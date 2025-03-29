@@ -137,7 +137,8 @@ The build artifacts will be stored in the `dist/` directory.
 
 ## License
 
-[Add your license information here]
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](LICENSE.md).
+You are free to use, share, and adapt this work for non-commercial purposes, as long as you provide attribution.
 
 ## For Developers
 
