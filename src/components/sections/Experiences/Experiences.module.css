@@ -1,0 +1,217 @@
+/* Updated Experience.module.css for Timeline + Accordion design */
+.experienceContainer {
+  margin-top: var(--mantine-spacing-xl);
+  position: relative;
+}
+
+/* Timeline styling */
+.timeline {
+  position: relative;
+  z-index: 1;
+}
+
+.timelineItem {
+  padding-bottom: var(--mantine-spacing-xl);
+}
+
+.timelineBullet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  background-color: var(--mantine-color-brand-6);
+  border-radius: 50%;
+  color: white;
+  box-shadow: 0 0 0 rgba(var(--mantine-color-brand-rgb), 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--mantine-color-brand-rgb), 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--mantine-color-brand-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--mantine-color-brand-rgb), 0);
+  }
+}
+
+.timelineYear {
+  font-size: var(--mantine-font-size-lg);
+  color: var(--mantine-color-brand-6);
+  margin-left: var(--mantine-spacing-xs);
+}
+
+/* Accordion styling */
+.accordionItem {
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-top: var(--mantine-spacing-xs);
+  margin-bottom: var(--mantine-spacing-xs);
+  background-color: white;
+}
+
+.accordionItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+  border-color: var(--mantine-color-brand-4);
+}
+
+.accordionControl {
+  padding: var(--mantine-spacing-md);
+  background: linear-gradient(
+    to right,
+    rgba(var(--mantine-color-brand-rgb), 0.02),
+    rgba(var(--mantine-color-brand-rgb), 0.07)
+  );
+  transition: background 0.3s ease;
+}
+
+.accordionControl:hover {
+  background: linear-gradient(
+    to right,
+    rgba(var(--mantine-color-brand-rgb), 0.05),
+    rgba(var(--mantine-color-brand-rgb), 0.1)
+  );
+}
+
+.accordionChevron {
+  color: var(--mantine-color-brand-6);
+  transition: transform 0.3s ease;
+  margin-right: var(--mantine-spacing-xs);
+}
+
+.accordionChevronIcon {
+  width: 50px;
+  height: 50px;
+}
+
+.accordionPanel {
+  padding: var(--mantine-spacing-md);
+}
+
+.accordionContent {
+  padding: 0;
+}
+
+.accordionLabel {
+  width: 100%;
+}
+
+.logoContainer {
+  max-width: 120px;
+  min-width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mantine-spacing-xs);
+}
+
+.companyLogo {
+  max-height: 40px;
+  max-width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.accordionItem:hover .companyLogo {
+  transform: scale(1.05);
+}
+
+.labelContent {
+  flex: 1;
+}
+
+.companyName {
+  font-size: var(--mantine-font-size-lg);
+  margin-bottom: 4px;
+  color: var(--mantine-color-dark-7);
+}
+
+.jobTitle {
+  color: var(--mantine-color-gray-7);
+}
+
+.durationBadge {
+  background-color: rgba(var(--mantine-color-brand-rgb), 0.1);
+  color: var(--mantine-color-brand-7);
+  border-color: var(--mantine-color-brand-3);
+  transition: all 0.3s ease;
+}
+
+.contextWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-md);
+  animation: fadeIn 0.5s ease;
+}
+
+.contextItem {
+  padding: var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  background-color: rgba(var(--mantine-color-gray-rgb), 0.05);
+  border: 1px solid var(--mantine-color-gray-2);
+  transition: all 0.3s ease;
+}
+
+.contextItem:hover {
+  background-color: rgba(var(--mantine-color-gray-rgb), 0.08);
+  border-color: var(--mantine-color-gray-3);
+}
+
+.contextHeader {
+  flex-wrap: wrap;
+}
+
+.contextTitle {
+  font-weight: 600;
+  margin-right: var(--mantine-spacing-xs);
+  color: var(--mantine-color-brand-6);
+}
+
+.techGroup {
+  flex-wrap: wrap;
+}
+
+.techBadge {
+  text-transform: none;
+  transition: all 0.3s ease;
+  background-color: rgba(var(--mantine-color-brand-rgb), 0.1);
+  color: var(--mantine-color-brand-7);
+  border-color: var(--mantine-color-brand-3);
+}
+
+.techBadge:hover {
+  transform: translateY(-2px);
+  background-color: rgba(var(--mantine-color-brand-rgb), 0.2);
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .accordionLabel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .logoContainer {
+    margin-bottom: var(--mantine-spacing-xs);
+    width: 50px;
+    height: 50px;
+  }
+}

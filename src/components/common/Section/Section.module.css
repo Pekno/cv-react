@@ -1,0 +1,49 @@
+.section {
+  padding: 80px 0;
+  transition: background-color 0.3s ease;
+}
+
+.even {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.odd {
+  background-color: white;
+}
+
+.sectionTitle {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--mantine-color-brand-6);
+  text-align: center;
+  margin-bottom: 20px !important; /* Keep the original margin */
+  padding-bottom: 10px; /* Add padding to create space for the ::after element */
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.sectionTitle::after {
+  content: '';
+  width: 70px;
+  height: 3px;
+  background-color: var(--mantine-color-brand-6);
+  position: absolute;
+  bottom: 0; /* Position it at the bottom of the padding area, not below the text */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 50px 0;
+  }
+  
+  .sectionTitle {
+    font-size: 28px;
+    margin-bottom: 40px;
+    padding-bottom: 25px; /* Adjust padding for mobile */
+  }
+}

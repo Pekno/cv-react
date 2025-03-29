@@ -1,0 +1,44 @@
+.header {
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    background-color: transparent;
+    transition: all 0.4s ease-in-out;
+    padding: 1rem;
+}
+
+.sticky {
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 1rem;
+}
+
+.link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    color: var(--mantine-color-brand-6);
+    font-weight: 500;
+    font-size: var(--mantine-font-size-sm);
+}
+
+.link:hover {
+    background-color: var(--mantine-color-brand-0);
+}
+
+.active {
+    background-color: var(--mantine-color-brand-0);
+    font-weight: 600;
+    position: relative;
+}
+
+.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--mantine-color-brand-6);
+}

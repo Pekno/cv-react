@@ -1,0 +1,48 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignore content of asset directories but keep their structure
+/src/assets/pdf/*
+!/src/assets/pdf/.gitkeep
+
+/src/assets/profiles/*
+!/src/assets/profiles/.gitkeep
+
+/src/assets/companies/*
+!/src/assets/companies/.gitkeep
+
+/src/assets/hobbies/*
+!/src/assets/hobbies/.gitkeep
+
+/src/assets/projects/*
+!/src/assets/projects/.gitkeep
+
+# Ignore actual data files but keep examples
+/src/data/*
+!/src/data/*.example.ts
+
+# Ignore actual translation files but keep examples
+/src/i18n/locales/*
+!/src/i18n/locales/*.example.ts

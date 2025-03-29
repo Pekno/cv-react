@@ -1,0 +1,29 @@
+.link {
+  display: block;
+  padding: 8px 12px;
+  border-radius: var(--mantine-radius-sm);
+  text-decoration: none;
+  color: var(--mantine-color-brand-6);
+  font-weight: 500;
+}
+
+.link:hover {
+  background-color: var(--mantine-color-brand-0);
+}
+
+.active {
+  background-color: var(--mantine-color-brand-0);
+  font-weight: 600;
+  position: relative;
+}
+
+.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: var(--mantine-color-brand-6);
+  border-radius: 0 var(--mantine-radius-sm) var(--mantine-radius-sm) 0;
+}

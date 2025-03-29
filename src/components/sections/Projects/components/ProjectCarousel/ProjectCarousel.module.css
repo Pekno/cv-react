@@ -1,0 +1,76 @@
+.carouselContainer {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 0;
+  overflow: hidden;
+}
+
+/* Blur effect on edges */
+.carouselContainer::before,
+.carouselContainer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.carouselContainer::before {
+  left: 0;
+  background: linear-gradient(to right, var(--background-color, #f8f9fa) 0%, rgba(248, 249, 250, 0) 100%);
+}
+
+.carouselContainer::after {
+  right: 0;
+  background: linear-gradient(to left, var(--background-color, #f8f9fa) 0%, rgba(248, 249, 250, 0) 100%);
+}
+
+/* Autoplay Control */
+.autoplayControl {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.autoplayButton {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.autoplayButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Card */
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0 auto;
+  height: 100%;
+  min-height: 400px;
+}
+
+.description {
+  display: -webkit-box;
+  line-clamp: 4;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}

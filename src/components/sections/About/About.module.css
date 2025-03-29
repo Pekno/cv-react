@@ -1,0 +1,70 @@
+.aboutSection {
+    padding-top: 20px;
+    scroll-margin-top: 80px;
+}
+
+@media (max-width: 768px) {
+    .aboutSection {
+        padding-top: 15px;
+    }
+}
+
+.textCenter {
+    text-align: center;
+}
+
+@media (max-width: 576px) {
+    .avatar {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+.name {
+    font-weight: 700;
+    color: var(--mantine-color-brand-6);
+    margin-bottom: 0;
+}
+
+.title {
+    font-size: var(--mantine-font-size-xl);
+    font-weight: 500;
+    color: var(--mantine-color-gray-7);
+    margin-bottom: 0;
+}
+
+.counterWrap {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: var(--mantine-spacing-md);
+}
+
+.counter {
+    font-weight: 700;
+    font-size: var(--mantine-font-size-xl);
+    color: var(--mantine-color-brand-6);
+    margin-right: 5px;
+}
+
+.actionIcon {
+    color: white;
+    background-color: var(--mantine-color-brand-6);
+}
+
+.actionIcon:hover {
+    background-color: var(--mantine-color-brand-7);
+}
+
+.summary {
+    line-height: 1.6;
+    margin-bottom: var(--mantine-spacing-md);
+}
+
+.summary a {
+    color: var(--mantine-color-brand-6);
+    text-decoration: none;
+}
+
+.summary a:hover {
+    text-decoration: underline;
+}

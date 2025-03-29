@@ -1,0 +1,106 @@
+.consoleContainer {
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  margin: var(--mantine-spacing-xl) 0;
+  background-color: #0c0c0c;
+  font-family: 'Consolas', 'Lucida Console', monospace;
+  border: 1px solid #444;
+}
+
+.consoleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  background-color: #1f1f1f;
+  border-bottom: 1px solid #444;
+}
+
+.consoleTitle {
+  color: #ffffff;
+  flex-grow: 1;
+}
+
+.windowControls {
+  display: flex;
+}
+
+.windowButton {
+  color: #ffffff;
+  background-color: transparent;
+}
+
+.windowButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.consoleBody {
+  padding: 15px;
+  color: #cccccc;
+  min-height: 150px;
+  background-color: #0c0c0c;
+}
+
+.terminalIcon {
+  color: #cccccc;
+}
+
+.commandText, .commandPrompt {
+  color: #cccccc;
+}
+
+.consoleContent {
+  margin-left: 25px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.consoleContent a, .consoleLink {
+  color: #3b79db;
+  text-decoration: none;
+  border-bottom: 1px dashed #3b79db;
+}
+
+.consoleContent a:hover, .consoleLink:hover {
+  color: #5890e9;
+  border-bottom: 1px solid #5890e9;
+}
+
+.cursor {
+  font-weight: bold;
+  color: #cccccc;
+  animation: blink 1s step-end infinite;
+}
+
+.cursorHidden {
+  opacity: 0;
+}
+
+@keyframes blink {
+  from, to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Make sure the text is readable on dark themes */
+[data-mantine-color-scheme="dark"] .consoleContainer {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-mantine-color-scheme="dark"] .consoleContent {
+  color: #e0e0e0;
+}
+
+/* Export the component */
+.summary a {
+  color: var(--mantine-color-brand-6);
+  text-decoration: none;
+}
+
+.summary a:hover {
+  text-decoration: underline;
+}

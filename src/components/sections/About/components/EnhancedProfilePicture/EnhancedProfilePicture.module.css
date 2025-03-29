@@ -1,0 +1,90 @@
+/* Main container with relative positioning */
+.mainContainer {
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Border container for the gradient ring */
+.borderContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Image wrapper - this centers the image and prevents blur effects from leaking */
+.imageWrapper {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* Actual image container that gets the blur animation */
+.imageContainer {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+/* The image itself */
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Animation class for the blur effect */
+.animating {
+  animation: blurTransition 3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Blur animation keyframes */
+@keyframes blurTransition {
+  0% {
+    filter: blur(0px);
+  }
+  15% {
+    filter: blur(2px);
+  }
+  45% {
+    filter: blur(10px);
+  }
+  50% {
+    filter: blur(10px); /* Peak blur at the middle of the animation */
+  }
+  55% {
+    filter: blur(10px);
+  }
+  85% {
+    filter: blur(2px);
+  }
+  100% {
+    filter: blur(0px);
+  }
+}
+
+.gradientRingOuter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent, var(--mantine-color-brand-6) 50%, transparent);
+  opacity: 0.5;
+  animation: rotateGradient 10s linear infinite;
+}
+
+@keyframes rotateGradient {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

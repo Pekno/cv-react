@@ -1,0 +1,16 @@
+.scrollToTop {
+    position: fixed;
+    bottom: var(--mantine-spacing-xl);
+    right: var(--mantine-spacing-xl);
+    left: auto;
+    z-index: 10000;
+    background-color: var(--mantine-color-brand-6);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    width: 40px;
+    height: 40px;
+}
+
+.scrollToTop:hover {
+    background-color: var(--mantine-color-brand-7);
+}

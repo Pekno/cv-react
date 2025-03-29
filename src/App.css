@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Signika:wght@300;400;500;600;700&display=swap');
+
+/* Text-only Mantine components */
+.mantine-Text-root,
+.mantine-Title-root {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Apply no selection to text content only */
+h1, h2, h3, h4, h5, h6, p, span {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: 'signika', sans-serif;
+}
+
+/* Prevent text selection without affecting interactive elements */
+p, h1, h2, h3, h4, h5, h6, span, label, li > text, div:not([role="button"]) > text {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
