@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo, ReactNode } from 'react';
 import { Box, Text, Group, ActionIcon } from '@mantine/core';
 import { IconX, IconMinus, IconSquare } from '@tabler/icons-react';
 import classes from './ConsoleTypingAnimation.module.css';
-import { useProfileData } from '../../../../../hooks/useProfileData';
+import { useProfileData } from '@hooks/useProfileData';
 import { Link } from 'react-router-dom';
-import { ExperiencesData } from 'components/sections/Experiences/Experiences.types';
+import { ExperiencesData } from '@components/sections/Experiences/Experiences.types';
 
 interface ConsoleTypingAnimationProps {
   content: string;

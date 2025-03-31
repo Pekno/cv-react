@@ -1,10 +1,10 @@
 import { Grid, Paper, Timeline, Text, Group, RingProgress, Stack, SimpleGrid, Center, Badge, Title } from '@mantine/core';
 import { IconSchool, IconLanguage } from '@tabler/icons-react';
-import Section from '../../common/Section/Section';
+import Section from '@components/common/Section/Section';
 import classes from './Education.module.css';
-import { useLanguage } from '../../../hooks/useLanguage';
+import { useLanguage } from '@hooks/useLanguage';
 import { EducationProps, historyKey, languageKey } from './Education.types';
-import { createRegisteredSection } from '../../../decorators/section.decorator';
+import { createRegisteredSection } from '@decorators/section.decorator';
 
 export default createRegisteredSection<EducationProps>('education',({ data, evenSection = false }) => {
   const { t } = useLanguage();

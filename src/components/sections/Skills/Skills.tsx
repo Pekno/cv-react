@@ -9,7 +9,7 @@ import {
   SimpleGrid,
   List
 } from '@mantine/core';
-import { useLanguage } from '../../../hooks/useLanguage';
+import { useLanguage } from '@hooks/useLanguage';
 import { 
   IconBriefcase,
   IconTarget,
@@ -19,14 +19,14 @@ import {
   IconRefresh,
   IconCertificate
 } from '@tabler/icons-react';
-import Section from '../../common/Section/Section';
+import Section from '@components/common/Section/Section';
 import classes from './Skills.module.css';
 import techCategoryClasses from './components/TechCategory/TechCategory.module.css';
-import { createRegisteredSection } from '../../../decorators/section.decorator';
-import { useColorPalette } from '../../../hooks/useColorPalette';
+import { createRegisteredSection } from '@decorators/section.decorator';
 import { SkillsProps, MainSkill, keyCompetenciesKey, qualityKey, categoryKey, chipKey } from './Skills.types';
-import SkillCard from './components/SkillCard/SkillCard';
+import { useColorPalette } from '@hooks/useColorPalette';
 import TechCategory from './components/TechCategory/TechCategory';
+import SkillCard from './components/SkillCard/SkillCard';
 
 export default createRegisteredSection<SkillsProps>('skills',({ data, evenSection = false }) => {
   const { t } = useLanguage();

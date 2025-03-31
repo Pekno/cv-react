@@ -13,14 +13,14 @@ import {
   IconClock,
   IconChevronDown
 } from '@tabler/icons-react';
-import { useLanguage } from '../../../hooks/useLanguage';
-import Section from '../../common/Section/Section';
+import { useLanguage } from '@hooks/useLanguage';
+import Section from '@components/common/Section/Section';
 import classes from './Experiences.module.css';
 import { useLocation } from 'react-router-dom';
-import { createRegisteredSection } from '../../../decorators/section.decorator';
-import { contextKey, experienceKey, ExperiencesProps } from './Experiences.types';
-import { GlobalTranslationKeys } from 'types/translations.types';
+import { createRegisteredSection } from '@decorators/section.decorator';
+import { contextKey, experienceKey, ExperiencesProps } from './Experiences.types'
 import { ExperienceLabel } from './components/ExperienceLabel/ExperienceLabel';
+import { GlobalTranslationKeys } from '@app-types/translations.types';
 
 export default createRegisteredSection<ExperiencesProps>('experiences',({ data, evenSection = false }) => {
   const { t } = useLanguage();

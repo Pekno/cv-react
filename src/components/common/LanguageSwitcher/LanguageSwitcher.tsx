@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SegmentedControl, ActionIcon, Menu, Button } from '@mantine/core';
 import { IconLanguage } from '@tabler/icons-react';
-import i18next from 'i18next';
-import { useLanguage } from '../../../hooks/useLanguage';
+import { useLanguage } from '@hooks/useLanguage';
 import classes from './LanguageSwitcher.module.css';
 
 interface LanguageOption {
@@ -40,9 +39,7 @@ const getLanguageNativeName = (code: string): string => {
 
 const LanguageSwitcher: React.FC = () => {
   const { currentLanguage, supportedLanguages, setLanguage } = useLanguage();
-  const [languageOptions, setLanguageOptions] = useState<LanguageOption[]>(buildLang(supportedLanguages));
-
-  console.log(languageOptions)
+  const [languageOptions] = useState<LanguageOption[]>(buildLang(supportedLanguages));
 
   // Handle language change
   const handleLanguageChange = (newLanguage?: string) => {

@@ -11,7 +11,7 @@ import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import classes from './Header.module.css';
 import { useScrollSpy } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
-import { useProfileData } from '../../../hooks/useProfileData';
+import { useProfileData } from '@hooks/useProfileData';
 
 interface HeaderProps {
   opened: boolean;

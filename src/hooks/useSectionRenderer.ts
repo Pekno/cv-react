@@ -1,22 +1,6 @@
 import React, { useMemo, createElement } from "react";
-import { sectionRegistry } from "../decorators/section.decorator";
 import { SectionProps, SectionTypeRegistry } from "../types/profile-data.types";
-import { RegisteredSectionComponent } from "../types/section-component.types";
-
-/**
- * Custom hook that returns a section component by its type
- * with proper typing and memoization
- */
-export function useSectionComponent<K extends keyof SectionTypeRegistry>(
-  type: K
-): RegisteredSectionComponent<K> | null {
-  return useMemo(
-    () =>
-      (sectionRegistry[type]?.component as RegisteredSectionComponent<K>) ||
-      null,
-    [type]
-  );
-}
+import useSectionComponent from "./useSectionComponent";
 
 /**
  * Custom hook that provides both the component and a render function

@@ -1,5 +1,5 @@
-import { TranslationKey } from "types/translations.types";
-import { SectionProps } from "../../../types/profile-data.types";
+import { TranslationKey } from "@app-types/translations.types";
+import { SectionProps } from "@app-types/profile-data.types";
 
 export interface MainSkill {
   id: string;

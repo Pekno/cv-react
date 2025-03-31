@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Paper, ThemeIcon, Title, Text, Group, Badge } from '@mantine/core';
-import { useColorPalette } from '../../../../../hooks/useColorPalette';
+import { useColorPalette } from '@hooks/useColorPalette';
 import classes from './SkillCard.module.css';
 
 export interface SkillCardProps {

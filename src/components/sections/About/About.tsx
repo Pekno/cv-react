@@ -6,15 +6,15 @@ import {
   ActionIcon,
 } from '@mantine/core';
 import { IconDownload } from '@tabler/icons-react';
-import { useLanguage } from '../../../hooks/useLanguage';
-import Section from '../../common/Section/Section';
+import Section from '@components/common/Section/Section';
 import classes from './About.module.css';
 import ConsoleTypingAnimation from './components/ConsoleTypingAnimation/ConsoleTypingAnimation';
 import AnimatedCounter from './components/AnimatedCounter/AnimatedCounter';
 import EnhancedProfilePicture from './components/EnhancedProfilePicture/EnhancedProfilePicture';
-import SocialLinks from '../../common/SocialLinks/SocialLinks';
+import SocialLinks from '@components/common/SocialLinks/SocialLinks';
 import { AboutProps } from './About.types';
-import { createRegisteredSection } from '../../../decorators/section.decorator';
+import { createRegisteredSection } from '@decorators/section.decorator';
+import { useLanguage } from '@hooks/useLanguage';
 
 export default createRegisteredSection<AboutProps>('about',({ data, meta, evenSection = false }) => {
   const { t, getCvPdfPath } = useLanguage();

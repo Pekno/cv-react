@@ -7,11 +7,11 @@ import {
   IconDeviceDesktop,
   IconBriefcase 
 } from '@tabler/icons-react';
-import { useLanguage } from '../../../hooks/useLanguage';
-import Section from '../../common/Section/Section';
+import { useLanguage } from '@hooks/useLanguage';
+import Section from '@components/common/Section/Section';
 import classes from './ProjectStats.module.css';
 import { ProjectStatsProps, statKey } from './ProjectStats.types';
-import { createRegisteredSection } from '../../../decorators/section.decorator';
+import { createRegisteredSection } from '@decorators/section.decorator';
 
 // Map icon strings to actual icon components
 const iconMap: Record<string, React.ReactNode> = {

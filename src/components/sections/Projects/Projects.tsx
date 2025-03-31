@@ -1,12 +1,12 @@
 import { 
   Text
 } from '@mantine/core';
-import { useLanguage } from '../../../hooks/useLanguage';
-import Section from '../../common/Section/Section';
+import { useLanguage } from '@hooks/useLanguage';
+import Section from '@components/common/Section/Section';
 import ProjectCarousel from './components/ProjectCarousel/ProjectCarousel';
 import classes from './Projects.module.css';
 import { actionKey, itemKey, ProjectsProps } from './Projects.types';
-import { createRegisteredSection } from '../../../decorators/section.decorator';
+import { createRegisteredSection } from '@decorators/section.decorator';
 
 
 export default createRegisteredSection<ProjectsProps>('projects',({ data, evenSection = false }) => {

@@ -7,11 +7,11 @@ import {
   Box,
   Blockquote
 } from '@mantine/core';
-import { useLanguage } from '../../../hooks/useLanguage';
-import Section from '../../common/Section/Section';
+import { useLanguage } from '@hooks/useLanguage';
+import Section from '@components/common/Section/Section';
 import classes from './Hobbies.module.css';
 import { HobbiesProps, TravelItem, travelKey } from './Hobbies.types';
-import { createRegisteredSection } from '../../../decorators/section.decorator';
+import { createRegisteredSection } from '@decorators/section.decorator';
 
 export default createRegisteredSection<HobbiesProps>('hobbies',({ data, evenSection = false }) => {
   const { t } = useLanguage();

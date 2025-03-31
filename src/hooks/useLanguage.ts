@@ -17,10 +17,10 @@ export const useLanguage = (): UseLanguageReturn => {
   const { t: originalT, i18n } = useTranslation();
   const { data } = useProfileData();
 
-  // Use i18n.language directly instead of maintaining duplicate state
+  // Use i18n.language directly instead of duplicating in state
   const currentLanguage = i18n.language;
 
-  // Update PDF path based on language
+  // Memoize functions that don't need to change often
   const getCvPdfPath = useCallback((): string => {
     return data.meta.pdfResume[currentLanguage] ?? "";
   }, [currentLanguage, data.meta.pdfResume]);
@@ -46,13 +46,10 @@ export const useLanguage = (): UseLanguageReturn => {
     (lang) => lang !== "cimode" && lang !== "dev" && Boolean(lang)
   );
 
-  // Create a wrapper that handles the type checking
-  const typedT = useCallback(
+  // Type-safe translation function
+  const t = useCallback(
     (key: TranslationKey, options?: any): string => {
-      // Cast TranslationKey to string to satisfy i18next types
-      const stringKey: string = key as string;
-      // Force the return value to be string
-      return originalT(stringKey, options) as string;
+      return originalT(key as string, options) as string;
     },
     [originalT]
   );
@@ -61,7 +58,7 @@ export const useLanguage = (): UseLanguageReturn => {
     currentLanguage,
     supportedLanguages: filteredLanguages,
     setLanguage,
-    t: typedT,
+    t,
     getCvPdfPath,
   };
 };

@@ -118,7 +118,7 @@ export function getI18nKey<K extends keyof SectionTypeRegistry>(
 
 /**
  * Helper to get section order from profile data
- * With improved typing and null safety
+ * With improved typing and null safety using proper functional approach
  */
 export function getSectionOrder(
   data: ProfileData
