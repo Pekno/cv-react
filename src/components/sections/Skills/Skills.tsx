@@ -22,13 +22,13 @@ import {
 import Section from '../../common/Section/Section';
 import classes from './Skills.module.css';
 import techCategoryClasses from './components/TechCategory/TechCategory.module.css';
-import { registerSection } from '../../../decorators/section.decorator';
+import { createRegisteredSection } from '../../../decorators/section.decorator';
 import { useColorPalette } from '../../../hooks/useColorPalette';
-import { SkillsData, SkillsProps, MainSkill, keyCompetenciesKey, qualityKey, categoryKey, chipKey } from './Skills.types';
+import { SkillsProps, MainSkill, keyCompetenciesKey, qualityKey, categoryKey, chipKey } from './Skills.types';
 import SkillCard from './components/SkillCard/SkillCard';
 import TechCategory from './components/TechCategory/TechCategory';
 
-const Skills: React.FC<SkillsProps> = ({ data, evenSection = false }) => {
+export default createRegisteredSection<SkillsProps>('skills',({ data, evenSection = false }) => {
   const { t } = useLanguage();
   
   // Theme color from your Mantine theme (your primary brand color)
@@ -111,8 +111,4 @@ const Skills: React.FC<SkillsProps> = ({ data, evenSection = false }) => {
       </Paper>
     </Section>
   );
-};
-
-export default registerSection<SkillsData>({
-  type: 'skills',
-})(Skills);
+});

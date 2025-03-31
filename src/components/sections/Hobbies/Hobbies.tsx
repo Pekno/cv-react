@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Text,
   Card,
@@ -10,11 +10,10 @@ import {
 import { useLanguage } from '../../../hooks/useLanguage';
 import Section from '../../common/Section/Section';
 import classes from './Hobbies.module.css';
-import { HobbiesData, HobbiesProps, TravelItem, travelKey } from './Hobbies.types';
-import { registerSection } from '../../../decorators/section.decorator';
+import { HobbiesProps, TravelItem, travelKey } from './Hobbies.types';
+import { createRegisteredSection } from '../../../decorators/section.decorator';
 
-
-const Hobbies: React.FC<HobbiesProps> = ({ data, evenSection = false }) => {
+export default createRegisteredSection<HobbiesProps>('hobbies',({ data, evenSection = false }) => {
   const { t } = useLanguage();
   const [expandedImage, setExpandedImage] = useState<{img: string; title: string; desc: string} | null>(null);
 
@@ -97,6 +96,4 @@ const Hobbies: React.FC<HobbiesProps> = ({ data, evenSection = false }) => {
       </Grid>
     </Section>
   );
-};
-
-export default registerSection<HobbiesData>({ type: 'hobbies' })(Hobbies);
+});

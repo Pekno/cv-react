@@ -1,11 +1,9 @@
-// Updated Experience.tsx with Timeline and Accordion
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Accordion,
   Text, 
   Group, 
   Badge, 
-  Image,
   Box,
   Timeline,
   Title
@@ -19,42 +17,12 @@ import { useLanguage } from '../../../hooks/useLanguage';
 import Section from '../../common/Section/Section';
 import classes from './Experiences.module.css';
 import { useLocation } from 'react-router-dom';
-import { registerSection } from '../../../decorators/section.decorator';
-import { contextKey, experienceKey, ExperiencesData, ExperiencesProps } from './Experiences.types';
+import { createRegisteredSection } from '../../../decorators/section.decorator';
+import { contextKey, experienceKey, ExperiencesProps } from './Experiences.types';
 import { GlobalTranslationKeys } from 'types/translations.types';
+import { ExperienceLabel } from './components/ExperienceLabel/ExperienceLabel';
 
-interface ExperienceLabelProps {
-  companyName: string;
-  companyLogo: string;
-  jobTitle: string;
-}
-
-function ExperienceLabel({ companyName, companyLogo, jobTitle }: ExperienceLabelProps) {
-  return (
-    <Group wrap="nowrap" className={classes.accordionLabel}>
-      <div className={classes.logoContainer}>
-        <Image 
-          src={companyLogo} 
-          alt={companyName}
-          height={40}
-          w="auto"
-          fit="contain"
-          className={classes.companyLogo}
-        />
-      </div>
-      <div className={classes.labelContent}>
-        <Text fw={700} className={classes.companyName} span>{companyName}</Text>
-        <Group gap="xs">
-          <Text size="sm" fw={500} span className={classes.jobTitle}>
-            {jobTitle}
-          </Text>
-        </Group>
-      </div>
-    </Group>
-  );
-}
-
-const Experiences: React.FC<ExperiencesProps> = ({ data, evenSection = false }) => {
+export default createRegisteredSection<ExperiencesProps>('experiences',({ data, evenSection = false }) => {
   const { t } = useLanguage();
   const location = useLocation();
   const [value, setValue] = useState<string | null>(null);
@@ -180,8 +148,4 @@ const Experiences: React.FC<ExperiencesProps> = ({ data, evenSection = false }) 
       </div>
     </Section>
   );
-};
-
-export default registerSection<ExperiencesData>({
-  type: 'experiences'
-})(Experiences);
+});

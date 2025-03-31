@@ -1,13 +1,12 @@
-import React from 'react';
 import { Grid, Paper, Timeline, Text, Group, RingProgress, Stack, SimpleGrid, Center, Badge, Title } from '@mantine/core';
 import { IconSchool, IconLanguage } from '@tabler/icons-react';
 import Section from '../../common/Section/Section';
 import classes from './Education.module.css';
 import { useLanguage } from '../../../hooks/useLanguage';
-import { EducationData, EducationProps, historyKey, languageKey } from './Education.types';
-import { registerSection } from '../../../decorators/section.decorator';
+import { EducationProps, historyKey, languageKey } from './Education.types';
+import { createRegisteredSection } from '../../../decorators/section.decorator';
 
-const Education: React.FC<EducationProps> = ({ data, evenSection = true }) => {
+export default createRegisteredSection<EducationProps>('education',({ data, evenSection = false }) => {
   const { t } = useLanguage();
 
   // Convert education data from the centralized store to component format
@@ -97,8 +96,4 @@ const Education: React.FC<EducationProps> = ({ data, evenSection = true }) => {
       </Grid>
     </Section>
   );
-};
-
-export default registerSection<EducationData>({
-  type: 'education',
-})(Education);
+});

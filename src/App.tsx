@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AppShell } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import './App.css';
@@ -7,9 +7,9 @@ import Navbar from './components/common/Navbar/Navbar';
 import ScrollToTop from './components/common/ScrollToTop/ScrollToTop';
 import { useLanguage } from './hooks/useLanguage';
 import { useProfileData } from './hooks/useProfileData';
-// Import functions from section.decorator instead of section config
-import { sectionRegistry, getI18nKey, getSectionOrder } from './decorators/section.decorator';
+import { getI18nKey, getSectionOrder } from './decorators/section.decorator';
 import Footer from './components/common/Footer/Footer';
+import { useSectionRenderer } from './hooks/useSectionRenderer';
 
 // Import components to ensure decorators are applied
 import.meta.glob('./components/sections/*/*.tsx', { eager: true });
@@ -22,40 +22,43 @@ const App: React.FC = () => {
   // Get section types in order from profile data
   const sectionOrder = getSectionOrder(data);
 
+  // Create memoized section components
+  const sections = sectionOrder.map(type => ({
+      type,
+      // This returns { component, renderSection, renderList } for each section type
+      renderer: useSectionRenderer(type)
+    }));
+
   // Filter to only include section types that have registered components
-  const validSectionTypes = sectionOrder.filter(type => sectionRegistry[type]);
+  const validSections = useMemo(() => {
+    return sections.filter(section => section.renderer.component !== null);
+  }, [sections]);
 
   // Convert to menu items for navigation
-  const menuItems = validSectionTypes.map(type => ({
-    key: type,
-    label: t(getI18nKey(type))
-  }));
+  const menuItems = useMemo(() => {
+    return validSections.map(section => ({
+      key: section.type,
+      label: t(getI18nKey(section.type))
+    }));
+  }, [validSections, t]);
 
-  // Function to render components based on section registry and order
-  const renderSections = () => {
-    return validSectionTypes.map((type, index) => {
-      const registryItem = sectionRegistry[type];
-      if (!registryItem) return null; // Skip if no component registered for this type
-      
-      const Component = registryItem.component;
-      
-      // Find the section data
-      const sectionData = data.sections.find(section => section.sectionName === type);
+  // Render all the sections
+  const renderedSections = useMemo(() => {
+    return validSections.map((section, index) => {
+      const sectionData = data.sections.find(s => s.sectionName === section.type);
       if (!sectionData) return null;
-      
-      // Calculate evenSection based on index
+
       const evenSection = index % 2 === 0;
       
-      // Common props for all components
-      const commonProps = {
+      // Use the renderSection function from the hook
+      return section.renderer.renderSection({
         data: sectionData.data,
-        evenSection
-      };
-      
-      // All other components just use common props
-      return <Component key={type} {...commonProps} meta={data.meta} />;
+        evenSection,
+        meta: data.meta,
+        itemKey: section.type // Use the section type as the React key
+      });
     });
-  };
+  }, [validSections, data]);
 
   return (
     <AppShell
@@ -70,11 +73,8 @@ const App: React.FC = () => {
       <Navbar menuItems={menuItems} toggle={toggle} />
 
       <AppShell.Main pt={60}>
-        {/* Dynamically render sections based on registry */}
-        {renderSections()}
-        {/* Add the Footer component */}
-        <Footer/>
-        {/* Scroll to Top Button */}
+        {renderedSections}
+        <Footer />
         <ScrollToTop />
       </AppShell.Main>
     </AppShell>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   Text
 } from '@mantine/core';
@@ -6,10 +5,11 @@ import { useLanguage } from '../../../hooks/useLanguage';
 import Section from '../../common/Section/Section';
 import ProjectCarousel from './components/ProjectCarousel/ProjectCarousel';
 import classes from './Projects.module.css';
-import { actionKey, itemKey, ProjectsData, ProjectsProps } from './Projects.types';
-import { registerSection } from '../../../decorators/section.decorator';
+import { actionKey, itemKey, ProjectsProps } from './Projects.types';
+import { createRegisteredSection } from '../../../decorators/section.decorator';
 
-const Projects: React.FC<ProjectsProps> = ({ data, evenSection = true }) => {
+
+export default createRegisteredSection<ProjectsProps>('projects',({ data, evenSection = false }) => {
   const { t } = useLanguage();
 
   // Process projects to add translated descriptions and link texts
@@ -31,8 +31,4 @@ const Projects: React.FC<ProjectsProps> = ({ data, evenSection = true }) => {
       <ProjectCarousel projects={processedProjects} />
     </Section>
   );
-};
-
-export default registerSection<ProjectsData>({
-  type: 'projects',
-})(Projects);
+});

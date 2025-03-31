@@ -11,6 +11,10 @@ const localeModules = import.meta.glob("./locales/*.{ts,js,json}", {
 const resources: Record<string, { translation: any }> = {};
 
 Object.entries(localeModules).forEach(([path, module]) => {
+  // Skip example files
+  if (path.includes(".example.")) {
+    return;
+  }
   // Extract language code from path (e.g., './locales/en.ts' -> 'en')
   const match = path.match(/\.\/locales\/(.+)\.(ts|js|json)$/);
 

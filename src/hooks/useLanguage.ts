@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { TranslationKey } from "../types/translations.types";
 import { useProfileData } from "./useProfileData";
@@ -6,29 +6,45 @@ import { useProfileData } from "./useProfileData";
 // Define the interface for our hook
 interface UseLanguageReturn {
   currentLanguage: string;
-  toggleLanguage: () => void;
+  supportedLanguages: string[];
+  setLanguage: (lang: string) => void;
   t: (key: TranslationKey, options?: any) => string;
   getCvPdfPath: () => string;
-  isEnglish: boolean;
 }
 
 export const useLanguage = (): UseLanguageReturn => {
   // Use the standard hook
   const { t: originalT, i18n } = useTranslation();
   const { data } = useProfileData();
-  const [currentLanguage, setCurrentLanguage] = useState<string>(i18n.language);
+
+  // Use i18n.language directly instead of maintaining duplicate state
+  const currentLanguage = i18n.language;
 
   // Update PDF path based on language
   const getCvPdfPath = useCallback((): string => {
     return data.meta.pdfResume[currentLanguage] ?? "";
-  }, [currentLanguage]);
+  }, [currentLanguage, data.meta.pdfResume]);
 
-  // Toggle between FR and EN
-  const toggleLanguage = useCallback((): void => {
-    const newLanguage = currentLanguage === "fr" ? "en" : "fr";
-    i18n.changeLanguage(newLanguage);
-    setCurrentLanguage(newLanguage);
-  }, [currentLanguage, i18n]);
+  // Set a specific language
+  const setLanguage = useCallback(
+    (lang: string): void => {
+      if (
+        i18n.options.supportedLngs &&
+        i18n.options.supportedLngs.includes(lang)
+      ) {
+        i18n.changeLanguage(lang);
+      }
+    },
+    [i18n]
+  );
+
+  // Get all supported languages from i18n configuration
+  const supportedLanguages = i18n.options.supportedLngs || [];
+
+  // Filter out special values like 'cimode' and example files
+  const filteredLanguages = supportedLanguages.filter(
+    (lang) => lang !== "cimode" && lang !== "dev" && Boolean(lang)
+  );
 
   // Create a wrapper that handles the type checking
   const typedT = useCallback(
@@ -41,16 +57,11 @@ export const useLanguage = (): UseLanguageReturn => {
     [originalT]
   );
 
-  // Update language state when i18n language changes
-  useEffect(() => {
-    setCurrentLanguage(i18n.language);
-  }, [i18n.language]);
-
   return {
     currentLanguage,
-    toggleLanguage,
+    supportedLanguages: filteredLanguages,
+    setLanguage,
     t: typedT,
     getCvPdfPath,
-    isEnglish: currentLanguage === "en",
   };
 };

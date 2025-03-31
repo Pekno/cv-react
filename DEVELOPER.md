@@ -71,23 +71,8 @@ When adding new functionality, each section component extends the central type r
 Sections register themselves using the decorator pattern:
 
 ```typescript
-// In decorators/section.decorator.ts
-export function registerSection<T extends SectionDataTypes>(options: {
-  type: keyof SectionTypeRegistry;
-}) {
-  return function <C extends ComponentType<SectionProps<T> & Record<string, any>>>(
-    component: C
-  ): C {
-    // Register the component in the registry
-    sectionRegistry[options.type] = {
-      component,
-    };
-    return component;
-  };
-}
-
 // In a section component
-export default registerSection<SectionData>({ type: 'sectionName' })(SectionComponent);
+export default createRegisteredSection<SectionProps>('sectionName',({ data, evenSection = false }) => {
 ```
 
 This system:

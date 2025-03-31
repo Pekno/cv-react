@@ -34,18 +34,30 @@ export interface MetaData {
   socials: SocialLink[];
 }
 
+// Define a union of supported social platforms for strict type safety
+export type SocialPlatform =
+  | "github"
+  | "linkedin"
+  | "twitter"
+  | "instagram"
+  | "facebook"
+  | "youtube"
+  | "dribbble"
+  | "behance"
+  | "medium"
+  | "stackoverflow"
+  | "website"; // for personal websites
+
 export interface SocialLink {
-  type: string;
+  type: SocialPlatform;
   url: string;
 }
 
 // Updated for backward compatibility if needed
 // In a full implementation, this would be removed or deprecated
 export interface LocalizedText {
-  i18nKey: TranslationKey | string;
+  i18nKey: TranslationKey;
 }
-
-// Helper types for direct use of translation keys
 
 // Type for referencing a section's translation key directly
 export type TranslationKeyRef = {

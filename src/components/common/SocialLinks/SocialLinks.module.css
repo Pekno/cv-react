@@ -1,0 +1,8 @@
+.socialLink {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.socialLink:hover {
+  transform: translateY(-3px);
+  opacity: 0.9;
+}

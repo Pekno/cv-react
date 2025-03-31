@@ -73,5 +73,7 @@ type SectionTranslationKeys = {
 }[keyof SectionTranslations];
 
 // Complete translation key type
-export type TranslationKey = string &
-  (GlobalTranslationKeys | MenuTranslationKeys | SectionTranslationKeys);
+export type TranslationKey =
+  | GlobalTranslationKeys
+  | MenuTranslationKeys
+  | SectionTranslationKeys;
