@@ -8,7 +8,7 @@ export const profileData: ProfileData = {
   meta: {
     name: "Alex Morgan",
     profilePictures: [
-      "./src/assets/profiles/profile.jpg",
+      "./src/assets/profiles/default.jpg",
       // Add more profile pictures if needed
     ],
     pdfResume: {

@@ -2,6 +2,9 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
+// Declare the global variable for TypeScript
+declare const __USE_EXAMPLE_DATA__: boolean;
+
 // Dynamic import of all locale files
 const localeModules = import.meta.glob("./locales/*.{ts,js,json}", {
   eager: true,
@@ -11,12 +14,18 @@ const localeModules = import.meta.glob("./locales/*.{ts,js,json}", {
 const resources: Record<string, { translation: any }> = {};
 
 Object.entries(localeModules).forEach(([path, module]) => {
-  // Skip example files
-  if (path.includes(".example.")) {
+  // Skip example files unless we're in demo mode
+  const isExampleFile = path.includes(".example.");
+  if (
+    (isExampleFile && !__USE_EXAMPLE_DATA__) ||
+    (!isExampleFile && __USE_EXAMPLE_DATA__)
+  ) {
     return;
   }
   // Extract language code from path (e.g., './locales/en.ts' -> 'en')
-  const match = path.match(/\.\/locales\/(.+)\.(ts|js|json)$/);
+  const match = path
+    .replace(".example", "")
+    .match(/\.\/locales\/(.+)\.(ts|js|json)$/);
 
   if (match && match[1]) {
     const langCode = match[1];

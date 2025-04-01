@@ -28,7 +28,7 @@ dist-ssr
 !/src/assets/pdf/.gitkeep
 
 /src/assets/profiles/*
-!/src/assets/profiles/.gitkeep
+!/src/assets/profiles/default.jpg
 
 /src/assets/companies/*
 !/src/assets/companies/.gitkeep

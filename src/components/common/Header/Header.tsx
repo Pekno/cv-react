@@ -5,7 +5,8 @@ import {
   Burger, 
   Title,
   Box,
-  AppShell
+  AppShell,
+  Badge
 } from '@mantine/core';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import classes from './Header.module.css';
@@ -20,7 +21,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ opened, toggle, menuItems }) => {
-  const { data } = useProfileData();
+  // Get the isUsingExampleData flag from the useProfileData hook
+  const { data, isUsingExampleData } = useProfileData();
   const scrollSpy = useScrollSpy({
     selector: "section[id]",
   });
@@ -48,6 +50,11 @@ const Header: React.FC<HeaderProps> = ({ opened, toggle, menuItems }) => {
               hiddenFrom="md" 
             />
             <Title order={4}>{data.meta.name}</Title>
+            {isUsingExampleData && (
+              <Badge color="yellow" variant="outline" ml="sm">
+                DEMO MODE - Using Example Data
+              </Badge>
+            )}
           </Group>
           
           <Group gap={15} visibleFrom="md">
