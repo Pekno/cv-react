@@ -1,3 +1,4 @@
+import React, { useCallback } from 'react';
 import {
   Grid,
   Text,
@@ -16,8 +17,14 @@ import { AboutProps } from './About.types';
 import { createRegisteredSection } from '@decorators/section.decorator';
 import { useLanguage } from '@hooks/useLanguage';
 
-export default createRegisteredSection<AboutProps>('about',({ data, meta, evenSection = false }) => {
+// Define the component as a plain function first, then register it with the decorator
+const AboutSectionComponent = ({ data, meta, evenSection = false }: AboutProps) => {
   const { t, getCvPdfPath } = useLanguage();
+  
+  // Simple callback for download tracking (if needed)
+  const handleDownload = useCallback(() => {
+    console.log('Resume downloaded');
+  }, []);
 
   return (
     <Section id="about" title="" className={classes.aboutSection} evenSection={evenSection}>
@@ -33,7 +40,6 @@ export default createRegisteredSection<AboutProps>('about',({ data, meta, evenSe
         <Grid.Col className={classes.textCenter}>
           <Title order={1} className={classes.name}>{meta.name}</Title>
 
-          {/* Using the statically defined keys with IDE autocomplete */}
           <Title order={2} className={classes.title} mt="xs">
             {t('sections.about.jobTitle')}
           </Title>
@@ -55,23 +61,29 @@ export default createRegisteredSection<AboutProps>('about',({ data, meta, evenSe
           />
 
           <Group>
-            {/* Use the new SocialLinks component */}
             <SocialLinks socials={meta.socials} className={classes.actionIcon} />
-            
-            <ActionIcon
-              size="lg"
-              radius="xl"
-              variant="filled"
-              className={classes.actionIcon}
-              component="a"
-              href={getCvPdfPath()}
-              download
-            >
-              <IconDownload size={18} />
-            </ActionIcon>
+            { 
+              Object.keys(meta.pdfResume).length && 
+              <ActionIcon
+                size="lg"
+                radius="xl"
+                variant="filled"
+                className={classes.actionIcon}
+                component="a"
+                href={getCvPdfPath()}
+                download
+                onClick={handleDownload}
+              >
+
+                <IconDownload size={18} />
+              </ActionIcon>
+            }
           </Group>
         </Grid.Col>
       </Grid>
     </Section>
   );
-});
+};
+
+// Export with section registration
+export default createRegisteredSection<AboutProps>('about', AboutSectionComponent);

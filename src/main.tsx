@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { MantineThemeProvider } from './theme/MantineProvider';
+import './theme/variables.css';
+import './theme/mixins.css';
 import './i18n/i18n.ts';
 import { BrowserRouter } from 'react-router-dom';
 

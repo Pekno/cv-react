@@ -35,7 +35,7 @@ const Section: React.FC<SectionProps> = ({
   
   // If evenSection is explicitly provided, use that value
   if (evenSection !== undefined) {
-    sectionClasses.push(evenSection ? classes.even : classes.odd);
+    sectionClasses.push(evenSection ? classes.sectionEven : classes.sectionOdd);
   }
   
   return (
@@ -49,11 +49,14 @@ const Section: React.FC<SectionProps> = ({
         {title && (
           <Title 
             className={classes.sectionTitle} 
+            order={2}
           >
             {title}
           </Title>
         )}
-        {children}
+        <div className={classes.fadeIn}>
+          {children}
+        </div>
       </Container>
     </Box>
   );

@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { 
   Text
 } from '@mantine/core';
@@ -8,18 +9,24 @@ import classes from './Projects.module.css';
 import { actionKey, itemKey, ProjectsProps } from './Projects.types';
 import { createRegisteredSection } from '@decorators/section.decorator';
 
+// Create a memoized ProjectCarousel component
+const MemoizedProjectCarousel = React.memo(ProjectCarousel);
 
-export default createRegisteredSection<ProjectsProps>('projects',({ data, evenSection = false }) => {
+// Create the Projects component as a regular function
+const ProjectsSectionComponent = ({ data, evenSection = false }: ProjectsProps) => {
   const { t } = useLanguage();
 
   // Process projects to add translated descriptions and link texts
-  const processedProjects = data.projects.map(project => ({
-    title: t(itemKey(project.id, 'title')),
-    description: t(itemKey(project.id, 'desc')),
-    image: project.image,
-    link: project.link,
-    linkText: project.linkTextKey ? t(actionKey(project.linkTextKey)) : undefined
-  }));
+  // Memoize to prevent recalculation on every render
+  const processedProjects = useMemo(() => {
+    return data.projects.map(project => ({
+      title: t(itemKey(project.id, 'title')),
+      description: t(itemKey(project.id, 'desc')),
+      image: project.image,
+      link: project.link,
+      linkText: project.linkTextKey ? t(actionKey(project.linkTextKey)) : undefined
+    }));
+  }, [data.projects, t]);
 
   return (
     <Section id="projects" title={t('menu.projects')} evenSection={evenSection}>
@@ -28,7 +35,10 @@ export default createRegisteredSection<ProjectsProps>('projects',({ data, evenSe
       </Text>
       
       {/* Project Carousel */}
-      <ProjectCarousel projects={processedProjects} />
+      <MemoizedProjectCarousel projects={processedProjects} />
     </Section>
   );
-});
+};
+
+// Export with section registration
+export default createRegisteredSection<ProjectsProps>('projects', ProjectsSectionComponent);

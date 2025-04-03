@@ -29,7 +29,7 @@ const fr: Translations = {
       jobTitle: "Développeur Full Stack",
       experienceText: "ans d'expérience",
       summary:
-        "Je suis Alex Morgan, un développeur full stack passionné avec plus de 8 ans d'expérience dans la création d'applications web et de solutions numériques. Je suis spécialisé dans la création d'applications robustes et évolutives utilisant des technologies modernes comme React, Node.js et AWS. Mon expertise s'étend de la conception d'interfaces conviviales à l'implémentation de systèmes backend sécurisés et à la mise en place de pipelines CI/CD efficaces. Je m'engage à écrire du code propre et maintenable, et j'aime relever des défis techniques complexes. Quand je ne code pas, vous pouvez me trouver en train d'explorer de nouvelles technologies, de contribuer à des projets open-source ou de profiter d'aventures en plein air.",
+        "Je suis Alex Morgan, un développeur full stack passionné avec plus de 8 ans d'expérience dans la création d'applications web et de solutions numériques. Je suis spécialisé dans la création d'applications robustes et évolutives utilisant des technologies modernes comme React, Node.js et AWS. Mon expertise s'étend de la conception d'interfaces conviviales (TechInnovate Solutions) à l'implémentation de systèmes backend sécurisés et à la mise en place de pipelines CI/CD efficaces. Je m'engage à écrire du code propre et maintenable, et j'aime relever des défis techniques complexes. Quand je ne code pas, vous pouvez me trouver en train d'explorer de nouvelles technologies, de contribuer à des projets open-source ou de profiter d'aventures en plein air.",
     },
     skills: {
       functional: {

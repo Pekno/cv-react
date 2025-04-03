@@ -1,0 +1,28 @@
+/* Enhanced Projects CSS with variables */
+.projectsSection {
+  scroll-margin-top: 80px;
+}
+
+.introText {
+  max-width: 800px;
+  margin: 0 auto var(--space-xl);
+  text-align: center;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.carouselWrapper {
+  position: relative;
+  margin-top: var(--space-xl);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .introText {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .carouselWrapper {
+    margin-top: var(--space-lg);
+  }
+}

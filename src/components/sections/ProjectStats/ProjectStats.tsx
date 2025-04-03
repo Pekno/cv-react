@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Grid, Paper, Text, ThemeIcon } from '@mantine/core';
 import { 
   IconCode, 
@@ -22,47 +22,76 @@ const iconMap: Record<string, React.ReactNode> = {
   'projects': <IconBriefcase size={24} />
 };
 
-export default createRegisteredSection<ProjectStatsProps>('projectStats',({ data, evenSection = false }) => {
-    const { t } = useLanguage();
+// Create a memoized stat card component
+const StatCard = React.memo(({
+  icon,
+  value,
+  unit,
+  label
+}: {
+  icon: React.ReactNode;
+  value: number | string;
+  unit?: string;
+  label: string;
+}) => (
+  <Paper withBorder radius="md" className={classes.statCard}>
+    <ThemeIcon 
+      size={60} 
+      radius="xl" 
+      className={classes.statIcon}
+      color="blue"
+    >
+      {icon}
+    </ThemeIcon>
+    
+    <div className={classes.statValue}>
+      {value}
+      {unit && <span>{unit}</span>}
+    </div>
+    
+    <Text className={classes.statLabel}>
+      {label}
+    </Text>
+  </Paper>
+));
 
-    const getIcon = (iconName: string): React.ReactNode => {
-      return iconMap[iconName] || <IconCode size={24} />;
-    };
+// Create the ProjectStats component as a regular function
+const ProjectStatsComponent = ({ data, evenSection = false }: ProjectStatsProps) => {
+  const { t } = useLanguage();
 
-    return (
-      <Section id="projectStats" title={t('menu.projectStats')} evenSection={evenSection}>
-        <Grid className={classes.statsGrid}>
-          {data.stats.map((stat, index) => (
-            <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={index}>
-              <Paper withBorder radius="md" className={classes.statCard}>
-                <ThemeIcon 
-                  size={60} 
-                  radius="xl" 
-                  className={classes.statIcon}
-                  color="blue"
-                >
-                  {getIcon(stat.icon)}
-                </ThemeIcon>
-                
-                <div className={classes.statValue}>
-                  {stat.value}
-                  {stat.unit && <span>{stat.unit}</span>}
-                </div>
-                
-                <Text className={classes.statLabel}>
-                  {t(statKey(stat.label))}
-                </Text>
-              </Paper>
-            </Grid.Col>
-          ))}
-        </Grid>
-        
-        <div className={classes.summary}>
-          <Text size="lg" ta="center">
-            {t('sections.projectStats.summary')}
-          </Text>
-        </div>
-      </Section>
-    );
-  }
-);
+  // Memoize the icon getter function
+  const getIcon = useCallback((iconName: string): React.ReactNode => {
+    return iconMap[iconName] || <IconCode size={24} />;
+  }, []);
+
+  // Memoize the stats grid to prevent unnecessary re-renders
+  const statsGrid = useMemo(() => (
+    <Grid className={classes.statsGrid}>
+      {data.stats.map((stat, index) => (
+        <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={index}>
+          <StatCard
+            icon={getIcon(stat.icon)}
+            value={stat.value}
+            unit={stat.unit}
+            label={t(statKey(stat.label))}
+          />
+        </Grid.Col>
+      ))}
+    </Grid>
+  ), [data.stats, getIcon, t]);
+
+  return (
+    <Section id="projectStats" title={t('menu.projectStats')} evenSection={evenSection}>
+      {statsGrid}
+      
+      <div className={classes.summary}>
+        <Text size="lg" ta="center">
+          {t('sections.projectStats.summary')}
+        </Text>
+      </div>
+    </Section>
+  );
+};
+
+// Export with section registration
+export default createRegisteredSection<ProjectStatsProps>('projectStats', ProjectStatsComponent);

@@ -1,8 +1,9 @@
+/* Enhanced ProjectCarousel CSS with variables */
 .carouselContainer {
   position: relative;
   width: 100%;
   margin: 0 auto;
-  padding: 20px 0;
+  padding: var(--space-md) 0;
   overflow: hidden;
 }
 
@@ -14,29 +15,29 @@
   top: 0;
   bottom: 0;
   width: 5%;
-  z-index: 10;
+  z-index: var(--z-base);
   pointer-events: none;
 }
 
 .carouselContainer::before {
   left: 0;
-  background: linear-gradient(to right, var(--background-color, #f8f9fa) 0%, rgba(248, 249, 250, 0) 100%);
+  background: linear-gradient(to right, var(--bg-primary) 0%, rgba(248, 249, 250, 0) 100%);
 }
 
 .carouselContainer::after {
   right: 0;
-  background: linear-gradient(to left, var(--background-color, #f8f9fa) 0%, rgba(248, 249, 250, 0) 100%);
+  background: linear-gradient(to left, var(--bg-primary) 0%, rgba(248, 249, 250, 0) 100%);
 }
 
 /* Autoplay Control */
 .autoplayControl {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 20;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: var(--z-dropdown);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .autoplayButton {
@@ -46,13 +47,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  background-color: var(--primary);
+  color: white;
 }
 
 .autoplayButton:hover {
   transform: scale(1.05);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
+  background-color: var(--primary-dark);
+}
+
+.autoplayStatus {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
 }
 
 /* Card */
@@ -63,6 +72,41 @@
   margin: 0 auto;
   height: 100%;
   min-height: 400px;
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-normal), 
+              box-shadow var(--transition-normal);
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.cardImage {
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+  transition: transform var(--transition-normal);
+}
+
+.card:hover .cardImage {
+  transform: scale(1.05);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: var(--space-md);
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
 }
 
 .description {
@@ -73,4 +117,76 @@
   overflow: hidden;
   text-overflow: ellipsis;
   flex-grow: 1;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.cardFooter {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.projectLink {
+  color: var(--primary);
+  transition: color var(--transition-fast);
+}
+
+.projectLink:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Navigation controls */
+.controls {
+  position: absolute;
+  bottom: var(--space-md);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  z-index: var(--z-base);
+}
+
+.controlButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.controlButton:hover {
+  transform: scale(1.1);
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .card {
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 576px) {
+  .autoplayControl {
+    top: var(--space-xs);
+    right: var(--space-xs);
+  }
+  
+  .autoplayButton {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  
+  .cardImage {
+    height: 150px;
+  }
 }

@@ -1,16 +1,18 @@
 .aboutSection {
-    padding-top: 20px;
+    padding-top: var(--space-md);
     scroll-margin-top: 80px;
-}
-
-@media (max-width: 768px) {
-    .aboutSection {
-        padding-top: 15px;
-    }
+    transition: opacity var(--transition-normal);
 }
 
 .textCenter {
     text-align: center;
+}
+
+/* More efficient media query - use standard syntax */
+@media (max-width: 768px) {
+    .aboutSection {
+        padding-top: var(--space-sm);
+    }
 }
 
 @media (max-width: 576px) {
@@ -22,49 +24,54 @@
 
 .name {
     font-weight: 700;
-    color: var(--mantine-color-brand-6);
+    color: var(--primary);
     margin-bottom: 0;
 }
 
 .title {
     font-size: var(--mantine-font-size-xl);
     font-weight: 500;
-    color: var(--mantine-color-gray-7);
+    color: var(--text-secondary);
     margin-bottom: 0;
 }
 
+/* Optimized counter styles */
 .counterWrap {
     display: inline-flex;
     align-items: center;
-    margin-bottom: var(--mantine-spacing-md);
+    margin-bottom: var(--space-md);
 }
 
 .counter {
     font-weight: 700;
     font-size: var(--mantine-font-size-xl);
-    color: var(--mantine-color-brand-6);
-    margin-right: 5px;
+    color: var(--primary);
+    margin-right: var(--space-xs);
 }
 
+/* Consolidated action icon styles */
 .actionIcon {
     color: white;
-    background-color: var(--mantine-color-brand-6);
+    background-color: var(--primary);
+    transition: background-color var(--transition-fast);
 }
 
 .actionIcon:hover {
-    background-color: var(--mantine-color-brand-7);
+    background-color: var(--primary-dark);
 }
 
 .summary {
     line-height: 1.6;
-    margin-bottom: var(--mantine-spacing-md);
+    margin-bottom: var(--space-md);
 }
 
 .summary a {
-    color: var(--mantine-color-brand-6);
+    color: var(--primary);
     text-decoration: none;
+    transition: color var(--transition-fast);
 }
 
 .summary a:hover {
     text-decoration: underline;
+    color: var(--primary-dark);
 }

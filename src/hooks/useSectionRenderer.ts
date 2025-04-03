@@ -1,57 +1,69 @@
-import React, { useMemo, createElement } from "react";
+import { useCallback } from "react";
+import React from "react";
 import { SectionProps, SectionTypeRegistry } from "../types/profile-data.types";
 import useSectionComponent from "./useSectionComponent";
 
 /**
- * Custom hook that provides both the component and a render function
+ * Custom hook that provides both the component and optimized render functions
  * for a given section type
+ * 
+ * @param type - The section type identifier from SectionTypeRegistry
+ * @returns Object containing the component and render functions
  */
 export function useSectionRenderer<K extends keyof SectionTypeRegistry>(
   type: K
 ) {
+  // Get the component for this section type
   const Component = useSectionComponent(type);
 
-  const renderSection = useMemo(() => {
-    if (!Component) return () => null;
-
-    return (
+  // Use useCallback for renderSection function
+  const renderSection = useCallback(
+    (
       props: Omit<SectionProps<SectionTypeRegistry[K]>, "key"> & {
         itemKey?: string;
       }
     ) => {
+      if (!Component) return null;
+
       // Extract itemKey (which isn't part of SectionProps)
       const { itemKey, ...sectionProps } = props;
 
-      // Use createElement to specify key separately from component props
-      return createElement(
-        Component as React.ComponentType<SectionProps<SectionTypeRegistry[K]>>,
-        { ...(sectionProps as any), key: itemKey }
+      // Use createElement instead of JSX to avoid type issues
+      return React.createElement(
+        Component,
+        { 
+          ...sectionProps as SectionProps<SectionTypeRegistry[K]>, 
+          key: itemKey 
+        }
       );
-    };
-  }, [Component]);
+    },
+    [Component] // Only depend on Component reference
+  );
 
-  const renderList = useMemo(() => {
-    if (!Component) return () => [];
-
-    return (
+  // Use useCallback for renderList function
+  const renderList = useCallback(
+    (
       items: Array<
         Omit<SectionProps<SectionTypeRegistry[K]>, "key"> & { id: string }
       >
-    ): React.ReactNode[] => {
+    ) => {
+      if (!Component) return [];
+
       return items.map((item) => {
         const { id, ...props } = item;
 
-        // Use createElement to handle key separately
-        return createElement(
-          // Fixed: Use ComponentType instead of direct Component reference as a type
-          Component as React.ComponentType<
-            SectionProps<SectionTypeRegistry[K]>
-          >,
-          { ...(props as any), key: id }
+        // Use createElement instead of JSX
+        return React.createElement(
+          Component,
+          {
+            ...props as SectionProps<SectionTypeRegistry[K]>,
+            key: id
+          }
         );
       });
-    };
-  }, [Component]);
+    },
+    [Component] // Only depend on Component reference
+  );
 
   return {
     component: Component,

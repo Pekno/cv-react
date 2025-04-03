@@ -18,12 +18,12 @@ export interface GlobalTranslations {
 
 // Menu translations - keys must match the registry
 export type MenuTranslations = {
-  [K in keyof SectionTypeRegistry]: string;
+  [K in keyof SectionTypeRegistry]?: string;
 };
 
 // Create a mapping of section translations
 export type SectionTranslations = {
-  [K in keyof SectionTypeRegistry]: SectionTranslationRegistryMap[K];
+  [K in keyof SectionTypeRegistry]?: SectionTranslationRegistryMap[K];
 };
 
 // This registry will be extended by each section
