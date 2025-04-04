@@ -7,7 +7,8 @@ import {
   Divider,
   ThemeIcon,
   SimpleGrid,
-  List
+  List,
+  useMantineTheme
 } from '@mantine/core';
 import { useLanguage } from '@hooks/useLanguage';
 import { 
@@ -38,12 +39,10 @@ const MemoizedTechCategory = React.memo(TechCategory);
 // First define the component as a regular function, which we'll export with the decorator
 const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
   const { t } = useLanguage();
-  
-  // Theme color from your Mantine theme (your primary brand color)
-  const themeColor = '#2b689c';
+  const theme = useMantineTheme();
   
   // Using the enhanced useColorPalette hook
-  const { palette: skillColors, generateVariants, isColorDark } = useColorPalette(themeColor, data.mainSkills.length);
+  const { palette: skillColors, generateVariants, isColorDark } = useColorPalette(theme.colors['brand'][6], data.mainSkills.length);
   
   // Map icon strings to actual icon components - memoized function
   const getIconComponent = useCallback((iconName: string): React.ReactNode => {

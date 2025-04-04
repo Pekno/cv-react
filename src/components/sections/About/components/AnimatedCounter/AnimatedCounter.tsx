@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './AnimatedCounter.module.css';
+import { useMantineTheme } from '@mantine/core';
+import useColorPalette from '@/hooks/useColorPalette';
 
 interface Particle {
   id: number;
@@ -36,22 +38,15 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   const counterRef = useRef<HTMLDivElement>(null);
   const lastValue = useRef(start);
   const particleIdCounter = useRef(0);
+  const theme = useMantineTheme();
+
+  
+  // Using the enhanced useColorPalette hook
+  const { palette } = useColorPalette(theme.colors['brand'][6], 10);
 
   // Generate random color from a set of vibrant colors
   const getRandomColor = () => {
-    const colors = [
-      '#4299e1', // blue
-      '#3182ce', // blue darker
-      '#2b6cb0', // blue even darker
-      '#63b3ed', // blue lighter
-      '#ebf8ff', // blue lightest
-      '#90cdf4', // another blue
-      '#4fd1c5', // teal
-      '#38b2ac', // teal darker
-      '#f6ad55', // orange
-      '#f6e05e', // yellow
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
+    return palette[Math.floor(Math.random() * palette.length)];
   };
 
   // Create particles when counter changes
