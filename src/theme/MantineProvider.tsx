@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import '@mantine/core/styles.css';
 import './variables.css'; // Import our CSS variables
-import { MantineProvider, createTheme, MantineThemeOverride } from '@mantine/core';
+import { MantineProvider, createTheme } from '@mantine/core';
 
 // Define your theme with primary color matching your original blue (#2b689c)
-const theme: MantineThemeOverride = createTheme({
+const theme = createTheme({
   colors: {
     // Add your custom brand colors
     brand: [
@@ -21,17 +21,17 @@ const theme: MantineThemeOverride = createTheme({
     ],
   },
   primaryColor: 'brand',
-  primaryShade: 6,
-  fontFamily: 'Signika, Roboto, sans-serif',
+  primaryShade: { light: 6, dark: 8 },
+  fontFamily: 'Signika, sans-serif', // Use a simpler font family definition
   headings: {
-    fontFamily: 'Signika, Roboto, sans-serif',
+    fontFamily: 'Signika, sans-serif', // Use a simpler font family definition
     sizes: {
-      h1: { fontSize: '2.5rem', fontWeight: 700 },
-      h2: { fontSize: '2rem', fontWeight: 600 },
-      h3: { fontSize: '1.5rem', fontWeight: 600 },
-      h4: { fontSize: '1.25rem', fontWeight: 600 },
-      h5: { fontSize: '1rem', fontWeight: 600 },
-      h6: { fontSize: '0.875rem', fontWeight: 600 },
+      h1: { fontSize: '2.5rem', fontWeight: '700' },
+      h2: { fontSize: '2rem', fontWeight: '600' },
+      h3: { fontSize: '1.5rem', fontWeight: '600' },
+      h4: { fontSize: '1.25rem', fontWeight: '600' },
+      h5: { fontSize: '1rem', fontWeight: '600' },
+      h6: { fontSize: '0.875rem', fontWeight: '600' },
     },
   },
   // Enhanced spacing system
@@ -74,24 +74,24 @@ const theme: MantineThemeOverride = createTheme({
         radius: 'md',
         p: 'lg',
       },
-      styles: (theme) => ({
+      styles: {
         root: {
           transition: 'box-shadow 0.3s ease, transform 0.2s ease',
           '&:hover': {
-            boxShadow: theme.shadows.md,
+            boxShadow: 'var(--mantine-shadow-md)',
           },
         },
-      }),
+      },
     },
     Button: {
       defaultProps: {
         radius: 'md',
       },
-      styles: (theme) => ({
+      styles: {
         root: {
           transition: 'all 0.2s ease',
         },
-      }),
+      },
     },
     Paper: {
       defaultProps: {
@@ -119,64 +119,7 @@ interface MantineThemeProviderProps {
 
 export function MantineThemeProvider({ children }: MantineThemeProviderProps): JSX.Element {
   return (
-    <MantineProvider 
-      theme={{
-        ...theme,
-        globalStyles: (theme) => ({
-          // Global styles
-          'html, body': {
-            scrollBehavior: 'smooth',
-          },
-          'body': {
-            color: theme.colors.gray[8],
-            lineHeight: 1.6,
-          },
-          // Better typography
-          'h1, h2, h3, h4, h5, h6': {
-            marginTop: 0,
-            marginBottom: theme.spacing.md,
-            color: theme.colors.gray[9],
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            msUserSelect: 'none',
-            userSelect: 'none',
-          },
-          'p': {
-            marginTop: 0,
-            marginBottom: theme.spacing.md,
-          },
-          // Links and buttons
-          'a': {
-            color: theme.colors.brand[6],
-            textDecoration: 'none',
-            transition: 'color 0.2s ease',
-            '&:hover': {
-              color: theme.colors.brand[7],
-              textDecoration: 'underline',
-            },
-          },
-          'button, a, [role="button"]': {
-            cursor: 'pointer !important',
-          },
-          // Transitions
-          '.transition-fast': {
-            transition: '150ms ease !important',
-          },
-          '.transition-normal': {
-            transition: '250ms ease !important',
-          },
-          '.transition-slow': {
-            transition: '350ms ease !important',
-          },
-          // Focus styles for accessibility
-          '*:focus-visible': {
-            outline: `2px solid ${theme.colors.brand[6]}`,
-            outlineOffset: '2px',
-          },
-        }),
-      }} 
-      defaultColorScheme="light"
-    >
+    <MantineProvider theme={theme} defaultColorScheme="light">
       {children}
     </MantineProvider>
   );

@@ -37,9 +37,11 @@ src/
 
 3. **Decorator Pattern**: Used to register section components, allowing automatic discovery and rendering without manual imports.
 
-4. **Dynamic i18n**: Automatically loads all available translations using Vite's import.meta.glob feature.
+4. **Build-Time Optimization**: A custom Vite plugin analyzes profile data and includes only used sections in the final bundle.
 
-5. **Hooks-Based State Management**: Custom hooks encapsulate business logic and provide a clean API for components.
+5. **Dynamic i18n**: Automatically loads all available translations using Vite's import.meta.glob feature.
+
+6. **Hooks-Based State Management**: Custom hooks encapsulate business logic and provide a clean API for components.
 
 ### Type System
 
@@ -87,6 +89,49 @@ The project uses component composition to build complex UIs from simpler compone
 1. **Section Wrapper**: A common `Section` component provides consistent styling and layout
 2. **Sub-components**: Each section has its own specialized sub-components
 3. **Composition over Inheritance**: Component behavior is extended through composition rather than inheritance
+
+## Build Optimization System
+
+### Vite Plugin for Section Analysis
+
+The project includes a custom Vite plugin that optimizes the final bundle by analyzing which sections are actually used in your profile data:
+
+```typescript
+// Extract from vite.config.ts
+function usedSectionsPlugin(): Plugin {
+  // Store sections with proper typing from registry
+  let usedSections: Array<keyof SectionTypeRegistry> = [];
+  
+  return {
+    name: 'used-sections-plugin',
+    enforce: 'pre' as const,
+    
+    buildStart() {
+      // Analyze profile data to determine used sections
+      // ...
+      logger.info(`📦 Used sections detected in profile data: ${usedSections.join(', ')}`);
+    },
+    
+    transform(code: string, id: string) {
+      // Replace glob imports with specific sections
+      // ...
+    }
+  };
+}
+```
+
+### How It Works
+
+1. **Analysis Phase**: During build, the plugin scans your profile data files to determine which sections are used
+2. **Transformation Phase**: It replaces the wildcard imports in App.tsx with specific imports for only the sections you use
+3. **Type Safety**: The entire process is type-safe, using your SectionTypeRegistry
+
+### Benefits
+
+- **Smaller Bundle Size**: Only the sections you actually use are included in the build
+- **No Manual Configuration**: Just add or remove sections from your profile data
+- **Type-Safe Detection**: The plugin understands your section registry
+- **Logging**: Detailed logs show which sections are detected and included
 
 ## Internationalization System
 
@@ -144,137 +189,6 @@ This approach automatically:
 - Builds a resources object for i18next
 - Creates a list of supported languages
 
-### Usage in Components
-
-Components access translations through the `useLanguage` hook:
-
-```typescript
-import { useLanguage } from '../hooks/useLanguage';
-
-const MyComponent: React.FC = () => {
-  const { t, currentLanguage, toggleLanguage } = useLanguage();
-  
-  return (
-    <div>
-      <h1>{t('sections.about.title')}</h1>
-      <p>{t('sections.about.content')}</p>
-      <button onClick={toggleLanguage}>
-        Switch to {currentLanguage === 'en' ? 'French' : 'English'}
-      </button>
-    </div>
-  );
-};
-```
-
-### Adding a New Language
-
-To add a new language:
-
-1. Create a new file in the `locales` directory with the language code as the filename (e.g., `es.ts` for Spanish)
-2. Copy the structure from an existing language file (e.g., `en.ts`)
-3. Translate all content into the new language
-4. The system will automatically detect and include the new language
-
-Example for a new Spanish translation file (`es.ts`):
-
-```typescript
-import { Translations } from "../../types/translations.types";
-
-const es: Translations = {
-  global: {
-    units: {
-      months: "meses",
-      years: "años",
-    },
-    // ... other translations
-  },
-  menu: {
-    about: "Sobre mí",
-    skills: "Habilidades",
-    // ... other menu items
-  },
-  sections: {
-    // ... section translations
-  }
-};
-
-export default es;
-```
-
-### Adding New Translation Keys
-
-When adding new translation keys:
-
-1. Add the key to all language files to maintain consistency
-2. Extend the appropriate type definition if adding a new section or major feature
-
-For example, when adding a new section:
-
-```typescript
-// In YourNewSection.types.ts
-export interface YourNewSectionTranslations {
-  title: string;
-  subtitle: string;
-  // ... other translation keys
-}
-
-// Extend the translation registry map
-declare module "../../../types/translations.types" {
-  interface SectionTranslationRegistryMap {
-    yourNewSection: YourNewSectionTranslations;
-  }
-}
-```
-
-### Testing Translations
-
-It's recommended to test translations by:
-
-1. Switching languages in the UI to verify all content appears correctly
-2. Checking for missing translations using the browser console (i18next will warn about missing keys)
-3. Verifying that all sections maintain proper layout in all languages (some languages may have longer text)
-
-### Performance Considerations
-
-- Translation files are loaded eagerly by default for immediate availability
-- For larger applications with many languages, consider switching to lazy loading
-- The language detector caches the selected language in localStorage to avoid detection on every page load
-
-## Custom Hooks
-
-The project uses several custom hooks to encapsulate logic:
-
-### useLanguage
-
-Provides internationalization functionality:
-
-```typescript
-interface UseLanguageReturn {
-  currentLanguage: string;
-  toggleLanguage: () => void;
-  t: (key: TranslationKey, options?: any) => string;
-  getCvPdfPath: () => string;
-  isEnglish: boolean;
-}
-```
-
-### useProfileData
-
-Provides access to the CV data with translations:
-
-```typescript
-const { 
-  data,
-  currentLanguage,
-  toggleLanguage,
-  t,
-  getLocalizedText,
-  getCvPdfPath,
-  getCalculatedExperiences,
-  isEnglish
-} = useProfileData();
-```
-
 ## Adding a New Section
 
 Adding a new section component to the CV involves several steps:
@@ -296,15 +210,12 @@ In `NewSection.types.ts`:
 
 ```typescript
 import { SectionProps } from "../../../types/profile-data.types";
-import { TranslationKey } from "../../../types/translations.types";
 
 // Define the data structure for your section
 export interface NewSectionData {
   // Add your properties here
   someProperty: string;
   anotherProperty: number;
-  examples: string[];  // Array-type properties
-  mappedData: Record<string, string>;  // Object-like mapping
 }
 
 export interface NewSectionProps extends SectionProps<NewSectionData> {}
@@ -313,24 +224,6 @@ export interface NewSectionProps extends SectionProps<NewSectionData> {}
 export interface NewSectionTranslations {
   title: string;
   subtitle: string;
-  // Support for arrays with numeric indices
-  examples: {
-    [index: number]: string;
-  };
-  // Support for object mappings with string keys
-  mappedData: {
-    [key: string]: string;
-  };
-}
-
-// Helper function for accessing array item translations with type safety
-export function exampleKey(index: number): TranslationKey {
-  return `sections.newSection.examples.${index}` as TranslationKey;
-}
-
-// Helper function for accessing object mapping translations with type safety
-export function mappedDataKey(key: string): TranslationKey {
-  return `sections.newSection.mappedData.${key}` as TranslationKey;
 }
 
 // Extend the section type registry (IMPORTANT!)
@@ -348,26 +241,6 @@ declare module "../../../types/translations.types" {
 }
 ```
 
-The type system supports both array indices and object keys in translations:
-
-1. **Array Indices**: For array-like data (e.g., `string[]`), the translation system generates keys like "examples.0", "examples.1", etc. Helper functions like `exampleKey(index)` provide type-safe access to these translations.
-
-2. **Object Mappings**: For record-like data (e.g., `Record<string, string>`), the translation system supports keys like "mappedData.key1", "mappedData.key2", etc. Helper functions like `mappedDataKey(key)` ensure type safety.
-
-Usage example in a component:
-
-```typescript
-const { t } = useLanguage();
-
-// Access array item translation
-const firstExample = t(exampleKey(0));
-
-// Access object mapping translation
-const specificData = t(mappedDataKey("specificKey"));
-```
-
-This approach maintains type safety while allowing flexible data structures in both the component data and translations.
-
 ### 3. Implement the Component
 
 In `NewSection.tsx`:
@@ -375,13 +248,14 @@ In `NewSection.tsx`:
 ```typescript
 import React from 'react';
 import { Text, Title } from '@mantine/core';
-import { useLanguage } from '../../../hooks/useLanguage';
-import Section from '../../common/Section/Section';
-import { NewSectionProps, NewSectionData } from './NewSection.types';
-import { registerSection } from '../../../decorators/section.decorator';
+import { useLanguage } from '@hooks/useLanguage';
+import Section from '@components/common/Section/Section';
+import { NewSectionProps } from './NewSection.types';
+import { createRegisteredSection } from '@decorators/section.decorator';
 import classes from './NewSection.module.css';
 
-const NewSection: React.FC<NewSectionProps> = ({ data, evenSection = true }) => {
+// Define the component as a plain function first
+const NewSectionComponent = ({ data, meta, evenSection = false }: NewSectionProps) => {
   const { t } = useLanguage();
 
   return (
@@ -396,11 +270,69 @@ const NewSection: React.FC<NewSectionProps> = ({ data, evenSection = true }) => 
   );
 };
 
-// IMPORTANT: Register the section using the decorator
-export default registerSection<NewSectionData>({ type: 'newSection' })(NewSection);
+// Register the section with the decorator
+export default createRegisteredSection<NewSectionProps>('newSection', NewSectionComponent);
 ```
 
-Note: After creating the component structure, end users will need to add translations in the language files and populate the section data in profile-data.ts. Refer them to the main README for instructions on customizing content.
+### 4. Update Profile Data
+
+Add your new section to the profile data in `src/data/profile-data.ts`:
+
+```typescript
+sections: [
+  // ... existing sections
+  {
+    sectionName: "newSection",
+    data: {
+      someProperty: "Value here",
+      anotherProperty: 42
+    },
+  },
+]
+```
+
+### 5. Add Translations
+
+Add translations for your new section in all language files:
+
+```typescript
+// In en.ts
+menu: {
+  // ... existing menu items
+  newSection: "New Section",
+},
+sections: {
+  // ... existing sections
+  newSection: {
+    title: "Section Title",
+    subtitle: "Section subtitle or description",
+  },
+}
+```
+
+## Build Process
+
+The build process has been optimized to automatically include only the sections you use in your profile data:
+
+1. **Development**: During development, all sections are loaded for easy testing and development
+2. **Production Build**: During the production build:
+   - The Vite plugin analyzes your profile data to find used sections
+   - It replaces generic imports with specific imports for only the used sections
+   - The final bundle only includes the code needed for your specific CV
+
+### Demo Mode
+
+The project supports a special "demo" mode for using example data:
+
+```bash
+# Run development server with example data
+npm run dev -- --mode=demo
+
+# Build with example data
+npm run build -- --mode=demo
+```
+
+This is controlled by the `__USE_EXAMPLE_DATA__` feature flag set in the Vite config.
 
 ## Future Development Considerations
 
@@ -411,10 +343,13 @@ When extending the project, consider these best practices:
 3. **Keep Translations Consistent**: Add new translation keys to all language files
 4. **Component Isolation**: Each section should be independent and reusable
 5. **Responsive Design**: Ensure all new components work well on all screen sizes
+6. **Optimize Font Loading**: Use proper Google Fonts loading practices
+7. **Follow ESLint Rules**: Keep code consistent with the established patterns
 
-### Developer Notes
+## Developer Notes
 
 1. Always use the `t` function from `useLanguage` hook rather than importing i18next directly
 2. Maintain consistent key naming across the application
 3. Group translations by feature or section for better organization
 4. Use TypeScript's type system to catch missing translations early
+5. The build optimization works automatically - no need to manually include or exclude sections

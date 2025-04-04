@@ -59,7 +59,6 @@ const LanguageSwitcher: React.FC = () => {
           const otherLang = languageOptions.find(
             option => option.value !== currentLanguage
           )?.value || languageOptions[0]?.value;
-          console.log(languageOptions)
           handleLanguageChange(otherLang);
         }}
         className={classes.languageToggle}

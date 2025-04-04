@@ -126,7 +126,7 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
               </Accordion.Control>
               <Accordion.Panel>
                 <div className={classes.contextWrapper}>
-                  {exp.contexts.map((context, contextIndex) => (
+                  {exp.contexts.map((_, contextIndex) => (
                     <Box key={contextIndex} className={classes.contextItem}>
                       <Group gap={5} className={classes.contextHeader}>
                         <Title order={5} className={classes.contextTitle}>Mission :</Title>

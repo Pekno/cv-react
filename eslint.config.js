@@ -45,6 +45,18 @@ export default [
   // TypeScript-specific configuration
   {
     files: ['**/*.{ts,tsx}'],
-    ...tseslint.configs.recommended,
+    // Instead of spreading the config, explicitly set rules and other properties
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: './tsconfig.json',
+      }
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+    },
   }
 ];

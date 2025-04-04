@@ -7,11 +7,10 @@ import Navbar from './components/common/Navbar/Navbar';
 import ScrollToTop from './components/common/ScrollToTop/ScrollToTop';
 import { useLanguage } from './hooks/useLanguage';
 import { useProfileData } from './hooks/useProfileData';
-import { getI18nKey, getSectionOrder } from './decorators/section.decorator';
+import { getI18nKey, sectionRegistry } from './decorators/section.decorator';
 import Footer from './components/common/Footer/Footer';
-import { useSectionRenderer } from './hooks/useSectionRenderer';
 
-// Import components to ensure decorators are applied
+// The build process will replace this with explicit imports of only the used sections
 import.meta.glob('./components/sections/*/*.tsx', { eager: true });
 
 const App: React.FC = () => {
@@ -19,46 +18,33 @@ const App: React.FC = () => {
   const { data } = useProfileData();
   const [opened, { toggle }] = useDisclosure(false);
 
-  // Get section types in order from profile data
-  const sectionOrder = getSectionOrder(data);
+  // Get all registered sections in the registry
+  const registeredSectionTypes = useMemo(() => {
+    return Object.keys(sectionRegistry) as Array<keyof typeof sectionRegistry>;
+  }, []);
+  
+  // Filter to only include section types that are in the profile data
+  const sectionsToRender = useMemo(() => {
+    return data.sections
+      .filter(section => 
+        registeredSectionTypes.includes(section.sectionName) && 
+        sectionRegistry[section.sectionName]?.component != null
+      )
+      .map((section, index) => ({
+        type: section.sectionName,
+        data: section.data,
+        evenSection: index % 2 === 0,
+        component: sectionRegistry[section.sectionName]?.component
+      }));
+  }, [data.sections, registeredSectionTypes]);
 
-  // Create memoized section components
-  const sections = sectionOrder.map(type => ({
-      type,
-      // This returns { component, renderSection, renderList } for each section type
-      renderer: useSectionRenderer(type)
-    }));
-
-  // Filter to only include section types that have registered components
-  const validSections = useMemo(() => {
-    return sections.filter(section => section.renderer.component !== null);
-  }, [sections]);
-
-  // Convert to menu items for navigation
+  // Create menu items for navigation
   const menuItems = useMemo(() => {
-    return validSections.map(section => ({
+    return sectionsToRender.map(section => ({
       key: section.type,
       label: t(getI18nKey(section.type))
     }));
-  }, [validSections, t]);
-
-  // Render all the sections
-  const renderedSections = useMemo(() => {
-    return validSections.map((section, index) => {
-      const sectionData = data.sections.find(s => s.sectionName === section.type);
-      if (!sectionData) return null;
-
-      const evenSection = index % 2 === 0;
-      
-      // Use the renderSection function from the hook
-      return section.renderer.renderSection({
-        data: sectionData.data,
-        evenSection,
-        meta: data.meta,
-        itemKey: section.type // Use the section type as the React key
-      });
-    });
-  }, [validSections, data]);
+  }, [sectionsToRender, t]);
 
   return (
     <AppShell
@@ -73,7 +59,22 @@ const App: React.FC = () => {
       <Navbar menuItems={menuItems} toggle={toggle} />
 
       <AppShell.Main pt={60}>
-        {renderedSections}
+        {sectionsToRender.map(section => {
+          const Component = section.component;
+          
+          // Skip rendering if no component is registered for this section
+          if (!Component) return null;
+          
+          // Directly render the component with its props
+          return (
+            <Component
+              key={section.type}
+              data={section.data}
+              meta={data.meta}
+              evenSection={section.evenSection}
+            />
+          );
+        })}
         <Footer />
         <ScrollToTop />
       </AppShell.Main>

@@ -11,6 +11,7 @@ A modern, responsive CV/portfolio application built with React, TypeScript, and 
 - 🧰 **Decorator Pattern**: Simplified registration of new sections
 - 📱 **Responsive Design**: Mobile-friendly layout
 - 🚀 **Fast Development**: Powered by Vite for quick build and hot module replacement
+- 🔍 **Build Optimization**: Automatically includes only the sections you use
 
 ## Customizing Your CV
 
@@ -134,6 +135,34 @@ yarn build
 ```
 
 The build artifacts will be stored in the `dist/` directory.
+
+### Using Demo Mode
+
+To use example data instead of your personal data during development:
+
+```bash
+npm run dev -- --mode=demo
+# or
+yarn dev --mode=demo
+```
+
+To build using example data:
+
+```bash
+npm run build -- --mode=demo
+# or
+yarn build --mode=demo
+```
+
+## Performance Optimization
+
+This project includes a custom Vite plugin that automatically analyzes your profile data and only includes the sections you actually use in the final bundle. This means:
+
+1. **Smaller Bundle Size**: Only the components you actually use are included in the build
+2. **No Manual Configuration**: Just add or remove sections from your profile data
+3. **Type-Safe Detection**: The plugin understands your section registry
+
+This optimization happens automatically during the build process with no additional configuration needed.
 
 ## License
 

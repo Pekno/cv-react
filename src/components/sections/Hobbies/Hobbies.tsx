@@ -12,6 +12,7 @@ import Section from '@components/common/Section/Section';
 import classes from './Hobbies.module.css';
 import { HobbiesProps, TravelItem, travelKey } from './Hobbies.types';
 import { createRegisteredSection } from '@decorators/section.decorator';
+import { TranslationKey } from '@/types/translations.types';
 
 // Interface for the expanded image state
 interface ExpandedImageState {
@@ -29,7 +30,7 @@ const TravelCard = React.memo(({
 }: {
   travel: TravelItem;
   index: number;
-  t: (key: string) => string;
+  t: (key: TranslationKey, options?: any) => string;
   onClick: (travel: TravelItem) => void;
 }) => (
   <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={index}>

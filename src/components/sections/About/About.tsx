@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Grid,
   Text,
   Title,
   Group,
   ActionIcon,
+  Loader
 } from '@mantine/core';
 import { IconDownload } from '@tabler/icons-react';
 import Section from '@components/common/Section/Section';
@@ -20,11 +21,41 @@ import { useLanguage } from '@hooks/useLanguage';
 // Define the component as a plain function first, then register it with the decorator
 const AboutSectionComponent = ({ data, meta, evenSection = false }: AboutProps) => {
   const { t, getCvPdfPath } = useLanguage();
+  const [isDownloading, setIsDownloading] = useState(false);
   
-  // Simple callback for download tracking (if needed)
+  // Enhanced download handler with loading state
   const handleDownload = useCallback(() => {
+    // Set downloading state
+    setIsDownloading(true);
+    
+    // Get the URL of the resume
+    const resumePath = getCvPdfPath();
+    if (!resumePath) {
+      setIsDownloading(false);
+      return;
+    }
+    
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.href = resumePath;
+    link.setAttribute('download', '');
+    link.setAttribute('type', 'application/pdf');
+    
+    // Trigger the download
+    document.body.appendChild(link);
+    link.click();
+    
+    // Clean up
+    document.body.removeChild(link);
+    
+    // Analytics tracking or any other side effects
     console.log('Resume downloaded');
-  }, []);
+    
+    // Reset downloading state after a short delay to show the loading indicator
+    setTimeout(() => {
+      setIsDownloading(false);
+    }, 500);
+  }, [getCvPdfPath]);
 
   return (
     <Section id="about" title="" className={classes.aboutSection} evenSection={evenSection}>
@@ -63,20 +94,22 @@ const AboutSectionComponent = ({ data, meta, evenSection = false }: AboutProps) 
           <Group>
             <SocialLinks socials={meta.socials} className={classes.actionIcon} />
             { 
-              Object.keys(meta.pdfResume).length && 
-              <ActionIcon
-                size="lg"
-                radius="xl"
-                variant="filled"
-                className={classes.actionIcon}
-                component="a"
-                href={getCvPdfPath()}
-                download
-                onClick={handleDownload}
-              >
-
-                <IconDownload size={18} />
-              </ActionIcon>
+              Object.keys(meta.pdfResume).length > 0 && (
+                <ActionIcon
+                  size="lg"
+                  radius="xl"
+                  variant="filled"
+                  className={classes.actionIcon}
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                >
+                  {isDownloading ? (
+                    <Loader size="xs" color="white" />
+                  ) : (
+                    <IconDownload size={18} />
+                  )}
+                </ActionIcon>
+              )
             }
           </Group>
         </Grid.Col>

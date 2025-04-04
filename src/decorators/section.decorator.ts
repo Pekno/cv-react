@@ -1,4 +1,4 @@
-import { ComponentType, useMemo, createElement } from "react";
+import React, { ComponentType } from "react";
 import {
   SectionDataTypes,
   SectionProps,
@@ -60,49 +60,6 @@ export function createRegisteredSection<P extends SectionProps<any>>(
 
   // Return the registered component - no 'unknown' cast needed
   return Component;
-}
-
-/**
- * Custom hook to access and render a section component by type
- * Provides memoization, type safety, and simplified rendering
- *
- * @example
- * // In a parent component:
- * const AboutSection = useSectionComponent('about');
- * return AboutSection ? <AboutSection data={data} meta={meta} /> : null;
- */
-export function useSectionComponent<K extends keyof SectionTypeRegistry>(
-  type: K
-): RegisteredSectionComponent<K> | null {
-  return useMemo(
-    () =>
-      (sectionRegistry[type]?.component as RegisteredSectionComponent<K>) ||
-      null,
-    [type]
-  );
-}
-
-/**
- * Custom hook that provides both the component and a render function
- * This simplifies component usage even further
- *
- * @example
- * // In a parent component:
- * const { renderSection } = useSectionRenderer('about');
- * return renderSection({ data, meta, evenSection: true });
- */
-export function useSectionRenderer<K extends keyof SectionTypeRegistry>(
-  type: K
-) {
-  const component = useSectionComponent(type);
-
-  const renderSection = useMemo(() => {
-    return (props: SectionProps<SectionTypeRegistry[K]>) => {
-      return component ? createElement(component, props) : null;
-    };
-  }, [component]);
-
-  return { component, renderSection };
 }
 
 /**

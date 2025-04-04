@@ -4,10 +4,60 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CV</title>
+    <meta name="description" content="Professional CV and portfolio showcasing skills, experience, and projects." />
+    <title>CV | Portfolio</title>
+    
+    <!-- Properly load Google Fonts with preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Critical CSS for faster initial render -->
+    <style>
+      /* Minimal CSS to ensure the page looks presentable during loading */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Signika', sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+      }
+      
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .loading-placeholder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100%;
+      }
+      
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(43, 104, 156, 0.2);
+        border-top-color: #2b689c;
+        border-radius: 50%;
+        animation: spin 1s ease-in-out infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Initial loading state shown before React loads -->
+      <div class="loading-placeholder">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
