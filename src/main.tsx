@@ -5,6 +5,7 @@ import { MantineThemeProvider } from './theme/MantineProvider';
 import './theme/variables.css';
 import './theme/mixins.css';
 import './theme/global-styles.css'; // Import the global styles
+import './theme/color-transitions.css'; // Import color transition styles
 import './i18n/i18n.ts';
 import { BrowserRouter } from 'react-router-dom';
 

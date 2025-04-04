@@ -1,268 +1,260 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
+import { useThemeState } from "./useTheme";
+
+type RGB = {
+  r: number;
+  g: number;
+  b: number;
+};
+
+type HSL = {
+  h: number;
+  s: number;
+  l: number;
+};
 
 /**
- * Seeded random number generator for deterministic colors
+ * Convert HEX to RGB.
+ * Supports formats: #RRGGBB and #RGB.
  */
-const seededRandom = (seed: number) => {
-  let r = seed;
-  return () => {
-    const v = r * Math.PI;
-    r = v - (v | 0);
-    return r;
+const hexToRgb = (hex: string): RGB => {
+  let cleaned = hex.replace("#", "");
+  if (cleaned.length === 3) {
+    cleaned = cleaned
+      .split("")
+      .map((char) => char + char)
+      .join("");
+  }
+  const bigint = parseInt(cleaned, 16);
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255,
   };
 };
 
 /**
- * Converts a hex color to HSL
- * @param hex - Hex color code (e.g., '#2b689c')
- * @returns HSL values as {h, s, l}
+ * Convert RGB to HEX.
  */
-const hexToHSL = (hex: string): { h: number; s: number; l: number } => {
-  // Remove the # if present
-  hex = hex.replace(/^#/, '');
+const rgbToHex = ({ r, g, b }: RGB): string => {
+  const toHex = (num: number) => {
+    const hex = num.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  };
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
 
-  // Parse the hex values
-  let r, g, b;
-  if (hex.length === 3) {
-    r = parseInt(hex.charAt(0) + hex.charAt(0), 16) / 255;
-    g = parseInt(hex.charAt(1) + hex.charAt(1), 16) / 255;
-    b = parseInt(hex.charAt(2) + hex.charAt(2), 16) / 255;
+/**
+ * Convert RGB to HSL.
+ */
+const rgbToHsl = ({ r, g, b }: RGB): HSL => {
+  const rNorm = r / 255;
+  const gNorm = g / 255;
+  const bNorm = b / 255;
+  const max = Math.max(rNorm, gNorm, bNorm);
+  const min = Math.min(rNorm, gNorm, bNorm);
+  let h = 0,
+    s = 0;
+  const l = (max + min) / 2;
+  const d = max - min;
+
+  if (d === 0) {
+    h = s = 0; // achromatic
   } else {
-    r = parseInt(hex.substring(0, 2), 16) / 255;
-    g = parseInt(hex.substring(2, 4), 16) / 255;
-    b = parseInt(hex.substring(4, 6), 16) / 255;
-  }
-
-  // Find max and min values
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  
-  // Calculate lightness
-  let h = 0, s = 0, l = (max + min) / 2;
-
-  // Calculate saturation
-  if (max !== min) {
-    const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    
-    // Calculate hue
     switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
+      case rNorm:
+        h = (gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0);
+        break;
+      case gNorm:
+        h = (bNorm - rNorm) / d + 2;
+        break;
+      case bNorm:
+        h = (rNorm - gNorm) / d + 4;
+        break;
+      default:
+        break;
     }
-    
-    h = h / 6;
+    h /= 6;
+  }
+  return { h, s, l };
+};
+
+/**
+ * Convert HSL to RGB.
+ */
+const hslToRgb = ({ h, s, l }: HSL): RGB => {
+  let r: number, g: number, b: number;
+
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    const hue2rgb = (p: number, q: number, t: number): number => {
+      if (t < 0) {
+        t += 1;
+      }
+      if (t > 1) {
+        t -= 1;
+      }
+      if (t < 1 / 6) {
+        return p + (q - p) * 6 * t;
+      }
+      if (t < 1 / 2) {
+        return q;
+      }
+      if (t < 2 / 3) {
+        return p + (q - p) * (2 / 3 - t) * 6;
+      }
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
   }
 
   return {
-    h: Math.round(h * 360),
-    s: Math.round(s * 100),
-    l: Math.round(l * 100)
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255),
   };
 };
 
 /**
- * Converts HSL values to a CSS HSL color string
- * @param h - Hue (0-360)
- * @param s - Saturation (0-100)
- * @param l - Lightness (0-100)
- * @returns HSL color string
+ * Convert HSL to HEX.
  */
-const hslToString = (h: number, s: number, l: number): string => {
-  return `hsl(${h}, ${s}%, ${l}%)`;
+const hslToHex = (hsl: HSL): string => {
+  const rgb = hslToRgb(hsl);
+  return rgbToHex(rgb);
 };
 
 /**
- * A hook that generates a consistent color palette and maps strings to colors from this palette.
- * Includes utilities for generating harmonious color schemes.
+ * Adjust the base HSL color based on the theme.
+ * If dark mode, increase the lightness slightly.
+ */
+const adjustForTheme = (hsl: HSL, isThemeDark: boolean): HSL => {
+  if (isThemeDark) {
+    return { ...hsl, l: Math.min(hsl.l + 0.1, 1) };
+  }
+  return hsl;
+};
+
+/**
+ * Generate analogous colors by adjusting the hue.
+ * Colors are spread evenly over a fixed range (e.g., ±30° around the base hue).
+ * For count=1, returns the base color.
+ */
+const generateAnalogousColors = (
+  hex: string,
+  count: number,
+  isThemeDark: boolean
+): string[] => {
+  let baseHsl = rgbToHsl(hexToRgb(hex));
+  // Adjust the base color based on the theme
+  baseHsl = adjustForTheme(baseHsl, isThemeDark);
+
+  // Define a total spread in degrees (30° on each side)
+  const spread = 60;
+  const result: string[] = [];
+
+  if (count === 1) {
+    result.push(hex);
+  } else {
+    for (let i = 0; i < count; i++) {
+      // Calculate new hue:
+      // Convert spread to fraction (degrees/360)
+      const offsetFraction = (spread / 360) * (i / (count - 1)) - spread / 720;
+      let newHue = baseHsl.h + offsetFraction;
+      if (newHue < 0) newHue += 1;
+      if (newHue > 1) newHue -= 1;
+      result.push(hslToHex({ ...baseHsl, h: newHue }));
+    }
+  }
+  return result;
+};
+
+/**
+ * Generate variants of a base color by adjusting its lightness.
+ * Produces 'count' variants evenly distributed between a defined dark and light adjustment.
+ */
+const generateVariants = (
+  baseHex: string,
+  count: number,
+  isThemeDark: boolean
+): string[] => {
+  let baseHsl = rgbToHsl(hexToRgb(baseHex));
+  // Adjust the base color based on the theme
+  baseHsl = adjustForTheme(baseHsl, isThemeDark);
+
+  const result: string[] = [];
+  // Define a maximum lightness adjustment (e.g., ±20% from the base lightness)
+  const delta = 0.2;
+
+  if (count === 1) {
+    result.push(baseHex);
+  } else {
+    for (let i = 0; i < count; i++) {
+      // Calculate a new lightness linearly spanning from base lightness - delta to base lightness + delta.
+      let newL = baseHsl.l - delta + (i * (2 * delta)) / (count - 1);
+      // Ensure new lightness is within [0,1]
+      newL = Math.min(1, Math.max(0, newL));
+      result.push(hslToHex({ ...baseHsl, l: newL }));
+    }
+  }
+  return result;
+};
+
+/**
+ * Determine if a color is "dark" based on its perceived luminance.
+ */
+const isColorDark = (hex: string): boolean => {
+  const { r, g, b } = hexToRgb(hex);
+  // Calculate perceived brightness (using a standard formula)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness < 128;
+};
+
+interface UseColorPaletteReturn {
+  palette: string[];
+  generateVariants: (baseHex: string, count: number) => string[];
+  isColorDark: (hex: string) => boolean;
+}
+
+/**
+ * useColorPalette hook.
  *
- * @param paletteSize - The number of colors to generate in the palette
- * @param seed - Optional seed for deterministic palette generation
- * @returns Object with palette and functions to get and manipulate colors
+ * @param themeColor - Base theme color in HEX (e.g., "#3498db").
+ * @param count - Number of analogous colors to generate.
+ *
+ * Returns:
+ * - palette: an array of analogous colors in HEX.
+ * - generateVariants: function to generate variants from any base HEX color.
+ * - isColorDark: function to determine if a HEX color is dark.
+ *
+ * Colors are adjusted based on the current theme state.
  */
-export const useColorPalette = (paletteSize: number = 10, seed: number = 1) => {
-  // Create a seeded random function
-  const rando = useMemo(() => seededRandom(seed), [seed]);
+const useColorPalette = (
+  themeColor: string,
+  count: number
+): UseColorPaletteReturn => {
+  const { isDark } = useThemeState();
 
-  // Use a ref to store the color map to avoid unnecessary re-renders
-  const colorMapRef = useRef<Record<string, string>>({});
+  const palette = useMemo(
+    () => generateAnalogousColors(themeColor, count, isDark),
+    [themeColor, count, isDark]
+  );
 
-  /**
-   * Generates an HSL color based on index and total palette size
-   */
-  const generateHSLColor = useMemo(() => {
-    return (index: number, total: number): string => {
-      // Use golden ratio to space hues evenly
-      const goldenRatioConjugate = 0.618033988749895;
-
-      // Calculate hue based on the golden ratio to get even spacing
-      // We use the seed to determine the starting point
-      const seedValue = rando(); // Use the rando function from useMemo
-      let hue = (seedValue / paletteSize + goldenRatioConjugate * index) % 1;
-      hue = (hue * 360) % 360;
-
-      // Add some variation in saturation and lightness, but keep them in a pleasing range
-      // Use index to deterministically vary these values
-      const saturationBase = 65;
-      const saturationVariation = 10;
-      const saturation = saturationBase + ((index % 3) * saturationVariation) / 2;
-
-      const lightnessBase = 55;
-      const lightnessVariation = 15;
-      const lightness =
-        lightnessBase + (((index + total / 2) % 3) * lightnessVariation) / 2;
-
-      return hslToString(Math.round(hue), Math.round(saturation), Math.round(lightness));
-    };
-  }, [paletteSize, rando]);
-
-  /**
-   * Generate the color palette once based on the seed and size
-   */
-  const colorPalette = useMemo(() => {
-    const newColors: string[] = [];
-    for (let i = 0; i < paletteSize; i++) {
-      newColors.push(generateHSLColor(i, paletteSize));
-    }
-    return newColors;
-  }, [paletteSize, generateHSLColor]);
-
-  /**
-   * Generates analogous colors based on a theme color
-   * @param themeColor - The base theme color in hex format (e.g., '#2b689c')
-   * @param count - Number of colors to generate
-   * @returns Array of HSL color strings
-   */
-  const generateAnalogousColors = useMemo(() => {
-    return (themeColor: string, count: number): string[] => {
-      // Convert the theme color to HSL
-      const { h, s, l } = hexToHSL(themeColor);
-      
-      // Generate colors with analogous hues (30° steps is common for analogous colors)
-      const hueStep = 30;
-      const colors: string[] = [];
-      
-      // Calculate the starting hue to center the analogous colors around the theme
-      const startHue = (h - (Math.floor(count / 2) * hueStep)) % 360;
-      
-      for (let i = 0; i < count; i++) {
-        // Calculate hue with 30° steps, ensuring it stays in the 0-360 range
-        const newHue = (startHue + (i * hueStep)) % 360;
-        // Vary saturation slightly for more visual interest
-        const newSat = Math.min(100, Math.max(30, s + (i % 3 - 1) * 5));
-        // Vary lightness slightly
-        const newLight = Math.min(80, Math.max(30, l + (i % 2) * 5));
-        
-        colors.push(hslToString(newHue, newSat, newLight));
-      }
-      
-      return colors;
-    };
-  }, []);
-
-  /**
-   * Generates color variations based on a base color
-   * @param baseColor - Base color in HSL format
-   * @param count - Number of variations to generate
-   * @returns Array of HSL color strings
-   */
-  const generateColorVariations = useMemo(() => {
-    return (baseColor: string, count: number): string[] => {
-      // Extract HSL values from the baseColor
-      const match = baseColor.match(/hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/);
-      if (!match) return Array(count).fill(baseColor);
-      
-      const h = parseInt(match[1]);
-      const s = parseInt(match[2]);
-      const l = parseInt(match[3]);
-      
-      // Generate variations by adjusting hue and saturation
-      return Array.from({ length: count }, (_, i) => {
-        // Create variations around the base hue with smaller steps (15°)
-        // to keep them more closely related than analogous colors
-        const hueVariation = (h + (i * 15) % 30 - 15) % 360;
-        // Vary saturation slightly
-        const satVariation = Math.min(100, Math.max(40, s + (i % 3 - 1) * 5));
-        // Keep lightness close to original
-        const lightVariation = Math.min(80, Math.max(40, l + (i % 2) * 5));
-        
-        return hslToString(hueVariation, satVariation, lightVariation);
-      });
-    };
-  }, []);
-
-  /**
-   * Hash a string to use as an index into the color palette
-   */
-  const hashString = (str: string): number => {
-    let hash = 0;
-    if (str.length === 0) return hash;
-
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-
-    // Ensure positive hash
-    return Math.abs(hash);
-  };
-
-  /**
-   * Get a consistent color for a given string
-   */
-  const getColorForString = (str: string): string => {
-    if (!str || !colorPalette.length) return "hsl(209, 70%, 55%)"; // Default color
-
-    // Check if we already mapped this string to a color
-    if (colorMapRef.current[str]) {
-      return colorMapRef.current[str];
-    }
-
-    // Map the string to a color in our palette
-    const hash = hashString(str);
-    const colorIndex = hash % colorPalette.length;
-    const color = colorPalette[colorIndex];
-
-    // Store mapping for future consistency using the ref
-    colorMapRef.current[str] = color;
-
-    return color;
-  };
-
-  /**
-   * Determine if a color is dark (for text contrast)
-   */
-  const isColorDark = (color: string): boolean => {
-    // For HSL colors
-    if (color.startsWith("hsl")) {
-      const match = color.match(/hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/);
-      if (match) {
-        const l = parseInt(match[3]);
-        return l < 50;
-      }
-    }
-
-    // For hex colors
-    if (color.startsWith("#")) {
-      const r = parseInt(color.substr(1, 2), 16);
-      const g = parseInt(color.substr(3, 2), 16);
-      const b = parseInt(color.substr(5, 2), 16);
-      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-      return brightness < 128;
-    }
-
-    return false;
-  };
+  // Wrap generateVariants so that it automatically uses the current theme state.
+  const themedGenerateVariants = (baseHex: string, count: number): string[] =>
+    generateVariants(baseHex, count, isDark);
 
   return {
-    palette: colorPalette,
-    getColorForString,
+    palette,
+    generateVariants: themedGenerateVariants,
     isColorDark,
-    generateAnalogousColors,
-    generateColorVariations,
-    hexToHSL,
-    hslToString,
   };
 };
+
+export default useColorPalette;

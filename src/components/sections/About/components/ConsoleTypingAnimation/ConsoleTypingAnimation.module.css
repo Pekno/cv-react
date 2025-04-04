@@ -97,7 +97,7 @@
 
 /* Export the component */
 .summary a {
-  color: var(--mantine-color-brand-6);
+  color: var(--primary);
   text-decoration: none;
 }
 

@@ -1,14 +1,8 @@
 :root {
-  /* Colors */
-  --primary: #2b689c;
-  --primary-light: #5394cb;
-  --primary-dark: #23547f;
-  
-  --text-primary: #333;
-  --text-secondary: #666;
-  
-  --bg-primary: #fff;
-  --bg-secondary: #f8f9fa;
+  /* Base colors - used in both light and dark modes */
+  --primary-base: #2b689c;
+  --primary-light-base: #5394cb;
+  --primary-dark-base: #23547f;
   
   /* Spacing system */
   --space-xs: 0.25rem;  /* 4px */
@@ -18,11 +12,6 @@
   --space-xl: 2rem;     /* 32px */
   --space-2xl: 2.5rem;  /* 40px */
   --space-3xl: 3rem;    /* 48px */
-
-  /* Box shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -71,4 +60,52 @@
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-loose: 1.75;
+  
+  /* Light mode colors (default) */
+  --primary: var(--primary-base);
+  --primary-light: var(--primary-light-base);
+  --primary-dark: var(--primary-dark-base);
+  
+  --text-primary: #333;
+  --text-secondary: #666;
+  
+  --bg-primary: #fff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f0f2f5;
+  
+  --border-color: #e0e0e0;
+  
+  /* Box shadows for light mode */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode color variables */
+[data-color-scheme="dark"] {
+  --primary: var(--primary-light-base);
+  --primary-light: var(--primary-base);
+  --primary-dark: #1b4062;
+  
+  --text-color: #e0e0e0;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  
+  --bg-primary: #1a1b1e;
+  --bg-secondary: #25262b;
+  --bg-tertiary: #2c2e33;
+  
+  --border-color: #373a40;
+  
+  /* Box shadows for dark mode (softer) */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Transition for smooth theme switching */
+html, body {
+  transition: background-color var(--transition-normal),
+              color var(--transition-normal),
+              border-color var(--transition-normal);
 }

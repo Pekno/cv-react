@@ -29,7 +29,7 @@
 }
 
 .floatingIndicator {
-  background-color: var(--mantine-color-brand-6);
+  background-color: var(--primary);
   border-radius: 1000px;
   z-index: 1;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -51,5 +51,5 @@
 }
 
 [data-mantine-color-scheme="dark"] .floatingIndicator {
-  background-color: var(--mantine-color-brand-7);
+  background-color: var(--mantine-primary-color-7);
 }

@@ -24,7 +24,7 @@ import classes from './Skills.module.css';
 import techCategoryClasses from './components/TechCategory/TechCategory.module.css';
 import { createRegisteredSection } from '@decorators/section.decorator';
 import { SkillsProps, MainSkill, keyCompetenciesKey, qualityKey, categoryKey, chipKey } from './Skills.types';
-import { useColorPalette } from '@hooks/useColorPalette';
+import useColorPalette from '@hooks/useColorPalette';
 import TechCategory from './components/TechCategory/TechCategory';
 import SkillCard from './components/SkillCard/SkillCard';
 
@@ -43,12 +43,7 @@ const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
   const themeColor = '#2b689c';
   
   // Using the enhanced useColorPalette hook
-  const { generateAnalogousColors } = useColorPalette();
-  
-  // Generate analogous colors for skill cards based on the theme color
-  const skillColors = useMemo(() => {
-    return generateAnalogousColors(themeColor, data.mainSkills.length);
-  }, [themeColor, data.mainSkills.length, generateAnalogousColors]);
+  const { palette: skillColors, generateVariants, isColorDark } = useColorPalette(themeColor, data.mainSkills.length);
   
   // Map icon strings to actual icon components - memoized function
   const getIconComponent = useCallback((iconName: string): React.ReactNode => {
@@ -68,7 +63,7 @@ const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
   const renderMainSkills = useMemo(() => {
     return data.mainSkills.map((skill: MainSkill, skillIndex) => {
       // Use the pre-generated analogous color for this skill
-      const skillColor = skillColors[skillIndex];
+      const skillColor = skillColors[skillIndex] ?? "";
       
       return {
         icon: getIconComponent(skill.icon),
@@ -76,7 +71,9 @@ const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
         description: t(qualityKey(skill.id, 'desc')),
         badges: skill.badges.map(b => t(chipKey(skill.id, b))),
         seed: skillIndex + 1, // We'll still use index+1 as seed for consistent badge colors
-        mainColor: skillColor // Pass the analogous color to the SkillCard
+        mainColor: skillColor, // Pass the analogous color to the SkillCard
+        generateVariants,
+        isColorDark
       };
     });
   }, [data.mainSkills, skillColors, getIconComponent, t]);

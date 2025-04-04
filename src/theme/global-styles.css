@@ -2,10 +2,11 @@
 
 html, body {
   scroll-behavior: smooth;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
-  color: var(--mantine-color-gray-8);
+  color: var(--text-color);
   line-height: 1.6;
   font-family: 'Signika', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -15,27 +16,29 @@ body {
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
   margin-bottom: var(--mantine-spacing-md);
-  color: var(--mantine-color-gray-9);
+  color: var(--text-secondary);
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   font-family: 'Signika', sans-serif;
+  transition: color 0.3s ease;
 }
 
 p {
   margin-top: 0;
   margin-bottom: var(--mantine-spacing-md);
+  transition: color 0.3s ease;
 }
 
 a {
-  color: var(--mantine-color-brand-6);
+  color: var(--primary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--mantine-color-brand-7);
+  color: var(--mantine-primary-color-7);
   text-decoration: underline;
 }
 
@@ -56,6 +59,6 @@ button, a, [role="button"] {
 }
 
 *:focus-visible {
-  outline: 2px solid var(--mantine-color-brand-6);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }

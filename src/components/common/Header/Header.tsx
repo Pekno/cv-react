@@ -9,6 +9,7 @@ import {
   Badge
 } from '@mantine/core';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import ThemeToggle from '../ThemeToggle/ThemeToggle';
 import classes from './Header.module.css';
 import { useScrollSpy } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
@@ -39,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ opened, toggle, menuItems }) => {
   };
 
   return (
-    <AppShell.Header className={classes.header}>
+    <AppShell.Header style={{ padding: "0.5rem", height: "auto", backgroundColor: "var(--bg-tertiary)" }} className={classes.header}>
       <Container size="xl">
         <Group justify="space-between" h="100%">
           <Group>
@@ -68,13 +69,17 @@ const Header: React.FC<HeaderProps> = ({ opened, toggle, menuItems }) => {
                 {item.label}
               </Link >
             ))}
-            <LanguageSwitcher />
+            <Group gap="xs">
+              <ThemeToggle />
+              <LanguageSwitcher />
+            </Group>
           </Group>
           
-          {/* On mobile, only show language switcher in header */}
-          <Box hiddenFrom="md">
+          {/* On mobile, only show theme toggle and language switcher in header */}
+          <Group gap="xs" hiddenFrom="md">
+            <ThemeToggle />
             <LanguageSwitcher />
-          </Box>
+          </Group>
         </Group>
       </Container>
     </AppShell.Header>

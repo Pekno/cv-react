@@ -16,6 +16,10 @@ const fr: Translations = {
       paused: "Défilement automatique en pause",
     },
   },
+  theme: {
+    toggleLight: "Passer au mode clair",
+    toggleDark: "Passer au mode sombre",
+  },
   menu: {
     about: "À propos",
     skills: "Compétences",

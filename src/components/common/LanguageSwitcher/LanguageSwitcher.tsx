@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SegmentedControl, ActionIcon, Menu, Button } from '@mantine/core';
+import { SegmentedControl, ActionIcon, Menu, Button, Tooltip } from '@mantine/core';
 import { IconLanguage } from '@tabler/icons-react';
 import { useLanguage } from '@hooks/useLanguage';
 import classes from './LanguageSwitcher.module.css';
@@ -54,21 +54,28 @@ const LanguageSwitcher: React.FC = () => {
   } else if (languageOptions.length === 2) {
     // For two languages, render a simple toggle
     return (
-      <ActionIcon
-        onClick={() => {
-          const otherLang = languageOptions.find(
-            option => option.value !== currentLanguage
-          )?.value || languageOptions[0]?.value;
-          handleLanguageChange(otherLang);
-        }}
-        className={classes.languageToggle}
-        variant="subtle"
-        color="gray"
-        size="md"
-        aria-label="Switch language"
+      <Tooltip
+        label={getLanguageNativeName(currentLanguage)}
+        position="bottom"
+        withArrow
+        transitionProps={{ transition: "pop" }}
       >
-        {currentLanguage.toUpperCase()}
-      </ActionIcon>
+        <ActionIcon
+          onClick={() => {
+            const otherLang = languageOptions.find(
+              option => option.value !== currentLanguage
+            )?.value || languageOptions[0]?.value;
+            handleLanguageChange(otherLang);
+          }}
+          className={classes.languageToggle}
+          variant="subtle"
+          color="gray"
+          size="md"
+          aria-label="Switch language"
+        >
+          {currentLanguage.toUpperCase()}
+        </ActionIcon>
+      </Tooltip>
     );
   } else if (languageOptions.length <= 5) {
     // For 3-5 languages, use a segmented control

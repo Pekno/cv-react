@@ -1,0 +1,14 @@
+.themeToggle {
+  transition: background-color var(--transition-normal), 
+              border-color var(--transition-normal),
+              transform var(--transition-fast);
+}
+
+.themeToggle:hover {
+  transform: scale(1.05);
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.themeToggle:active {
+  transform: scale(0.95);
+}

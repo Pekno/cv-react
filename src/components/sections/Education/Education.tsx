@@ -55,23 +55,23 @@ const EducationSectionComponent = ({ data, evenSection = false }: EducationProps
 
   // Memoize the languages grid component
   const languagesGrid = useMemo(() => (
-    <SimpleGrid cols={{ base: 1, xs: 3, md: 1, lg: 3 }} spacing="md">
+    <SimpleGrid cols={{ base: 1, xs: 3, md: 2, lg: 3 }} spacing="xs">
       {renderLanguageItems.map((language, index) => (
         <Stack key={index} align="center">
           <Center>
             <RingProgress
-              size={120}
+              size={100}
               thickness={12}
               roundCaps
               sections={[{ value: language.value, color: language.color }]}
               label={
-                <Text fw={700} ta="center" size="lg">
+                <Text ta="center" size="lg">
                   {language.value}%
                 </Text>
               }
             />
           </Center>
-          <Text fw={600} mt="sm">{language.label}</Text>
+          <Text>{language.label}</Text>
           {language.subtitle && (
             <Text size="xs" c="dimmed" ta="center">{language.subtitle}</Text>
           )}

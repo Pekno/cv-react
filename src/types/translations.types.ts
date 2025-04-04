@@ -16,6 +16,12 @@ export interface GlobalTranslations {
   };
 }
 
+// Theme translations
+export interface ThemeTranslations {
+  toggleLight: string;
+  toggleDark: string;
+}
+
 // Menu translations - keys must match the registry
 export type MenuTranslations = {
   [K in keyof SectionTypeRegistry]?: string;
@@ -32,6 +38,7 @@ export interface SectionTranslationRegistryMap {}
 // Complete translations structure
 export interface Translations {
   global: GlobalTranslations;
+  theme: ThemeTranslations;
   menu: MenuTranslations;
   sections: SectionTranslations;
 }
@@ -46,6 +53,11 @@ export type GlobalTranslationKeys =
   | "global.thanks"
   | "global.autoplay.active"
   | "global.autoplay.paused";
+
+// Create keys for theme namespace
+export type ThemeTranslationKeys =
+  | "theme.toggleLight"
+  | "theme.toggleDark";
 
 // Create keys for menu items based on registry
 type MenuTranslationKeys = {
@@ -75,5 +87,6 @@ type SectionTranslationKeys = {
 // Complete translation key type
 export type TranslationKey =
   | GlobalTranslationKeys
+  | ThemeTranslationKeys
   | MenuTranslationKeys
   | SectionTranslationKeys;
