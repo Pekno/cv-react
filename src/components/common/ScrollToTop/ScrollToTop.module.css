@@ -14,3 +14,11 @@
 .scrollToTop:hover {
     background-color: var(--mantine-primary-color-7);
 }
+
+@media (max-width: 768px) {
+    .scrollToTop {
+        position: fixed;
+        bottom: var(--mantine-spacing-xs);
+        right: var(--mantine-spacing-xs);
+    }
+}

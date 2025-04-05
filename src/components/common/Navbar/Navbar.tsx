@@ -31,8 +31,8 @@ const Navbar: React.FC<NavbarProps> = ({ menuItems, toggle }) => {
   };
 
   return (
-    <AppShell.Navbar p="md">
-      <AppShell.Section grow component={ScrollArea}>
+    <AppShell.Navbar p="md" style={{ backgroundColor: "var(--bg-tertiary)" }} >
+      <AppShell.Section grow component={ScrollArea} >
         <Stack>
           <Text fw={700} size="sm">Navigation</Text>
           {menuItems.map((item) => (

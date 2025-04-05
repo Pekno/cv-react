@@ -6,7 +6,8 @@ import {
   Badge, 
   Box,
   Timeline,
-  Title
+  Title,
+  useMantineColorScheme
 } from '@mantine/core';
 import { 
   IconBriefcase,
@@ -21,6 +22,7 @@ import { createRegisteredSection } from '@decorators/section.decorator';
 import { contextKey, experienceKey, ExperiencesProps } from './Experiences.types'
 import { ExperienceLabel } from './components/ExperienceLabel/ExperienceLabel';
 import { GlobalTranslationKeys } from '@app-types/translations.types';
+import { useMediaQuery } from '@mantine/hooks';
 
 // Memoize the ExperienceLabel component to prevent unnecessary re-renders
 const MemoizedExperienceLabel = React.memo(ExperienceLabel);
@@ -30,6 +32,8 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
   const { t } = useLanguage();
   const location = useLocation();
   const [value, setValue] = useState<string | null>(null);
+  // Check if screen is mobile
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Handle direct navigation to subsections via URL hash
   useEffect(() => {
@@ -69,31 +73,45 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
   const experiencesTimeline = useMemo(() => (
     <Timeline 
       active={processedExperiences.length - 1} 
-      bulletSize={34} 
-      lineWidth={2}
+      bulletSize={isMobile ? 14 : 34} 
+      lineWidth={isMobile ? 1 : 2}
       color="brand"
       className={classes.timeline}
+      style={isMobile ? { 
+        paddingLeft: '8px',
+        paddingBottom: '0', 
+        marginBottom: '0',
+      } : undefined}
+      py={isMobile ? 0 : undefined}
     >
       {processedExperiences.map((exp, companyIndex) => (
         <Timeline.Item
           id={`work-${exp.id}`}
           key={exp.id}
           data-order={1}
-          style={{scrollMarginTop:80}}
+          style={{
+            scrollMarginTop: 80,
+            ...(isMobile ? { paddingBottom: '4px', marginBottom: '0' } : {})
+          }}
           bullet={
             <Box className={classes.timelineBullet}>
-              <IconBriefcase size={16} />
+              {/* Only show icon on desktop */}
+              {!isMobile && <IconBriefcase size={16} />}
             </Box>
           }
           title={
-            <Box>
-              <Group gap="xs" className={classes.timelineHeader}>
+            <Box style={isMobile ? { marginBottom: '2px' } : undefined}>
+              <Group gap={isMobile ? "4px" : "xs"} className={classes.timelineHeader}>
                 <Text fw={700} className={classes.companyYear} span>
                   {exp.startDate.getFullYear()}
                 </Text>
-                <Badge size="md" radius="xl" className={classes.durationBadge}>
+                <Badge 
+                  size={isMobile ? "xs" : "md"} 
+                  radius="xl" 
+                  className={classes.durationBadge}
+                >
                   <Group gap={5}>
-                    <IconClock size={12} />
+                    <IconClock size={isMobile ? 10 : 12} />
                     <span>{exp.duration} {t(exp.durationUnit)}</span>
                   </Group>
                 </Badge>
@@ -130,15 +148,15 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
                     <Box key={contextIndex} className={classes.contextItem}>
                       <Group gap={5} className={classes.contextHeader}>
                         <Title order={5} className={classes.contextTitle}>Mission :</Title>
-                        <Text span>{t(contextKey(exp.id, contextIndex))}</Text>
+                        <Text size={isMobile ? "sm" : "md"} span>{t(contextKey(exp.id, contextIndex))}</Text>
                       </Group>
                       
                       {contextIndex < exp.technologies.length && (
-                        <Group mt="xs" gap="xs" className={classes.techGroup}>
+                        <Group mt={isMobile ? "4px" : "xs"} gap="xs" className={classes.techGroup}>
                           {exp.technologies[contextIndex] && exp.technologies[contextIndex].map((tech, techIndex) => (
                             <Badge 
                               key={techIndex} 
-                              size="sm" 
+                              size={isMobile ? "xs" : "sm"} 
                               variant="outline"
                               className={classes.techBadge}
                             >
@@ -156,7 +174,7 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
         </Timeline.Item>
       ))}
     </Timeline>
-  ), [processedExperiences, value, handleAccordionChange, t]);
+  ), [processedExperiences, value, handleAccordionChange, t, isMobile]);
 
   return (
     <Section id="experiences" title={t('menu.experiences')} evenSection={evenSection}>

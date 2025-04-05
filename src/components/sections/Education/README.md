@@ -38,7 +38,6 @@ The `Education` section requires the following data structure:
       {
         id: string;          // Language ID matching translation key (e.g., "english")
         value: number;       // Proficiency level (0-100)
-        color: string;       // Color for the progress bar
       }
     ]
   }
@@ -105,17 +104,14 @@ sections: {
       {
         id: "french",
         value: 100,
-        color: "brand.6",
       },
       {
         id: "english",
         value: 95,
-        color: "brand.6",
       },
       {
         id: "spanish",
         value: 20,
-        color: "brand.6",
       }
     ]
   }
@@ -239,7 +235,6 @@ Language proficiency is visualized using progress bars:
 
 - Each language has its own row
 - The progress bar width corresponds to the `value` percentage
-- The color is determined by the `color` property
 - The language name and mastery level are displayed alongside the bar
 
 ## Styling

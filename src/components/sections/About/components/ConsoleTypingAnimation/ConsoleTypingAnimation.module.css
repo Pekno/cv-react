@@ -94,13 +94,3 @@
 [data-mantine-color-scheme="dark"] .consoleContent {
   color: #e0e0e0;
 }
-
-/* Export the component */
-.summary a {
-  color: var(--primary);
-  text-decoration: none;
-}
-
-.summary a:hover {
-  text-decoration: underline;
-}

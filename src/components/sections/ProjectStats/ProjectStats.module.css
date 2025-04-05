@@ -1,9 +1,6 @@
-/* Enhanced ProjectStats CSS with variables */
+/* Optimized ProjectStats CSS */
 .statsGrid {
   margin-top: var(--space-xl);
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--space-lg);
 }
 
 .statCard {
@@ -73,21 +70,12 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .statsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: var(--space-md);
-  }
-  
   .statCard {
     padding: var(--space-lg);
   }
 }
 
 @media (max-width: 576px) {
-  .statsGrid {
-    grid-template-columns: 1fr;
-  }
-  
   .statValue {
     font-size: 2rem;
   }

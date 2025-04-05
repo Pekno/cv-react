@@ -171,22 +171,18 @@ export const profileData: ProfileData = {
           {
             id: "english",
             value: 100,
-            color: "brand.6",
           },
           {
             id: "french",
             value: 90,
-            color: "brand.6",
           },
           {
             id: "spanish",
             value: 65,
-            color: "brand.6",
           },
           {
             id: "german",
             value: 40,
-            color: "brand.6",
           },
         ],
       },

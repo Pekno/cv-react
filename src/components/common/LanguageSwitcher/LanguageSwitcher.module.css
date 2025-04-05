@@ -1,55 +1,16 @@
-.languageContainer {
-  display: flex;
-  position: relative;
-  background-color: var(--mantine-color-gray-2);
-  padding: 4px;
-  border-radius: 1000px;
-  min-width: 100px;
+.languageToggle {
+  font-weight: 600;
+}
+
+.segmentedControl {
+  min-width: 120px;
 }
 
 .languageButton {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 26px;
-  padding: 0 12px;
-  border-radius: 1000px;
-  position: relative;
-  z-index: 2;
-  transition: color 0.2s ease;
+  min-width: 100px;
 }
 
-.languageButton[data-active] {
-  color: var(--mantine-color-white);
-}
-
-.languageButton:not([data-active]) {
-  color: var(--mantine-color-gray-7);
-}
-
-.floatingIndicator {
-  background-color: var(--primary);
-  border-radius: 1000px;
-  z-index: 1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.languageLabel {
-  font-size: var(--mantine-font-size-xs);
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-/* Dark mode adjustments */
-[data-mantine-color-scheme="dark"] .languageContainer {
-  background-color: var(--mantine-color-dark-6);
-}
-
-[data-mantine-color-scheme="dark"] .languageButton:not([data-active]) {
-  color: var(--mantine-color-dark-0);
-}
-
-[data-mantine-color-scheme="dark"] .floatingIndicator {
-  background-color: var(--mantine-primary-color-7);
+.activeLanguage {
+  font-weight: 600;
+  background-color: var(--mantine-primary-color-0);
 }

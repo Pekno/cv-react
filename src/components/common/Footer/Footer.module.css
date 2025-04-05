@@ -4,11 +4,15 @@
     padding: 0 5px;
 }
 
-.footer > p, .footer > p > a {
+.footerText {
     font-weight: lighter;
     font-size: 10px;
-    color:"dimmed";
+    color: "dimmed";
     text-align: end;
+}
+
+.footerText > a{
+    color: var(--primary);
 }
   
 /* For responsive design */

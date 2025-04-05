@@ -96,14 +96,6 @@
   height: 50px;
 }
 
-.accordionPanel {
-  padding: var(--space-md);
-}
-
-.accordionContent {
-  padding: 0;
-}
-
 .durationBadge {
   background-color: rgba(43, 104, 156, 0.1);
   color: var(--primary-dark);
@@ -176,54 +168,12 @@
   }
 }
 
-.accordionLabel {
-  width: 100%;
-}
-
-.logoContainer {
-  max-width: 120px;
-  min-width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xs);
-}
-
-.companyLogo {
-  max-height: 40px;
-  max-width: 100%;
-  transition: transform var(--transition-normal);
-}
-
-.accordionItem:hover .companyLogo {
-  transform: scale(1.05);
-}
-
-.labelContent {
-  flex: 1;
-}
-
-.companyName {
-  font-size: var(--mantine-font-size-lg);
-  margin-bottom: 4px;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.jobTitle {
-  color: var(--text-secondary);
-}
-
 @media (max-width: 576px) {
-  .accordionLabel {
-    flex-direction: column;
-    align-items: flex-start;
+  .accordionPanel {
+    padding: var(--space-xs);
   }
   
-  .logoContainer {
-      margin-bottom: var(--space-xs);
-      width: 50px;
-      height: 50px;
-  }
+  .accordionContent {
+    padding: 0 !important;
+  }  
 }

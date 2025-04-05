@@ -1,4 +1,4 @@
-import { TranslationKey } from "types/translations.types";
+import { TranslationKey } from "@/types/translations.types";
 import { SectionProps } from "../../../types/profile-data.types";
 
 export interface TravelItem {

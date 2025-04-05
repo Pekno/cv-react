@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ opened, toggle, menuItems }) => {
   };
 
   return (
-    <AppShell.Header style={{ padding: "0.5rem", height: "auto", backgroundColor: "var(--bg-tertiary)" }} className={classes.header}>
+    <AppShell.Header style={{ height: "auto", backgroundColor: "var(--bg-tertiary)" }} className={classes.header}>
       <Container size="xl">
         <Group justify="space-between" h="100%">
           <Group>

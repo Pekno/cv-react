@@ -1,4 +1,4 @@
-import { TranslationKey } from "types/translations.types";
+import { TranslationKey } from "@/types/translations.types";
 import { SectionProps } from "../../../types/profile-data.types";
 
 export interface EducationItem {
@@ -9,7 +9,6 @@ export interface EducationItem {
 export interface LanguageItem {
   id: string;
   value: number;
-  color: string;
 }
 
 export interface EducationData {

@@ -1,4 +1,4 @@
-/* Enhanced ProjectCarousel CSS with variables */
+/* ProjectCarousel CSS with unused classes removed */
 .carouselContainer {
   position: relative;
   width: 100%;
@@ -21,12 +21,12 @@
 
 .carouselContainer::before {
   left: 0;
-  background: linear-gradient(to right, var(--bg-primary) 0%, rgba(248, 249, 250, 0) 100%);
+  background: linear-gradient(to right, var(--bg-secondary) 0%, rgba(248, 249, 250, 0) 100%);
 }
 
 .carouselContainer::after {
   right: 0;
-  background: linear-gradient(to left, var(--bg-primary) 0%, rgba(248, 249, 250, 0) 100%);
+  background: linear-gradient(to left, var(--bg-secondary) 0%, rgba(248, 249, 250, 0) 100%);
 }
 
 /* Autoplay Control */
@@ -121,60 +121,7 @@
   margin-bottom: var(--space-md);
 }
 
-.cardFooter {
-  margin-top: auto;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.projectLink {
-  color: var(--primary);
-  transition: color var(--transition-fast);
-}
-
-.projectLink:hover {
-  color: var(--primary-dark);
-  text-decoration: underline;
-}
-
-/* Navigation controls */
-.controls {
-  position: absolute;
-  bottom: var(--space-md);
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: var(--space-sm);
-  z-index: var(--z-base);
-}
-
-.controlButton {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--primary);
-  color: white;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
-}
-
-.controlButton:hover {
-  transform: scale(1.1);
-  background-color: var(--primary-dark);
-  box-shadow: var(--shadow-md);
-}
-
 /* Media queries */
-@media (max-width: 768px) {
-  .card {
-    min-height: 350px;
-  }
-}
-
 @media (max-width: 576px) {
   .autoplayControl {
     top: var(--space-xs);
@@ -185,8 +132,8 @@
     width: 30px !important;
     height: 30px !important;
   }
-  
-  .cardImage {
-    height: 150px;
+
+  .card {
+    min-height: 200px;
   }
 }
