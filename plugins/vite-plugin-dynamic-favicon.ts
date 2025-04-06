@@ -72,7 +72,6 @@ export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
   const {
     profilePath = path.resolve("./src/data/profile-data.ts"),
     templatePath = path.resolve("./src/assets/static/favicon-template.svg"),
-    outputPath = "favicon.svg",
   } = options;
 
   // Create a logger function in closure scope
