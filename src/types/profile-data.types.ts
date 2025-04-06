@@ -19,9 +19,29 @@ export interface Section<K extends keyof SectionTypeRegistry> {
   data: SectionTypeRegistry[K];
 }
 
+// Theme configuration
+export interface ThemeConfig {
+  /**
+   * Main brand color (hex format). This will be used to generate the full color palette.
+   * The value provided here will be shade 6 in the brand palette.
+   */
+  primaryColor: string;
+  
+  /**
+   * Optional accent color (hex format).
+   * If not provided, it will be generated from the primary color.
+   */
+  accentColor?: string;
+}
+
 // Updated ProfileData interface that leverages the improved Section type
 export interface ProfileData {
   meta: MetaData;
+  /**
+   * Theme configuration for the application.
+   * Defines brand colors and other theme settings.
+   */
+  theme?: ThemeConfig;
   sections: Section<keyof SectionTypeRegistry>[];
 }
 

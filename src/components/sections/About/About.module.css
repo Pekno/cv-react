@@ -17,7 +17,7 @@
 
 .name {
     font-weight: 700;
-    color: var(--primary);
+    color: var(--mantine-color-brand-filled);
     margin-bottom: 0;
 }
 
@@ -38,17 +38,17 @@
 .counter {
     font-weight: 700;
     font-size: var(--mantine-font-size-xl);
-    color: var(--primary);
+    color: var(--mantine-color-brand-filled);
     margin-right: var(--space-xs);
 }
 
 /* Consolidated action icon styles */
 .actionIcon {
     color: white;
-    background-color: var(--primary);
+    background-color: var(--mantine-color-brand-filled);
     transition: background-color var(--transition-fast);
 }
 
 .actionIcon:hover {
-    background-color: var(--primary-dark);
+    background-color: var(--mantine-color-brand-filled-dark);
 }

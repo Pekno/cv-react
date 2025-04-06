@@ -20,7 +20,6 @@
   align-items: center;
   justify-content: center;
   transition: all var(--transition-normal);
-  background-color: var(--primary);
   border-radius: 50%;
   color: white;
   box-shadow: 0 0 0 rgba(43, 104, 156, 0.4);
@@ -48,7 +47,7 @@
 
 .companyYear {
   font-size: var(--mantine-font-size-lg);
-  color: var(--primary);
+  color: var(--mantine-color-brand-filled);
 }
 
 /* Accordion styling */
@@ -64,7 +63,7 @@
 .accordionItem:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
-  border-color: var(--primary-light);
+  border-color: var(--mantine-color-brand-filled-light);
 }
 
 .accordionControl {
@@ -86,7 +85,7 @@
 }
 
 .accordionChevron {
-  color: var(--primary);
+  color: var(--mantine-color-brand-filled);
   transition: transform var(--transition-normal);
   margin-right: var(--space-xs);
 }
@@ -98,8 +97,8 @@
 
 .durationBadge {
   background-color: rgba(43, 104, 156, 0.1);
-  color: var(--primary-dark);
-  border-color: var(--primary-light);
+  color: var(--mantine-color-brand-filled-dark);
+  border-color: var(--mantine-color-brand-filled-light);
   transition: all var(--transition-normal);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-md);
@@ -133,7 +132,7 @@
 .contextTitle {
   font-weight: 600;
   margin-right: var(--space-xs);
-  color: var(--primary);
+  color: var(--mantine-color-brand-filled);
 }
 
 .techGroup {
@@ -145,8 +144,8 @@
   text-transform: none;
   transition: all var(--transition-fast);
   background-color: rgba(43, 104, 156, 0.1);
-  color: var(--primary-dark);
-  border-color: var(--primary-light);
+  color: var(--mantine-color-brand-filled-dark);
+  border-color: var(--mantine-color-brand-filled-light);
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
 }

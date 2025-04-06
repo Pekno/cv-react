@@ -12,6 +12,7 @@ A modern, responsive CV/portfolio application built with React, TypeScript, and 
 - 📱 **Responsive Design**: Mobile-friendly layout
 - 🚀 **Fast Development**: Powered by Vite for quick build and hot module replacement
 - 🔍 **Build Optimization**: Automatically includes only the sections you use
+- 🐳 **Docker Support**: Production-ready Docker container
 
 ## Customizing Your CV
 
@@ -22,15 +23,18 @@ To personalize this CV template with your own information, you'll primarily need
 The main data for your CV is stored in `src/data/profile-data.ts`. This file contains all the structured information that populates the various sections.
 
 ```typescript
+// First, import your assets at the top of the file
+import profilePicture from "../assets/profiles/your-profile-picture.jpg";
+
 // Example of modifying the About section data
 meta: {
   name: "Your Name",
   profilePictures: [
-    "./src/assets/your-profile-picture.jpg",
+    profilePicture, // Use the imported asset
   ],
   pdfResume: {
-    en: "./pdf/Your-Resume-EN.pdf",
-    fr: "./pdf/Your-Resume-FR.pdf",
+    en: "/pdf/Your-Resume-EN.pdf", // PDFs should be placed in the public/pdf folder
+    fr: "/pdf/Your-Resume-FR.pdf",
   },
   socials: [
     {
@@ -55,6 +59,21 @@ sections: [
 ```
 
 Each section has its own data structure, and you should refer to the specific section's README file for details on what fields are required.
+
+#### Asset Management
+
+For proper asset handling (especially when using Docker):
+
+1. **Images** (profile pictures, company logos, project images, etc.):
+   - Place the files in the appropriate subdirectory under `src/assets/`
+   - Import them at the top of your profile data file using ES Module imports
+   - Reference the imported variables in your data structure
+
+2. **PDF files** (resumes, certificates, etc.):
+   - Place the files in the `public/pdf/` directory
+   - Reference them with absolute paths starting with `/pdf/`
+
+This approach ensures that all assets are properly processed and included in the production build.
 
 ### 2. Update Translations
 
@@ -125,6 +144,47 @@ Each README contains detailed information on:
    ```
 
 4. Open your browser and navigate to `http://localhost:5173`
+
+### Using Docker for Production
+
+This project includes a production-ready Docker setup that builds and serves your CV application.
+
+#### Prerequisites for Docker
+
+- Docker and Docker Compose installed on your machine
+
+#### Deploying with Docker
+
+Build and run the production-optimized container:
+
+```bash
+# Build and start the container in detached mode
+npm run docker:up
+# or
+docker-compose up -d
+```
+
+This will:
+1. Build your application
+2. Create an optimized Nginx-based Docker image
+3. Start a container serving your application on port 80
+
+To stop the container:
+
+```bash
+npm run docker:down
+# or
+docker-compose down
+```
+
+#### Custom Docker Builds
+
+To build the Docker image without using docker-compose:
+
+```bash
+docker build -t cv-react .
+docker run -p 80:80 -d cv-react
+```
 
 ### Building for Production
 

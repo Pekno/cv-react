@@ -28,7 +28,7 @@ body {
 
 /* Selection styles */
 ::selection {
-  background-color: var(--primary);
+  background-color: var(--mantine-color-brand-filled);
   color: white;
 }
 
@@ -83,7 +83,7 @@ body {
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--mantine-color-brand-filled);
   outline-offset: 2px;
 }
 
@@ -103,12 +103,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-light);
+  background: var(--mantine-color-brand-filled-light);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: var(--mantine-color-brand-filled);
 }
 
 /* Text selection styling for code */

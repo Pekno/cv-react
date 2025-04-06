@@ -40,9 +40,8 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   const particleIdCounter = useRef(0);
   const theme = useMantineTheme();
 
-  
-  // Using the enhanced useColorPalette hook
-  const { palette } = useColorPalette(theme.colors['brand'][6], 10);
+  // Using the enhanced useColorPalette hook with null check for theme.colors
+  const { palette } = useColorPalette(theme.colors['brand']?.[6] || '#2b689c', 5);
 
   // Generate random color from a set of vibrant colors
   const getRandomColor = () => {

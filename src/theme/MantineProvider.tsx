@@ -4,30 +4,24 @@ import './variables.css'; // Import our CSS variables
 import { MantineProvider, createTheme, MantineColorScheme } from '@mantine/core';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { useTheme } from '../hooks/useTheme';
+import { generateBrandPalette } from '../utils/themeUtils';
+import { useProfileData } from '../hooks/useProfileData';
 
 /**
  * Creates a theme with both light and dark mode support
  * Handles components styling for different color schemes
  */
-const createAppTheme = (colorScheme: MantineColorScheme) => {
+const createAppTheme = (colorScheme: MantineColorScheme, brandColor: string) => {
   const isDark = colorScheme === 'dark';
   
+  // Generate the brand color palette from the configured primary color
+  const brandPalette = generateBrandPalette(brandColor);
+  
   return createTheme({
-    colorScheme,
+    // Remove colorScheme from here, we'll pass it to MantineProvider directly
     colors: {
-      // Add your custom brand colors
-      brand: [
-        '#e9f2f8', // 0 - lightest
-        '#c4dbed', 
-        '#9ec3e1', 
-        '#79acd6', 
-        '#5394cb', 
-        '#2e7cbf', 
-        '#2b689c', // 6 - your primary color
-        '#23547f', 
-        '#1b4062', 
-        '#132c45'  // 9 - darkest
-      ],
+      // Use the dynamically generated brand colors
+      brand: brandPalette,
       // Define dark theme colors
       dark: [
         '#C1C2C5', // 0
@@ -85,39 +79,39 @@ const createAppTheme = (colorScheme: MantineColorScheme) => {
     // Enhanced component defaults
     components: {
       AppShell: {
-        styles: (theme) => ({
+        styles: (theme: any) => ({
           main: {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+            backgroundColor: isDark ? theme.colors.dark[8] : theme.colors.gray[0],
           }
         }),
       },
       Card: {
-        styles: (theme) => ({
+        styles: (theme: any) => ({
           root: {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+            backgroundColor: isDark ? theme.colors.dark[6] : theme.white,
           }
         }),
       },
       Paper: {
-        styles: (theme) => ({
+        styles: (theme: any) => ({
           root: {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+            backgroundColor: isDark ? theme.colors.dark[6] : theme.white,
           }
         }),
       },
       Accordion: {
-        styles: (theme) => ({
+        styles: (theme: any) => ({
           item: {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-            borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3],
+            backgroundColor: isDark ? theme.colors.dark[6] : theme.white,
+            borderColor: isDark ? theme.colors.dark[4] : theme.colors.gray[3],
           },
           control: {
             '&:hover': {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[0],
+              backgroundColor: isDark ? theme.colors.dark[5] : theme.colors.gray[0],
             }
           },
           panel: {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+            backgroundColor: isDark ? theme.colors.dark[6] : theme.white,
           }
         }),
       },
@@ -136,11 +130,17 @@ function MantineThemeConsumer({ children }: MantineThemeProviderProps): JSX.Elem
   // Get color scheme from our theme context
   const { colorScheme } = useTheme();
   
+  // Get profile data to access theme configuration
+  const { data } = useProfileData();
+  
+  // Get the configured brand color or use default
+  const brandColor = data?.theme?.primaryColor || '#2b689c';
+  
   // Create a theme that includes our color scheme
-  const theme = createAppTheme(colorScheme);
+  const theme = createAppTheme(colorScheme, brandColor);
   
   return (
-    <MantineProvider theme={theme} colorScheme={colorScheme}>
+    <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
       {children}
     </MantineProvider>
   );

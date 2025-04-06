@@ -34,6 +34,11 @@ export const profileData: ProfileData = {
       },
     ],
   },
+  // Theme configuration for the demo version - uses a different color scheme
+  theme: {
+    // Primary brand color (this will generate a full palette)
+    primaryColor: "#3f51b5", // A purple/indigo color for the demo
+  },
   sections: [
     // About Section
     {

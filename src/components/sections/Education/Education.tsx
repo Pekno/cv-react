@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Grid, Paper, Timeline, Text, Group, RingProgress, Stack, Badge, Title, useMantineTheme, Center, SimpleGrid, SemiCircleProgress } from '@mantine/core';
+import { Grid, Paper, Timeline, Text, Group, RingProgress, Stack, Badge, Title, Center, SimpleGrid, SemiCircleProgress } from '@mantine/core';
 import { IconSchool, IconLanguage } from '@tabler/icons-react';
 import Section from '@components/common/Section/Section';
 import classes from './Education.module.css';

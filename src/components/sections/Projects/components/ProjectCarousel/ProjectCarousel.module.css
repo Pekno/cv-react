@@ -49,14 +49,14 @@
   justify-content: center;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
-  background-color: var(--primary);
+  background-color: var(--mantine-color-brand-filled);
   color: white;
 }
 
 .autoplayButton:hover {
   transform: scale(1.05);
   box-shadow: var(--shadow-md);
-  background-color: var(--primary-dark);
+  background-color: var(--mantine-color-brand-filled-dark);
 }
 
 .autoplayStatus {
@@ -107,6 +107,10 @@
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: var(--space-sm);
+}
+
+.cardButton {
+  background-color: var(--mantine-color-brand-filled) !important;
 }
 
 .description {

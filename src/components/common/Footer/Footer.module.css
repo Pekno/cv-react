@@ -12,7 +12,7 @@
 }
 
 .footerText > a{
-    color: var(--primary);
+    color: var(--mantine-color-brand-filled);
 }
   
 /* For responsive design */

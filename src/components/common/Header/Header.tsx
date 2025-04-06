@@ -4,7 +4,6 @@ import {
   Group, 
   Burger, 
   Title,
-  Box,
   AppShell,
   Badge
 } from '@mantine/core';

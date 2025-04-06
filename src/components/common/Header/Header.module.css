@@ -18,7 +18,7 @@
     padding: 0.5rem 0.75rem;
     border-radius: 0.25rem;
     text-decoration: none;
-    color: var(--primary);
+    color: var(--mantine-color-brand-filled);
     font-weight: 500;
     font-size: var(--mantine-font-size-sm);
 }
@@ -40,5 +40,5 @@
     right: 0;
     bottom: 0;
     height: 2px;
-    background-color: var(--primary);
+    background-color: var(--mantine-color-brand-filled);
 }

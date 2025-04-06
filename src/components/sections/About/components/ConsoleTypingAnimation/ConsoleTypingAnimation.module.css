@@ -57,14 +57,14 @@
 }
 
 .consoleContent a, .consoleLink {
-  color: #3b79db;
+  color: var(--mantine-color-brand-filled);
   text-decoration: none;
-  border-bottom: 1px dashed #3b79db;
+  border-bottom: 1px dashed var(--mantine-color-brand-filled);
 }
 
 .consoleContent a:hover, .consoleLink:hover {
-  color: #5890e9;
-  border-bottom: 1px solid #5890e9;
+  color: var(--mantine-primary-color-filled-hover);
+  border-bottom: 1px solid var(--mantine-primary-color-filled-hover);
 }
 
 .cursor {

@@ -6,8 +6,7 @@ import {
   Badge, 
   Box,
   Timeline,
-  Title,
-  useMantineColorScheme
+  Title
 } from '@mantine/core';
 import { 
   IconBriefcase,

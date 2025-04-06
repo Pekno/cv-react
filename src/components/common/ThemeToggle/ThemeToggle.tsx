@@ -12,7 +12,7 @@ import { useLanguage } from '../../../hooks/useLanguage';
  * to indicate the theme that will be switched to when clicked
  */
 const ThemeToggle: React.FC = () => {
-  const { colorScheme, toggleColorScheme, isDark } = useTheme();
+  const { toggleColorScheme, isDark } = useTheme();
   const { t } = useLanguage();
 
   return (

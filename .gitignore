@@ -26,8 +26,10 @@ codemcp.toml
 *.sw?
 
 # Ignore content of asset directories but keep their structure
-/src/assets/pdf/*
-!/src/assets/pdf/.gitkeep
+/public/pdf/*
+/public/favicon-adaptive.svg
+/public/favicon.svg
+!/public/pdf/.gitkeep
 
 /src/assets/profiles/*
 !/src/assets/profiles/default.jpg

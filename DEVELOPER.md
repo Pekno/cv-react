@@ -2,6 +2,14 @@
 
 This document provides technical details about the CV React project's architecture, implementation details, and development guidelines. It's intended for developers who want to understand, modify, or extend the codebase.
 
+## Project Creation Note
+
+This project was developed as a proof of concept exploring AI-assisted development using Claude AI and Machine Coding Programs (MCPs). While I designed the overall architecture and made key technical decisions about the structure, component composition, and data flow, the majority of the implementation code was generated through collaboration with AI.
+
+The development process demonstrated how human expertise in system design can be combined with AI capabilities in code generation to create a full-featured, maintainable application in significantly less time than traditional development.
+
+The CV React project serves both as a practical, usable CV/portfolio template and as an experiment in modern AI-assisted development workflows.
+
 ## Project Structure
 
 ```
@@ -25,6 +33,9 @@ src/
 ├── types/            # TypeScript type definitions
 ├── App.tsx           # Main application component
 └── main.tsx          # Application entry point
+public/
+├── pdf/              # PDF files for resumes
+└── ...               # Other public assets
 ```
 
 ## Architecture Overview
@@ -90,6 +101,22 @@ The project uses component composition to build complex UIs from simpler compone
 2. **Sub-components**: Each section has its own specialized sub-components
 3. **Composition over Inheritance**: Component behavior is extended through composition rather than inheritance
 
+### Asset Management
+
+The project uses Vite's asset handling system for optimized processing of images and other assets:
+
+1. **Static Assets in src/assets/**:
+   - Images, icons, and other static assets should be placed in appropriate subdirectories of `src/assets/`
+   - These assets should be imported directly in component or data files using ES Module imports
+   - Example: `import profilePicture from "../assets/profiles/picture.jpg";`
+
+2. **Public Assets in public/ directory**:
+   - PDF files and other assets that should be directly accessible should be placed in the `public/` directory
+   - These are referenced with absolute paths
+   - Example: `const resumeUrl = "/pdf/resume.pdf";`
+
+This approach ensures assets are properly processed, optimized, and included in production builds, with correct paths in Docker deployments.
+
 ## Build Optimization System
 
 ### Vite Plugin for Section Analysis
@@ -132,6 +159,165 @@ function usedSectionsPlugin(): Plugin {
 - **No Manual Configuration**: Just add or remove sections from your profile data
 - **Type-Safe Detection**: The plugin understands your section registry
 - **Logging**: Detailed logs show which sections are detected and included
+
+## Docker Production Deployment
+
+### Docker Configuration
+
+The project includes Docker support for production deployment:
+
+```
+/
+├── Dockerfile           # Production Docker configuration
+├── docker-compose.yml   # Docker Compose configuration
+└── nginx/
+    └── nginx.conf       # Nginx configuration for production
+```
+
+### Production Docker Setup
+
+The production Docker setup uses a multi-stage build process to create an optimized container:
+
+1. **Build Stage**: Compiles the React application using Node.js
+2. **Production Stage**: Serves the compiled assets with Nginx
+
+```dockerfile
+# Dockerfile
+# Build stage
+FROM node:20-alpine as build
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build the app
+RUN npm run build
+
+# Production stage
+FROM nginx:stable-alpine
+
+# Copy built assets from the build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy custom nginx config
+COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+The Docker Compose configuration simplifies deployment:
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cv-react
+    ports:
+      - "80:80"
+    restart: unless-stopped
+```
+
+### Nginx Configuration
+
+The Nginx configuration is optimized for single-page applications with React Router:
+
+```nginx
+# nginx/nginx.conf
+server {
+    listen 80;
+    server_name localhost;
+
+    # Serve static files
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Enable gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied expired no-cache no-store private auth;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/x-javascript application/xml application/json;
+    gzip_disable "MSIE [1-6]\.";
+
+    # Cache static assets
+    location ~* \.(jpg|jpeg|png|webp|gif|ico|css|js)$ {
+        root /usr/share/nginx/html;
+        expires 1y;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # Error pages
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}
+```
+
+This configuration provides:
+- Proper handling of React Router routes
+- Efficient caching of static assets
+- Gzip compression for improved performance
+- Appropriate error page handling
+
+### NPM Scripts for Docker
+
+The project includes npm scripts for easy Docker usage:
+
+```json
+"scripts": {
+  "docker:up": "docker-compose up -d",
+  "docker:down": "docker-compose down"
+}
+```
+
+### Deploying with Docker
+
+To deploy the application:
+
+1. Build and start the container:
+   ```bash
+   npm run docker:up
+   ```
+   or
+   ```bash
+   docker-compose up -d
+   ```
+
+2. To stop the container:
+   ```bash
+   npm run docker:down
+   ```
+   or
+   ```bash
+   docker-compose down
+   ```
+
+### Deployment Considerations
+
+1. **Port Configuration**: The container exposes port 80. If you need to use a different port on your host machine, modify the port mapping in `docker-compose.yml`.
+
+2. **Environment Variables**: If your application requires environment variables, add them to the `docker-compose.yml` file under the `environment` section.
+
+3. **SSL/HTTPS**: For production deployments requiring HTTPS, you'll need to configure SSL certificates with Nginx. Consider using a reverse proxy like Traefik or Nginx Proxy Manager for easier SSL management.
+
+4. **Container Restarts**: The container is configured to restart automatically (`restart: unless-stopped`) unless explicitly stopped, ensuring high availability.
 
 ## Internationalization System
 
@@ -279,13 +465,17 @@ export default createRegisteredSection<NewSectionProps>('newSection', NewSection
 Add your new section to the profile data in `src/data/profile-data.ts`:
 
 ```typescript
+// If your section uses images, import them at the top
+import newSectionImage from "../assets/path/to/image.jpg";
+
 sections: [
   // ... existing sections
   {
     sectionName: "newSection",
     data: {
       someProperty: "Value here",
-      anotherProperty: 42
+      anotherProperty: 42,
+      image: newSectionImage // Use imported image
     },
   },
 ]
@@ -345,6 +535,8 @@ When extending the project, consider these best practices:
 5. **Responsive Design**: Ensure all new components work well on all screen sizes
 6. **Optimize Font Loading**: Use proper Google Fonts loading practices
 7. **Follow ESLint Rules**: Keep code consistent with the established patterns
+8. **Asset Management**: Use proper Vite asset imports for images and place PDFs in the public folder
+9. **Docker Compatibility**: When modifying the build process, ensure it works with the Docker production setup
 
 ## Developer Notes
 
@@ -353,3 +545,7 @@ When extending the project, consider these best practices:
 3. Group translations by feature or section for better organization
 4. Use TypeScript's type system to catch missing translations early
 5. The build optimization works automatically - no need to manually include or exclude sections
+6. For Docker deployment, remember that the application is built during the Docker image creation process
+7. When adding new assets:
+   - For images: Use ES Module imports in your code
+   - For PDFs: Place them in the public/pdf directory and reference with absolute paths

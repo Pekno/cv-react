@@ -1,9 +1,4 @@
 :root {
-  /* Base colors - used in both light and dark modes */
-  --primary-base: #2b689c;
-  --primary-light-base: #5394cb;
-  --primary-dark-base: #23547f;
-  
   /* Spacing system */
   --space-xs: 0.25rem;  /* 4px */
   --space-sm: 0.5rem;   /* 8px */
@@ -61,11 +56,6 @@
   --line-height-normal: 1.5;
   --line-height-loose: 1.75;
   
-  /* Light mode colors (default) */
-  --primary: var(--primary-base);
-  --primary-light: var(--primary-light-base);
-  --primary-dark: var(--primary-dark-base);
-  
   --text-primary: #333;
   --text-secondary: #666;
   
@@ -82,11 +72,7 @@
 }
 
 /* Dark mode color variables */
-[data-color-scheme="dark"] {
-  --primary: var(--primary-light-base);
-  --primary-light: var(--primary-base);
-  --primary-dark: #1b4062;
-  
+[data-color-scheme="dark"] {  
   --text-color: #e0e0e0;
   --text-primary: #e0e0e0;
   --text-secondary: #a0a0a0;

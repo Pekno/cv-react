@@ -138,14 +138,13 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects }) =>
                     href={project.link}
                     target="_blank"
                     variant="filled"
-                    color="blue"
                     fullWidth
                     mt="auto"
                     radius="md"
                     size="xs"
                     style={{ cursor: 'pointer' }}
                     data-clickable="true"
-                    className="clickable-button"
+                    className={classes.cardButton}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleUserInteraction();

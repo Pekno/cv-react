@@ -21,7 +21,6 @@ import {
   IconCertificate
 } from '@tabler/icons-react';
 import Section from '@components/common/Section/Section';
-import classes from './Skills.module.css';
 import techCategoryClasses from './components/TechCategory/TechCategory.module.css';
 import { createRegisteredSection } from '@decorators/section.decorator';
 import { SkillsProps, MainSkill, keyCompetenciesKey, qualityKey, categoryKey, chipKey } from './Skills.types';
@@ -30,8 +29,6 @@ import TechCategory from './components/TechCategory/TechCategory';
 import SkillCard from './components/SkillCard/SkillCard';
 
 // Define icon name type for better type safety
-type IconName = 'IconBriefcase' | 'IconTarget' | 'IconBrain' | 'IconClipboardCheck' | 'IconUsers' | 'IconRefresh';
-
 // Create a memoized skill card component - memoize the child components instead
 const MemoizedSkillCard = React.memo(SkillCard);
 const MemoizedTechCategory = React.memo(TechCategory);
@@ -42,7 +39,7 @@ const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
   const theme = useMantineTheme();
   
   // Using the enhanced useColorPalette hook
-  const { palette: skillColors, generateVariants, isColorDark } = useColorPalette(theme.colors['brand'][6], data.mainSkills.length);
+  const { palette: skillColors, generateVariants, isColorDark } = useColorPalette(theme.colors['brand']?.[6] || '#2b689c', data.mainSkills.length);
   
   // Map icon strings to actual icon components - memoized function
   const getIconComponent = useCallback((iconName: string): React.ReactNode => {

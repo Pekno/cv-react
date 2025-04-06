@@ -1,7 +1,6 @@
 import React from 'react';
 import { SocialLink } from '../../../types/profile-data.types';
 import SocialIcons from './SocialIcons';
-import classes from './SocialLinks.module.css';
 
 interface SocialLinksProps {
   socials: SocialLink[];

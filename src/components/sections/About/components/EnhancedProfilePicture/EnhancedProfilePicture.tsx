@@ -17,7 +17,8 @@ const EnhancedProfilePicture: React.FC<EnhancedProfilePictureProps> = ({
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [nextImageLoaded, setNextImageLoaded] = useState(false);
+  // We're using setNextImageLoaded but never reading the state directly
+  const [, setNextImageLoaded] = useState(false);
 
   const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

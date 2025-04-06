@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Rounded square background -->
+  <rect width="32" height="32" rx="6" fill="${color}" />
+  
+  <!-- Text initials -->
+  <text 
+    x="16" 
+    y="22" 
+    font-family="Signika, Arial, sans-serif" 
+    font-weight="bold" 
+    font-size="16" 
+    text-anchor="middle" 
+    fill="${lightColor}"
+  >${text}</text>
+</svg>

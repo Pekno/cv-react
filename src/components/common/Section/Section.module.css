@@ -29,7 +29,7 @@
   left: 50%;
   width: 60px;
   height: 3px;
-  background-color: var(--primary);
+  background-color: var(--mantine-color-brand-filled);
   transform: translateX(-50%);
 }
 
