@@ -2,6 +2,10 @@
 
 A modern, responsive CV/portfolio application built with React, TypeScript, and Vite. This project features multiple language support, a type-safe architecture, and a component-based structure for easy maintenance and extension.
 
+Desktop             |  Mobile
+:-------------------------:|:-------------------------:
+![Desktop View](.github/screenshots/desktop.png)  |  ![Mobile View](.github/screenshots/mobile.png)
+
 ## Features
 
 - 🌐 **Multi-Language Support**: Built-in internationalization with English and French (easily extendable)
@@ -35,6 +39,9 @@ meta: {
   pdfResume: {
     en: "/pdf/Your-Resume-EN.pdf", // PDFs should be placed in the public/pdf folder
     fr: "/pdf/Your-Resume-FR.pdf",
+  },
+  theme: {
+    primaryColor: "#3f51b5", // The hexadecimal color value for the theme
   },
   socials: [
     {

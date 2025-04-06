@@ -105,7 +105,7 @@ const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
     <List spacing="md">
       {data.competencies.map((competency, competenciesIndex) => (
         <List.Item key={competenciesIndex} icon={
-          <ThemeIcon color="blue" size={24} radius="xl">
+          <ThemeIcon color="brand" size={24} radius="xl">
             <IconCertificate size="1rem" />
           </ThemeIcon>
         }>
