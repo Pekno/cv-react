@@ -12,15 +12,15 @@ The CV React project serves both as a practical, usable CV/portfolio template an
 
 ## Features
 
-- 🌐 **Multi-Language Support**: Switch between English, French, or add your own languages
-- 🌓 **Light & Dark Mode**: Customizable theme with automatic system preference detection
-- 🎨 **Personalized Branding**: Set your own theme color in one place to customize the entire site
-- 📱 **Responsive Design**: Looks great on all devices - mobile, tablet, and desktop
-- 🔄 **Easy Content Updates**: Simple data files for updating your information without touching code
-- 📝 **PDF Resume Downloads**: Offer downloadable resume versions for visitors
-- 🧩 **Modular Sections**: Show only the sections that matter to you
-- ⚡ **Fast Loading**: Optimized performance for quick page loads
-- 🚀 **Easy Deployment**: Ready to host anywhere with minimal configuration
+- 🌐 **Multi-Language Support**: Built-in internationalization with English and French (easily extendable)
+- 🧩 **Component-Based Architecture**: Modular sections for easy customization
+- 📝 **Type-Safe Development**: Strong TypeScript typing throughout
+- 🎨 **Modern UI**: Built with Mantine UI components
+- 🧰 **Decorator Pattern**: Simplified registration of new sections
+- 📱 **Responsive Design**: Mobile-friendly layout
+- 🚀 **Fast Development**: Powered by Vite for quick build and hot module replacement
+- 🔍 **Build Optimization**: Automatically includes only the sections you use
+- 🐳 **Docker Support**: Production-ready Docker container
 
 ## Project Structure
 
