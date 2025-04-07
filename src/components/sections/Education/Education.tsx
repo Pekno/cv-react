@@ -65,7 +65,7 @@ const EducationSectionComponent = ({ data, evenSection = false }: EducationProps
                 value={language.value}
                 size={70}
                 thickness={8}
-                color='brand'
+                filledSegmentColor='brand'
                 label={
                   <Text className={classes.progressLabel}>
                     {language.value}%

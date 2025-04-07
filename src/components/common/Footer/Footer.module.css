@@ -14,10 +14,3 @@
 .footerText > a{
     color: var(--mantine-color-brand-filled);
 }
-  
-/* For responsive design */
-@media (max-width: 768px) {
-    .footer {
-        visibility: hidden;
-    }
-}

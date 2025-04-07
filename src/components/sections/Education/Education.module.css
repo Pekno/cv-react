@@ -49,4 +49,7 @@
   .card {
     padding: 1rem;
   }
+  .progressLabel {
+    font-size: var(--mantine-font-size-sm) !important;
+  }
 }

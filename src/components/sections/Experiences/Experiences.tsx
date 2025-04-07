@@ -105,7 +105,7 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
                   {exp.startDate.getFullYear()}
                 </Text>
                 <Badge 
-                  size={isMobile ? "xs" : "md"} 
+                  size="md"
                   radius="xl" 
                   className={classes.durationBadge}
                 >
