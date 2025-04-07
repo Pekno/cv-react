@@ -63,8 +63,8 @@
 }
 
 .consoleContent a:hover, .consoleLink:hover {
-  color: var(--mantine-primary-color-filled-hover);
-  border-bottom: 1px solid var(--mantine-primary-color-filled-hover);
+  color: var(--mantine-color-brand-text);
+  border-bottom: 1px solid var(--mantine-color-brand-text);
 }
 
 .cursor {
