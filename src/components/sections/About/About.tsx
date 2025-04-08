@@ -3,13 +3,14 @@ import {
   Grid,
   Text,
   Title,
-  Group,
   ActionIcon,
-  Loader
+  Loader,
+  Tooltip
 } from '@mantine/core';
 import { IconDownload } from '@tabler/icons-react';
 import Section from '@components/common/Section/Section';
 import classes from './About.module.css';
+import Socialclasses from '@components/common/SocialLinks/SocialLinks.module.css'
 import ConsoleTypingAnimation from './components/ConsoleTypingAnimation/ConsoleTypingAnimation';
 import AnimatedCounter from './components/AnimatedCounter/AnimatedCounter';
 import EnhancedProfilePicture from './components/EnhancedProfilePicture/EnhancedProfilePicture';
@@ -91,27 +92,33 @@ const AboutSectionComponent = ({ data, meta, evenSection = false }: AboutProps) 
             skipAnimation={true}
           />
 
-          <Group>
-            <SocialLinks socials={meta.socials} className={classes.actionIcon} />
+          <SocialLinks socials={meta.socials} className={classes.actionIcon}>
             { 
               Object.keys(meta.pdfResume).length > 0 && (
-                <ActionIcon
-                  size="lg"
-                  radius="xl"
-                  variant="filled"
-                  className={classes.actionIcon}
-                  onClick={handleDownload}
-                  disabled={isDownloading}
+                <Tooltip
+                  label="PDF"
+                  position="bottom"
+                  withArrow
+                  transitionProps={{ transition: "pop" }}
                 >
-                  {isDownloading ? (
-                    <Loader size="xs" color="white" />
-                  ) : (
-                    <IconDownload size={18} />
-                  )}
-                </ActionIcon>
+                  <ActionIcon
+                    size="lg"
+                    radius="xl"
+                    variant="filled"
+                    className={`${Socialclasses.socialLink}`}
+                    onClick={handleDownload}
+                    disabled={isDownloading}
+                  >
+                    {isDownloading ? (
+                      <Loader size="xs" color="white" />
+                    ) : (
+                      <IconDownload size={18} />
+                    )}
+                  </ActionIcon>
+                </Tooltip>
               )
             }
-          </Group>
+          </SocialLinks>
         </Grid.Col>
       </Grid>
     </Section>
