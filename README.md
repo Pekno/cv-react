@@ -184,24 +184,8 @@ npm run docker:down
 docker-compose down
 ```
 
-#### Custom Docker Builds
-
-To build the Docker image without using docker-compose:
-
-```bash
-docker build -t cv-react .
-docker run -p 80:80 -d cv-react
-```
-
-### Building for Production
-
-```bash
-npm run build
-# or
-yarn build
-```
-
 The build artifacts will be stored in the `dist/` directory.
+More info in the [Deployment Documentation](DEPLOYMENT.md).
 
 ### Using Demo Mode
 
@@ -211,14 +195,6 @@ To use example data instead of your personal data during development:
 npm run dev -- --mode=demo
 # or
 yarn dev --mode=demo
-```
-
-To build using example data:
-
-```bash
-npm run build -- --mode=demo
-# or
-yarn build --mode=demo
 ```
 
 ## Performance Optimization
