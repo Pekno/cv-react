@@ -1,4 +1,4 @@
-# CV React
+# <img src="./.github/screenshots/logo.png" height="75">
 
 A modern, responsive CV/portfolio application built with React, TypeScript, and Vite. This project features multiple language support, a type-safe architecture, and a component-based structure for easy maintenance and extension.
 
