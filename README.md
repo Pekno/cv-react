@@ -208,6 +208,27 @@ docker-compose down
 The build artifacts will be stored in the `dist/` directory.
 More info in the [Deployment Documentation](DEPLOYMENT.md).
 
+### Keeping Your Fork Up to Date
+
+When new features or fixes are released upstream, sync your fork to get them:
+
+```bash
+# Add the upstream remote (only needed once)
+git remote add upstream https://github.com/Pekno/cv-react.git
+
+# Fetch upstream changes
+git fetch upstream
+
+# Merge upstream into your branch
+git merge upstream/main
+```
+
+If there are merge conflicts, they will most likely be in your customized files (`profile-data.ts`, translation files). Resolve them by keeping your personal data while accepting the structural changes from upstream.
+
+You can check the ![GitHub Tag](https://img.shields.io/github/v/tag/Pekno/cv-react?label=latest%20version) badge to see if a newer version is available.
+
+> **Tip:** If you use Netlify or Vercel, merging upstream and pushing will automatically trigger a redeploy.
+
 ### Using Demo Mode
 
 To use example data instead of your personal data during development:

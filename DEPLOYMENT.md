@@ -30,6 +30,27 @@ Every push to your repository will trigger an automatic redeploy.
 
 Both Netlify and Vercel offer free custom domain configuration in their dashboard settings.
 
+### Keeping Your Fork Up to Date
+
+When the upstream repository releases new features or fixes, sync your fork:
+
+```bash
+# Add the upstream remote (only needed once)
+git remote add upstream https://github.com/Pekno/cv-react.git
+
+# Fetch upstream changes
+git fetch upstream
+
+# Merge upstream into your branch
+git merge upstream/main
+```
+
+If there are merge conflicts, they will most likely be in your customized files (`profile-data.ts`, translation files). Resolve them by keeping your personal data while accepting the structural changes from upstream.
+
+Once you push the merged changes, Netlify or Vercel will automatically trigger a redeploy.
+
+> **Alternative:** You can also sync your fork directly from the GitHub UI by clicking **"Sync fork"** on your fork's main page.
+
 ---
 
 ## Docker + GitHub Actions (Self-Hosted)
