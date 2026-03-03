@@ -1,8 +1,42 @@
 # Deployment Guide for CV React
 
-This guide explains how to deploy your own personalized version of the CV React application using GitHub Actions and Docker. This approach allows you to maintain your personal profile data separately from the main application code and automate the build process.
+This guide covers all deployment options for the CV React application, from zero-config static hosting to self-hosted Docker containers.
 
-## Overview
+## Static Hosting — Netlify / Vercel (Recommended)
+
+The simplest way to deploy: fork, customize, and connect to a hosting platform. No server management required.
+
+### Deploying to Netlify
+
+1. Fork this repository on GitHub
+2. Edit `src/data/profile-data.ts` and `src/i18n/locales/` with your information
+3. Log in to [Netlify](https://app.netlify.com/) and click **"Add new site" > "Import an existing project"**
+4. Connect your GitHub fork — Netlify will auto-detect the build settings from `netlify.toml`
+5. Click **Deploy site**
+
+Every push to your repository will trigger an automatic redeploy.
+
+### Deploying to Vercel
+
+1. Fork this repository on GitHub
+2. Edit `src/data/profile-data.ts` and `src/i18n/locales/` with your information
+3. Log in to [Vercel](https://vercel.com/) and click **"Add New Project"**
+4. Import your GitHub fork — Vercel auto-detects Vite projects and uses the settings from `vercel.json`
+5. Click **Deploy**
+
+Every push to your repository will trigger an automatic redeploy.
+
+### Custom Domain
+
+Both Netlify and Vercel offer free custom domain configuration in their dashboard settings.
+
+---
+
+## Docker + GitHub Actions (Self-Hosted)
+
+This approach allows you to maintain your personal profile data separately from the main application code and automate the build process with Docker containers.
+
+### Overview
 
 The deployment process follows these steps:
 1. Create a private GitHub repository to store your personal data
@@ -10,7 +44,7 @@ The deployment process follows these steps:
 3. Configure GitHub Actions to build a Docker image
 4. Deploy the container image to your hosting service
 
-## 1. Create Your Personal Data Repository
+### 1. Create Your Personal Data Repository
 
 First, create a new private repository on GitHub to store your personal profile data:
 
@@ -20,7 +54,7 @@ First, create a new private repository on GitHub to store your personal profile 
 4. Initialize with a README file
 5. Click "Create repository"
 
-## 2. Set Up Your Folder Structure
+### 2. Set Up Your Folder Structure
 
 Your repository needs to follow this specific folder structure:
 
@@ -48,7 +82,7 @@ cv-react-private/
         └── resume.pdf
 ```
 
-### Required Files
+#### Required Files
 
 1. **Profile Data (`data/profile-data.ts`)**:
    - Contains your profile information (experience, education, skills, etc.)
@@ -64,7 +98,7 @@ cv-react-private/
 4. **Public Files (`public/` folder)**:
    - Additional files like PDFs that need to be accessible
 
-## 3. Add GitHub Actions Workflow
+### 3. Add GitHub Actions Workflow
 
 Create the `.github/workflows/docker-build.yml` file with the following content:
 
@@ -150,7 +184,7 @@ This workflow will:
 - Copy your personal data, translations, and assets into the main repository
 - Build a Docker image and push it to GitHub Container Registry
 
-## 4. Deploy the Container
+### 4. Deploy the Container
 
 Once your GitHub Actions workflow has successfully built and pushed your Docker image, you can deploy it using any container platform that supports Docker.
 
@@ -172,36 +206,36 @@ Replace `yourusername` with your GitHub username (in lowercase).
 
 This image can be deployed on any platform that supports Docker containers including Docker standalone, TrueNAS SCALE with Dockge, Kubernetes, Docker Swarm, or cloud container services.
 
-## 5. Keeping Your Fork Updated
+### 5. Keeping Your Fork Updated
 
 To keep your deployment up-to-date with changes from the main repository, you don't need to do anything special. Each time you push changes to your private repository, the GitHub Actions workflow will automatically check out the latest version of the main repository.
 
 If you want to trigger a new build manually, you can use the "Run workflow" button in the Actions tab of your GitHub repository.
 
-## Customizing Your Data
+### Customizing Your Data
 
 For details on how to structure your profile data and translations, please refer to the README.md file in the main repository. It contains comprehensive documentation on the data model and internationalization setup.
 
-## Troubleshooting
+### Troubleshooting
 
-### Image Not Building
+#### Image Not Building
 
 1. Check the GitHub Actions logs for any errors
 2. Verify that your folder structure matches the expected structure
 3. Make sure your profile-data.ts file is valid TypeScript
 
-### Container Not Starting
+#### Container Not Starting
 
 1. Check that your image was successfully pushed to GitHub Container Registry
 2. Verify that your server has access to pull from GitHub Container Registry
 3. Check the container logs for any runtime errors
 
-## Security Considerations
+### Security Considerations
 
 1. Keep your repository private to protect personal information
 2. Consider using GitHub's security features like Dependabot
 3. Regularly update the main repository to get security fixes
 
-## Conclusion
+### Conclusion
 
 Following this guide allows you to maintain your personal data separately from the application code while still benefiting from updates to the main CV React project. The automated GitHub Actions workflow makes deploying updates as simple as pushing changes to your private repository.

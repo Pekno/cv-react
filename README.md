@@ -1,5 +1,13 @@
 # <img src="./.github/screenshots/logo.png" height="75">
 
+<div align="center">
+
+![GitHub Tag](https://img.shields.io/github/v/tag/Pekno/cv-react?label=latest%20version)
+
+</div>
+
+## Description
+
 A modern, responsive CV/portfolio application built with React, TypeScript, and Vite. This project features multiple language support, a type-safe architecture, and a component-based structure for easy maintenance and extension.
 
 Desktop             |  Mobile
@@ -152,9 +160,22 @@ Each README contains detailed information on:
 
 4. Open your browser and navigate to `http://localhost:5173`
 
-### Using Docker for Production
+## Deployment
 
-This project includes a production-ready Docker setup that builds and serves your CV application.
+### Static Hosting with Netlify or Vercel (Recommended)
+
+The fastest way to deploy your CV — no server or Docker required:
+
+1. **Fork** this repository
+2. **Edit** `src/data/profile-data.ts` and the translation files in `src/i18n/locales/` with your information
+3. **Connect** your fork to [Netlify](https://app.netlify.com/) or [Vercel](https://vercel.com/) — both auto-detect Vite projects
+4. **Deploy** — every push to your repo triggers an automatic rebuild
+
+The project includes `netlify.toml` and `vercel.json` configuration files that handle SPA routing out of the box.
+
+### Docker (Self-Hosted)
+
+For self-hosted deployments, a production-ready Docker setup is included.
 
 #### Prerequisites for Docker
 
@@ -192,9 +213,7 @@ More info in the [Deployment Documentation](DEPLOYMENT.md).
 To use example data instead of your personal data during development:
 
 ```bash
-npm run dev -- --mode=demo
-# or
-yarn dev --mode=demo
+npm run dev:demo
 ```
 
 ## Performance Optimization

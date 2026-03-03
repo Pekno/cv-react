@@ -528,10 +528,10 @@ The project supports a special "demo" mode for using example data:
 
 ```bash
 # Run development server with example data
-npm run dev -- --mode=demo
+npm run dev:demo
 
 # Build with example data
-npm run build -- --mode=demo
+npm run build:demo
 ```
 
 This is controlled by the `__USE_EXAMPLE_DATA__` feature flag set in the Vite config.
