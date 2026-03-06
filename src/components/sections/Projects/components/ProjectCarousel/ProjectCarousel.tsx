@@ -1,23 +1,6 @@
-import React, { useState } from 'react';
-import { 
-  Card, 
-  Image, 
-  Title, 
-  Text, 
-  Button, 
-  Group,
-  Tooltip,
-  ActionIcon,
-  Box
-} from '@mantine/core';
-import { Carousel, Embla } from '@mantine/carousel';
-import { useTranslation } from 'react-i18next';
-import { IconPlayerPause, IconPlayerPlay } from '@tabler/icons-react';
-import useCarouselAutoplay from '../../hooks/useCarouselAutoplay';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { IconArrowUpRight, IconCode } from '@tabler/icons-react';
 import classes from './ProjectCarousel.module.css';
-
-// Import Mantine Carousel styles if they're not already imported elsewhere
-import '@mantine/carousel/styles.css';
 
 interface ProjectItem {
   title: string;
@@ -25,140 +8,128 @@ interface ProjectItem {
   image: string;
   link?: string;
   linkText?: string;
+  category?: string;
+  tags?: string[];
 }
 
 interface ProjectCarouselProps {
   projects: ProjectItem[];
 }
 
+const AUTOPLAY_DELAY = 5000;
+
 export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects }) => {
-  const { t } = useTranslation();
-  const [embla, setEmbla] = useState<Embla | null>(null);
-  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
-  
-  // Use custom hook for autoplay functionality
-  const { 
-    handleUserInteraction,
-    isAutoplayRunning,
-    startAutoplay,
-    stopAutoplay
-  } = useCarouselAutoplay(embla, {
-    delay: 1000, // 15 seconds rotation
-    idleDelay: 3000, // Reset after 15 seconds of inactivity
-  });
-  
-  const toggleAutoplay = () => {
-    if (isAutoplayRunning) {
-      stopAutoplay();
-      setAutoplayEnabled(false);
-    } else {
-      startAutoplay();
-      setAutoplayEnabled(true);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const autoplayRef = useRef<number | null>(null);
+
+  const featured = projects[selectedIndex];
+
+  const selectProject = useCallback((index: number) => {
+    setSelectedIndex(index);
+    // Reset autoplay timer on manual interaction
+    if (autoplayRef.current !== null) {
+      clearInterval(autoplayRef.current);
     }
-  };
-  
+    autoplayRef.current = window.setInterval(() => {
+      setSelectedIndex(prev => (prev + 1) % projects.length);
+    }, AUTOPLAY_DELAY);
+  }, [projects.length]);
+
+  // Start autoplay on mount
+  useEffect(() => {
+    if (projects.length <= 1) return;
+    autoplayRef.current = window.setInterval(() => {
+      setSelectedIndex(prev => (prev + 1) % projects.length);
+    }, AUTOPLAY_DELAY);
+    return () => {
+      if (autoplayRef.current !== null) clearInterval(autoplayRef.current);
+    };
+  }, [projects.length]);
+
+  if (!featured) return null;
+
   return (
-    <Box className={classes.carouselContainer}>
-      {/* Autoplay toggle button */}
-      <div className={classes.autoplayControl}>
-        <Tooltip 
-          label={isAutoplayRunning && autoplayEnabled ? t('autoplay-active') : t('autoplay-paused')} 
-          position="top"
-        >
-          <ActionIcon
-            variant="light"
-            color={isAutoplayRunning && autoplayEnabled ? "blue" : "gray"}
-            onClick={toggleAutoplay}
-            className={classes.autoplayButton}
-            aria-label={isAutoplayRunning ? t('autoplay-active') : t('autoplay-paused')}
-          >
-            {isAutoplayRunning ? (
-              <IconPlayerPlay size={18} />
-            ) : (
-              <IconPlayerPause size={18} />
-            )}
-          </ActionIcon>
-        </Tooltip>
-      </div>
-      
-      {/* Carousel */}
-      <Carousel
-        withIndicators
-        withControls
-        height="auto"
-        slideSize={{ base: '80%', sm: '40%', md: '30%', lg: '25%' }}
-        slideGap={{ base: 'md', sm: 'lg' }}
-        loop
-        align="center"
-        getEmblaApi={setEmbla}
-        slidesToScroll={1}
-        styles={{
-          control: {
-            zIndex: 15,
-          },
-          viewport: {
-            padding: '10px 0',
-          }
-        }}
-      >
-        {projects.map((project, index) => (
-          <Carousel.Slide key={index}>
-            <div className={classes.cardWrapper}>
-              <Card 
-                shadow="sm" 
-                padding="md" 
-                radius="md" 
-                withBorder 
-                className={classes.card}
-                style={{ 
-                  cursor: 'default',
-                  '--child-button-cursor': 'pointer'
-                }}
+    <div className={classes.spotlightContainer}>
+      {/* ── Featured card ── */}
+      <div className={classes.featuredCard}>
+        {/* Left: image */}
+        <div className={classes.featuredImageWrapper}>
+          <img
+            src={featured.image}
+            alt={featured.title}
+            className={classes.featuredImage}
+            draggable={false}
+          />
+          <div className={classes.imageOverlay} />
+        </div>
+
+        {/* Right: content */}
+        <div className={classes.featuredContent}>
+
+          <h2 className={classes.featuredTitle}>{featured.title}</h2>
+          <p className={classes.featuredDescription}>{featured.description}</p>
+
+          {featured.link && (
+            <div className={classes.actionsRow}>
+              <a
+                href={featured.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.primaryButton}
               >
-                <Card.Section>
-                  <Image
-                    src={project.image}
-                    height={150}
-                    alt={project.title}
-                    fit="cover"
-                  />
-                </Card.Section>
-
-                <Group mt="md" mb="xs">
-                  <Title order={5} fw={700}>{project.title}</Title>
-                </Group>
-
-                <Text size="xs" color="dimmed" mb="md" className={classes.description}>
-                  {project.description}
-                </Text>
-
-                {project.link && (
-                  <Button 
-                    component="a"
-                    href={project.link}
-                    target="_blank"
-                    variant="filled"
-                    fullWidth
-                    mt="auto"
-                    radius="md"
-                    size="xs"
-                    style={{ cursor: 'pointer' }}
-                    data-clickable="true"
-                    className={classes.cardButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleUserInteraction();
-                    }}
-                  >
-                    {project.linkText || t('personnalProjects-tryIt')}
-                  </Button>
-                )}
-              </Card>
+                <IconCode size={15} className={classes.buttonIcon} />
+                {featured.linkText ?? 'Source Code'}
+                <IconArrowUpRight size={14} className={classes.buttonArrow} />
+              </a>
+              <a
+                href={featured.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.statusLink}
+              >
+                <span className={classes.statusDot} />
+                Live Status
+              </a>
             </div>
-          </Carousel.Slide>
-        ))}
-      </Carousel>
-    </Box>
+          )}
+        </div>
+
+        {/* Corner icon button */}
+        <div className={classes.cornerBadge}>
+          <span className={classes.cornerIndex}>
+            {String(selectedIndex + 1).padStart(2, '0')}
+          </span>
+        </div>
+      </div>
+
+      {/* ── Thumbnail row ── */}
+      {projects.length > 1 && (
+        <div className={classes.thumbnailRow}>
+          {projects.map((project, index) => (
+            <button
+              key={index}
+              className={`${classes.thumbnail} ${index === selectedIndex ? classes.thumbnailActive : ''}`}
+              onClick={() => selectProject(index)}
+              aria-label={`Select project: ${project.title}`}
+              aria-pressed={index === selectedIndex}
+            >
+              <div className={classes.thumbnailImageWrapper}>
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className={classes.thumbnailImage}
+                  draggable={false}
+                />
+                {index === selectedIndex && (
+                  <div className={classes.thumbnailActiveOverlay} />
+                )}
+              </div>
+              <span className={classes.thumbnailLabel}>{project.title}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

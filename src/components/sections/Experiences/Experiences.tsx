@@ -1,188 +1,208 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { 
+import React, { useEffect, useState, useMemo } from 'react';
+import {
   Accordion,
-  Text, 
-  Group, 
-  Badge, 
-  Box,
-  Timeline,
-  Title
+  Text,
+  Image,
 } from '@mantine/core';
-import { 
+import {
+  IconChevronDown,
   IconBriefcase,
-  IconClock,
-  IconChevronDown
 } from '@tabler/icons-react';
 import { useLanguage } from '@hooks/useLanguage';
 import Section from '@components/common/Section/Section';
 import classes from './Experiences.module.css';
 import { useLocation } from 'react-router-dom';
 import { createRegisteredSection } from '@decorators/section.decorator';
-import { contextKey, experienceKey, ExperiencesProps } from './Experiences.types'
-import { ExperienceLabel } from './components/ExperienceLabel/ExperienceLabel';
-import { GlobalTranslationKeys } from '@app-types/translations.types';
-import { useMediaQuery } from '@mantine/hooks';
+import { contextKey, experienceKey, ExperiencesProps } from './Experiences.types';
+import { type TechItem, TechPillGroup } from '@components/common/TechPill/TechPill';
+import { GlobalTranslationKeys, TranslationKey } from '@app-types/translations.types';
 
-// Memoize the ExperienceLabel component to prevent unnecessary re-renders
-const MemoizedExperienceLabel = React.memo(ExperienceLabel);
+// ── Types ──────────────────────────────────────────────────────────
 
-// Create the Experiences component as a regular function
+interface ProcessedExperience {
+  id: string;
+  startDate: Date;
+  endDate?: Date;
+  companyName: string;
+  companyLogo: string;
+  technologies: TechItem[][];
+  contexts: number[];
+  isCurrent?: boolean;
+  duration: number;
+  durationUnit: GlobalTranslationKeys;
+}
+
+// ── Helpers ─────────────────────────────────────────────────────────
+
+function formatDate(date: Date): string {
+  return `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+}
+
+// ── Sub-components ─────────────────────────────────────────────────
+
+interface ExperienceCardProps {
+  exp: ProcessedExperience;
+  isOpen: boolean;
+  onToggle: (id: string | null) => void;
+  t: (key: TranslationKey, options?: unknown) => string;
+}
+
+const ExperienceCard = React.memo(({ exp, isOpen, onToggle, t }: ExperienceCardProps) => {
+  const isCurrent = !exp.endDate || exp.isCurrent;
+  const startStr = formatDate(exp.startDate);
+  const endStr = isCurrent ? t('global.present' as TranslationKey) : formatDate(exp.endDate!);
+
+  return (
+    <div className={classes.card}>
+      <Accordion
+        value={isOpen ? exp.id : null}
+        onChange={onToggle}
+        classNames={{
+          item: classes.accordionItem,
+          control: classes.accordionControl,
+          panel: classes.accordionPanel,
+          content: classes.accordionContent,
+          chevron: classes.accordionChevron,
+        }}
+        chevron={<IconChevronDown className={classes.accordionChevronIcon} />}
+      >
+        <Accordion.Item value={exp.id} id={`accordion-${exp.id}`}>
+          <Accordion.Control>
+            <div className={classes.cardHeader}>
+              <div className={classes.logoFrame}>
+                <Image
+                  src={exp.companyLogo}
+                  alt={exp.companyName}
+                  className={classes.companyLogo}
+                  fit="contain"
+                />
+              </div>
+              <div className={classes.headerContent}>
+                <span className={classes.jobTitle}>
+                  {t(experienceKey(exp.id, 'jobTitle'))}
+                </span>
+                <span className={classes.companyName}>{exp.companyName}</span>
+                <div className={classes.dateLine}>
+                  <span className={classes.dateRange}>
+                    {startStr} — {endStr}
+                  </span>
+                  <span className={classes.durationPill}>
+                    {exp.duration}&nbsp;{t(exp.durationUnit)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Accordion.Control>
+
+          <Accordion.Panel>
+            <div className={classes.contextWrapper}>
+              {exp.contexts.map((_, contextIndex) => (
+                <div key={contextIndex} className={classes.contextItem}>
+                  <div className={classes.bulletDot} />
+                  <Text component="span" className={classes.contextText}>
+                    {t(contextKey(exp.id, contextIndex))}
+                  </Text>
+                </div>
+              ))}
+
+              {exp.technologies.flat().length > 0 && (
+                <TechPillGroup
+                  items={exp.technologies.flat()}
+                  className={classes.techGroup}
+                />
+              )}
+            </div>
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </div>
+  );
+});
+
+ExperienceCard.displayName = 'ExperienceCard';
+
+// ── Main component ─────────────────────────────────────────────────
+
 const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesProps) => {
   const { t } = useLanguage();
   const location = useLocation();
   const [value, setValue] = useState<string | null>(null);
-  // Check if screen is mobile
-  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Handle direct navigation to subsections via URL hash
+  // Flow: hash changes → open accordion → wait for render → scroll
   useEffect(() => {
-    if (location.hash.includes("#work-")) {
-      const subsectionId = location.hash.replace("#work-", "");
+    if (location.hash.includes('#work-')) {
+      const subsectionId = location.hash.replace('#work-', '');
       setValue(subsectionId);
+
+      const timeoutId = setTimeout(() => {
+        const el = document.getElementById(`work-${subsectionId}`);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      }, 50);
+      return () => clearTimeout(timeoutId);
     }
   }, [location.hash]);
 
-  // Helper function to calculate difference in months
-  const calculateMonthDiff = useCallback((startDate: Date, endDate: Date): number => {
-    const months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
-    return months - startDate.getMonth() + endDate.getMonth() + 1;
-  }, []);
-
-  // Process experience data, calculating duration for "current" jobs
-  // Memoize this computation to prevent recalculation on every render
-  const processedExperiences = useMemo(() => {
+  const processedExperiences = useMemo((): ProcessedExperience[] => {
     return data.experiences.map((exp) => {
-      const startDate = exp.startDate;
       const currentDate = exp.endDate ?? new Date();
-      const diffMonths = calculateMonthDiff(startDate, currentDate);
+      const months = (currentDate.getFullYear() - exp.startDate.getFullYear()) * 12;
+      const diffMonths = months - exp.startDate.getMonth() + currentDate.getMonth() + 1;
       return {
         ...exp,
         duration: diffMonths < 12 ? diffMonths : Math.trunc(diffMonths / 12),
-        durationUnit: diffMonths < 12 ? 'global.units.months' : 'global.units.years' as GlobalTranslationKeys 
+        durationUnit: (diffMonths < 12
+          ? 'global.units.months'
+          : 'global.units.years') as GlobalTranslationKeys,
       };
     });
-  }, [data.experiences, calculateMonthDiff]);
-
-  // Handle accordion change
-  const handleAccordionChange = useCallback((newValue: string | null) => {
-    setValue(newValue);
-  }, []);
-
-  // Memoize the timeline component to prevent unnecessary re-renders
-  const experiencesTimeline = useMemo(() => (
-    <Timeline 
-      active={processedExperiences.length - 1} 
-      bulletSize={isMobile ? 14 : 34} 
-      lineWidth={isMobile ? 1 : 2}
-      color="brand"
-      className={classes.timeline}
-      style={isMobile ? { 
-        paddingLeft: '8px',
-        paddingBottom: '0', 
-        marginBottom: '0',
-      } : undefined}
-      py={isMobile ? 0 : undefined}
-    >
-      {processedExperiences.map((exp, companyIndex) => (
-        <Timeline.Item
-          id={`work-${exp.id}`}
-          key={exp.id}
-          data-order={1}
-          style={{
-            scrollMarginTop: 80,
-            ...(isMobile ? { paddingBottom: '4px', marginBottom: '0' } : {})
-          }}
-          bullet={
-            <Box className={classes.timelineBullet}>
-              {/* Only show icon on desktop */}
-              {!isMobile && <IconBriefcase size={16} />}
-            </Box>
-          }
-          title={
-            <Box style={isMobile ? { marginBottom: '2px' } : undefined}>
-              <Group gap={isMobile ? "4px" : "xs"} className={classes.timelineHeader}>
-                <Text fw={700} className={classes.companyYear} span>
-                  {exp.startDate.getFullYear()}
-                </Text>
-                <Badge 
-                  size="md"
-                  radius="xl" 
-                  className={classes.durationBadge}
-                >
-                  <Group gap={5}>
-                    <IconClock size={isMobile ? 10 : 12} />
-                    <span>{exp.duration} {t(exp.durationUnit)}</span>
-                  </Group>
-                </Badge>
-              </Group>
-            </Box>
-          }
-          className={classes.timelineItem}
-          lineVariant={companyIndex === processedExperiences.length - 1 ? 'dashed' : 'solid'}
-        >
-          <Accordion 
-            defaultValue={processedExperiences[0]?.id}
-            classNames={{
-              chevron: classes.accordionChevron,
-              item: classes.accordionItem,
-              control: classes.accordionControl,
-              panel: classes.accordionPanel,
-              content: classes.accordionContent
-            }}
-            value={value}
-            onChange={handleAccordionChange}
-            chevron={<IconChevronDown className={classes.accordionChevronIcon} />}
-          >
-            <Accordion.Item value={exp.id} id={`accordion-${exp.id}`}>
-              <Accordion.Control>
-                <MemoizedExperienceLabel 
-                  companyName={exp.companyName}
-                  companyLogo={exp.companyLogo}
-                  jobTitle={t(experienceKey(exp.id, 'jobTitle'))}
-                />
-              </Accordion.Control>
-              <Accordion.Panel>
-                <div className={classes.contextWrapper}>
-                  {exp.contexts.map((_, contextIndex) => (
-                    <Box key={contextIndex} className={classes.contextItem}>
-                      <Group gap={5} className={classes.contextHeader}>
-                        <Title order={5} className={classes.contextTitle}>Mission :</Title>
-                        <Text size={isMobile ? "sm" : "md"} span>{t(contextKey(exp.id, contextIndex))}</Text>
-                      </Group>
-                      
-                      {contextIndex < exp.technologies.length && (
-                        <Group mt={isMobile ? "4px" : "xs"} gap="xs" className={classes.techGroup}>
-                          {exp.technologies[contextIndex] && exp.technologies[contextIndex].map((tech, techIndex) => (
-                            <Badge 
-                              key={techIndex} 
-                              size={isMobile ? "xs" : "sm"} 
-                              variant="outline"
-                              className={classes.techBadge}
-                            >
-                              {tech}
-                            </Badge>
-                          ))}
-                        </Group>
-                      )}
-                    </Box>
-                  ))}
-                </div>
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
-        </Timeline.Item>
-      ))}
-    </Timeline>
-  ), [processedExperiences, value, handleAccordionChange, t, isMobile]);
+  }, [data.experiences]);
 
   return (
     <Section id="experiences" title={t('menu.experiences')} evenSection={evenSection}>
       <div className={classes.experienceContainer}>
-        {experiencesTimeline}
+        {/* Center vertical line */}
+        <div className={classes.timelineLine} />
+
+        {processedExperiences.map((exp, index) => {
+          const isCurrent = !exp.endDate || exp.isCurrent;
+          const isLeft = index % 2 === 0;
+
+          return (
+            <div
+              key={exp.id}
+              id={`work-${exp.id}`}
+              className={`${classes.entryRow} ${isLeft ? classes.entryRowLeft : classes.entryRowRight}`}
+              style={{ scrollMarginTop: 80 }}
+            >
+              {/* Card side */}
+              <div className={classes.cardSide}>
+                <ExperienceCard
+                  exp={exp}
+                  isOpen={value === exp.id}
+                  onToggle={setValue}
+                  t={t}
+                />
+              </div>
+
+              {/* Center node */}
+              <div className={classes.nodeCenter}>
+                <div className={`${classes.nodeIcon} ${isCurrent ? '' : classes.nodeIconInactive}`}>
+                  <IconBriefcase className={classes.nodeIconSvg} stroke={1.8} />
+                </div>
+              </div>
+
+              {/* Spacer side */}
+              <div className={classes.spacerSide} />
+            </div>
+          );
+        })}
       </div>
     </Section>
   );
 };
 
-// Export with section registration
 export default createRegisteredSection<ExperiencesProps>('experiences', ExperiencesSectionComponent);

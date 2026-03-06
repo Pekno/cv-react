@@ -1,135 +1,123 @@
-import React, { useCallback, useMemo } from 'react';
-import { 
-  Title, 
-  Text, 
-  Grid, 
-  Paper, 
-  Divider,
-  ThemeIcon,
-  SimpleGrid,
-  List,
-  useMantineTheme
+import React, { useMemo } from 'react';
+import {
+  Text,
+  Grid,
+  Title,
 } from '@mantine/core';
+import {
+  IconBriefcase,
+  IconTarget,
+  IconBrain,
+  IconCheck,
+  IconClipboardCheck,
+  IconUsers,
+  IconRefresh,
+} from '@tabler/icons-react';
 import { useLanguage } from '@hooks/useLanguage';
-import { 
+import { TechPillGroup } from '@components/common/TechPill/TechPill';
+import Section from '@components/common/Section/Section';
+import { createRegisteredSection } from '@decorators/section.decorator';
+import {
+  SkillsProps,
+  MainSkill,
+  TechCategory,
+  Competency,
+  qualityKey,
+  chipKey,
+  categoryKey,
+  competencyTitleKey,
+  competencyDescKey,
+} from './Skills.types';
+import SkillCard from './components/SkillCard/SkillCard';
+import classes from './Skills.module.css';
+
+const MemoizedSkillCard = React.memo(SkillCard);
+
+const TABLER_ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
   IconBriefcase,
   IconTarget,
   IconBrain,
   IconClipboardCheck,
   IconUsers,
   IconRefresh,
-  IconCertificate
-} from '@tabler/icons-react';
-import Section from '@components/common/Section/Section';
-import techCategoryClasses from './components/TechCategory/TechCategory.module.css';
-import { createRegisteredSection } from '@decorators/section.decorator';
-import { SkillsProps, MainSkill, keyCompetenciesKey, qualityKey, categoryKey, chipKey } from './Skills.types';
-import useColorPalette from '@hooks/useColorPalette';
-import TechCategory from './components/TechCategory/TechCategory';
-import SkillCard from './components/SkillCard/SkillCard';
+};
 
-// Define icon name type for better type safety
-// Create a memoized skill card component - memoize the child components instead
-const MemoizedSkillCard = React.memo(SkillCard);
-const MemoizedTechCategory = React.memo(TechCategory);
+function getTablerIcon(iconName: string): React.ReactNode {
+  const Icon = TABLER_ICON_MAP[iconName] ?? IconBriefcase;
+  return <Icon size={24} />;
+}
 
-// First define the component as a regular function, which we'll export with the decorator
 const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
   const { t } = useLanguage();
-  const theme = useMantineTheme();
-  
-  // Using the enhanced useColorPalette hook
-  const { palette: skillColors, generateVariants, isColorDark } = useColorPalette(theme.colors['brand']?.[6] || '#2b689c', data.mainSkills.length);
-  
-  // Map icon strings to actual icon components - memoized function
-  const getIconComponent = useCallback((iconName: string): React.ReactNode => {
-    const iconMap: Record<string, React.ReactNode> = {
-      'IconBriefcase': <IconBriefcase size={24} />,
-      'IconTarget': <IconTarget size={24} />,
-      'IconBrain': <IconBrain size={24} />,
-      'IconClipboardCheck': <IconClipboardCheck size={24} />,
-      'IconUsers': <IconUsers size={24} />,
-      'IconRefresh': <IconRefresh size={24} />
-    };
-    
-    return iconMap[iconName] || <IconBriefcase size={24} />;
-  }, []);
 
-  // Convert main skills data to component format - memoized
-  const renderMainSkills = useMemo(() => {
-    return data.mainSkills.map((skill: MainSkill, skillIndex) => {
-      // Use the pre-generated analogous color for this skill
-      const skillColor = skillColors[skillIndex] ?? "";
-      
-      return {
-        icon: getIconComponent(skill.icon),
-        title: t(qualityKey(skill.id, 'title')),
-        description: t(qualityKey(skill.id, 'desc')),
-        badges: skill.badges.map(b => t(chipKey(skill.id, b))),
-        seed: skillIndex + 1, // We'll still use index+1 as seed for consistent badge colors
-        mainColor: skillColor, // Pass the analogous color to the SkillCard
-        generateVariants,
-        isColorDark
-      };
-    });
-  }, [data.mainSkills, skillColors, getIconComponent, t]);
-  
-  // Memoize the skills grid to prevent unnecessary re-renders
-  const skillsGrid = useMemo(() => (
-    <Grid gutter={30} mb={50}>
-      {renderMainSkills.map((skill, index) => (
-        <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={index}>
-          <MemoizedSkillCard {...skill} />
-        </Grid.Col>
-      ))}
-    </Grid>
-  ), [renderMainSkills]);
-  
-  // Memoize the tech categories grid
-  const techCategoriesGrid = useMemo(() => (
-    <SimpleGrid cols={{ base: 1, md: 2 }} spacing={20} mb={40}>
-      {data.categories.map((category, categoryIndex) => (
-        <MemoizedTechCategory key={categoryIndex} title={t(categoryKey(category.id))}>
-          {category.items.map((url, itemIndex) => (
-            <div key={itemIndex} className={techCategoryClasses.shieldBadge}>
-              <img src={url} alt={t(categoryKey(category.id))} />
-            </div>
-          ))}
-        </MemoizedTechCategory>
-      ))}
-    </SimpleGrid>
-  ), [data.categories, t]);
-  
-  // Memoize the competencies list
-  const competenciesList = useMemo(() => (
-    <List spacing="md">
-      {data.competencies.map((competency, competenciesIndex) => (
-        <List.Item key={competenciesIndex} icon={
-          <ThemeIcon color="brand" size={24} radius="xl">
-            <IconCertificate size="1rem" />
-          </ThemeIcon>
-        }>
-          {t(keyCompetenciesKey(competency))}
-        </List.Item>
-      ))}
-    </List>
-  ), [data.competencies, t]);
+  const processedMainSkills = useMemo(() => {
+    return data.mainSkills.map((skill: MainSkill) => ({
+      icon: getTablerIcon(skill.icon),
+      title: t(qualityKey(skill.id, 'title')),
+      description: t(qualityKey(skill.id, 'desc')),
+      badges: skill.badges.map(b => t(chipKey(skill.id, b))),
+    }));
+  }, [data.mainSkills, t]);
 
   return (
     <Section id="skills" title={t('menu.skills')} evenSection={evenSection}>
-      {skillsGrid}
+      <Grid gutter={30}>
+        {processedMainSkills.map((skill, index) => (
+          <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={index}>
+            <MemoizedSkillCard {...skill} />
+          </Grid.Col>
+        ))}
+      </Grid>
 
-      <Divider my={50} label={<Text fw={700} fz="lg">{t('sections.skills.functional.libraries')}</Text>} labelPosition="center" />
+      <div className={classes.competenciesWrapper}>
+        <div className={classes.competenciesGrid}>
+          {/* Key Professional Competencies */}
+          <div className={classes.competenciesColumn}>
+            <Title order={2} className={classes.columnHeading}>
+              {t('sections.skills.functional.keyCompetencies.title')}
+            </Title>
+            <div className={classes.competencyList}>
+              {data.competencies.map((competency: Competency) => (
+                <div key={competency.id} className={classes.competencyItem}>
+                  <div className={classes.competencyIconBox}>
+                    <IconCheck size={18} strokeWidth={2.5} />
+                  </div>
+                  <div className={classes.competencyText}>
+                    <Text className={classes.competencyTitle}>
+                      {t(competencyTitleKey(competency.id))}
+                    </Text>
+                    <Text className={classes.competencyDesc}>
+                      {t(competencyDescKey(competency.id))}
+                    </Text>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-      {techCategoriesGrid}
-
-      <Paper withBorder p="lg" mt={50} radius="md">
-        <Title order={4} mb="md">{t('sections.skills.functional.keyCompetencies.title')}</Title>
-        {competenciesList}
-      </Paper>
+          {/* Technologies & Libraries */}
+          <div className={classes.technologiesCard}>
+            <Title order={2} className={classes.columnHeading}>
+              {t('sections.skills.functional.libraries')}
+            </Title>
+            <div className={classes.categoryList}>
+              {data.categories.map((category: TechCategory) => (
+                <div key={category.id} className={classes.categoryGroup}>
+                  <div className={classes.categoryHeader}>
+                    <span className={classes.categoryDot} />
+                    <Text className={classes.categoryName}>
+                      {t(categoryKey(category.id))}
+                    </Text>
+                  </div>
+                  <TechPillGroup items={category.items} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </Section>
   );
 };
 
-// Export with section registration - pass the regular function
 export default createRegisteredSection<SkillsProps>('skills', SkillsSectionComponent);

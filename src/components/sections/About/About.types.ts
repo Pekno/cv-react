@@ -1,7 +1,9 @@
-import { SectionProps } from "../../../types/profile-data.types";
+import { SectionProps } from "@app-types/profile-data.types";
 
 export interface AboutData {
   yearsOfExperience: number;
+  stackFocus?: string;
+  location?: string;
 }
 
 export interface AboutProps extends SectionProps<AboutData> {}
@@ -9,8 +11,15 @@ export interface AboutProps extends SectionProps<AboutData> {}
 // Define translations for this section
 export interface AboutTranslations {
   jobTitle: string;
-  experienceText: string;
+  jobTitleHighlight: string;
+  experienceYears: string;
+  experienceLabel: string;
   summary: string;
+  downloadResume: string;
+  stackFocusLabel: string;
+  locationLabel: string;
+  availabilityLabel: string;
+  openForCollaboration: string;
 }
 
 // Extend the section type registry

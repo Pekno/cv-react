@@ -1,7 +1,4 @@
 import React, { useMemo } from 'react';
-import { 
-  Text
-} from '@mantine/core';
 import { useLanguage } from '@hooks/useLanguage';
 import Section from '@components/common/Section/Section';
 import ProjectCarousel from './components/ProjectCarousel/ProjectCarousel';
@@ -24,17 +21,16 @@ const ProjectsSectionComponent = ({ data, evenSection = false }: ProjectsProps) 
       description: t(itemKey(project.id, 'desc')),
       image: project.image,
       link: project.link,
-      linkText: project.linkTextKey ? t(actionKey(project.linkTextKey)) : undefined
+      linkText: project.linkTextKey ? t(actionKey(project.linkTextKey)) : undefined,
     }));
   }, [data.projects, t]);
 
   return (
     <Section id="projects" title={t('menu.projects')} evenSection={evenSection}>
-      <Text mb={30} className={classes.introText}>
+      <p className={classes.introText}>
         {t('sections.projects.intro')}
-      </Text>
-      
-      {/* Project Carousel */}
+      </p>
+
       <MemoizedProjectCarousel projects={processedProjects} />
     </Section>
   );

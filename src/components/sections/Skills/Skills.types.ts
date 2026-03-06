@@ -1,5 +1,8 @@
 import { TranslationKey } from "@app-types/translations.types";
 import { SectionProps } from "@app-types/profile-data.types";
+import { TechItem } from "@components/common/TechPill/TechPill";
+
+export type { TechItem };
 
 export interface MainSkill {
   id: string;
@@ -9,16 +12,20 @@ export interface MainSkill {
 
 export interface TechCategory {
   id: string;
-  items: string[]; // Array of badge/image URLs
+  items: TechItem[];
+}
+
+export interface Competency {
+  id: string;
 }
 
 export interface SkillsData {
   mainSkills: MainSkill[];
   categories: TechCategory[];
-  competencies: string[]; // Change to more interesting data like icon
+  competencies: Competency[];
 }
 
-export interface SkillsProps extends SectionProps<SkillsData> {}
+export interface SkillsProps extends SectionProps<SkillsData> { }
 
 // Define translations for this section
 export interface SkillsFunctionalTranslations {
@@ -29,9 +36,14 @@ export interface SkillsFunctionalTranslations {
   keyCompetencies: {
     title: string;
     competencies: {
-      [competency: string]: string;
+      [competency: string]: SkillsCompetencyTranslation;
     };
   };
+}
+
+export interface SkillsCompetencyTranslation {
+  title: string;
+  desc: string;
 }
 
 export interface SkillsFunctionalQualityTranslations {
@@ -76,10 +88,12 @@ export function categoryKey(id: string): TranslationKey {
   return `sections.skills.technical.categories.${id}` as TranslationKey;
 }
 
-export function keyCompetenciesKey(
-  competency: keyof SkillsTechnicalCategoryTranslations
-): TranslationKey {
-  return `sections.skills.functional.keyCompetencies.competencies.${competency}` as TranslationKey;
+export function competencyTitleKey(id: string): TranslationKey {
+  return `sections.skills.functional.keyCompetencies.competencies.${id}.title` as TranslationKey;
+}
+
+export function competencyDescKey(id: string): TranslationKey {
+  return `sections.skills.functional.keyCompetencies.competencies.${id}.desc` as TranslationKey;
 }
 
 // Extend the section type registry

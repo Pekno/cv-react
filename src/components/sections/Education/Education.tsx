@@ -1,133 +1,141 @@
 import { useMemo } from 'react';
-import { Grid, Paper, Timeline, Text, Group, RingProgress, Stack, Badge, Title, Center, SimpleGrid, SemiCircleProgress } from '@mantine/core';
-import { IconSchool, IconLanguage } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
+import { IconSchool, IconLanguage, IconInfoCircle } from '@tabler/icons-react';
 import Section from '@components/common/Section/Section';
 import classes from './Education.module.css';
 import { useLanguage } from '@hooks/useLanguage';
 import { EducationProps, historyKey, languageKey } from './Education.types';
 import { createRegisteredSection } from '@decorators/section.decorator';
-import { useMediaQuery } from '@mantine/hooks';
 
-// Create the Education component as a regular function
+const TOTAL_SEGMENTS = 10;
+
+/**
+ * Computes segment states for a 10-segment proficiency bar.
+ * Returns an array of 'filled' | 'partial' | 'empty' strings.
+ */
+function getSegments(value: number): ('filled' | 'partial' | 'empty')[] {
+  const ratio = Math.max(0, Math.min(100, value)) / 100;
+  const filled = ratio * TOTAL_SEGMENTS;
+  const fullSegments = Math.floor(filled);
+  const remainder = filled - fullSegments;
+
+  return Array.from({ length: TOTAL_SEGMENTS }, (_, i) => {
+    if (i < fullSegments) return 'filled';
+    if (i === fullSegments && remainder >= 0.25) return 'partial';
+    return 'empty';
+  });
+}
+
 const EducationSectionComponent = ({ data, evenSection = false }: EducationProps) => {
   const { t } = useLanguage();
-  const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Convert education data from the centralized store to component format
-  // Use useMemo to avoid recalculation on every render
-  const renderEducationItems = useMemo(() => {
-    return data.history.map((item, index) => ({
-      year: item.year,
-      title: t(historyKey(index, 'name')),
-      location: t(historyKey(index, 'location')),
-      icon: <IconSchool stroke={1.5} />,
-    }));
-  }, [data.history, t]);
+  const educationItems = useMemo(
+    () =>
+      data.history.map((item, index) => ({
+        year: item.year,
+        title: t(historyKey(index, 'name')),
+        institution: t(historyKey(index, 'location')),
+        description: t(historyKey(index, 'description')),
+      })),
+    [data.history, t]
+  );
 
-  // Convert language data from the centralized store to component format
-  // Memoize to prevent unnecessary recalculations
-  const renderLanguageItems = useMemo(() => {
-    return data.languages.map((lang) => ({
-      label: t(languageKey(lang.id, 'type')),
-      value: lang.value,
-      subtitle: t(languageKey(lang.id, 'mastery')),
-    }));
-  }, [data.languages, t]);
-
-  // Memoize the education timeline component
-  const educationTimeline = useMemo(() => (
-    <Timeline active={renderEducationItems.length - 1} bulletSize={24} lineWidth={2} color="brand">
-      {renderEducationItems.map((education, index) => (
-        <Timeline.Item
-          key={index}
-          bullet={education.icon}
-          title={
-            <Group gap="xs">
-              <Text fw={700} size="lg">{education.title}</Text>
-              <Badge color="brand">{education.year}</Badge>
-            </Group>
-          }
-        >
-          <Text c="dimmed" dangerouslySetInnerHTML={{ __html: education.location }} />
-        </Timeline.Item>
-      ))}
-    </Timeline>
-  ), [renderEducationItems]);
-
-  // Memoize the languages grid component
-  const languagesGrid = useMemo(() => (
-    <SimpleGrid cols={{ base: 3 }} spacing="xs">
-      {renderLanguageItems.map((language, index) => (
-        <Stack key={index} align="center">
-          <Center>
-          {isMobile ? (
-              <SemiCircleProgress
-                value={language.value}
-                size={70}
-                thickness={8}
-                filledSegmentColor='brand'
-                label={
-                  <Text className={classes.progressLabel}>
-                    {language.value}%
-                  </Text>
-                }
-              />
-            ) : (
-              <RingProgress
-                size={100}
-                thickness={10}
-                roundCaps
-                sections={[{ value: language.value, color: 'brand' }]}
-                label={
-                  <Text className={classes.progressLabel}>
-                    {language.value}%
-                  </Text>
-                }
-              />
-            )}
-          </Center>
-          <Text>{language.label}</Text>
-          {language.subtitle && (
-            <Text size="xs" c="dimmed" ta="center">{language.subtitle}</Text>
-          )}
-        </Stack>
-      ))}
-    </SimpleGrid>
-  ), [renderLanguageItems, isMobile]);
+  const languageItems = useMemo(
+    () =>
+      data.languages.map((lang) => ({
+        id: lang.id,
+        name: t(languageKey(lang.id, 'type')),
+        mastery: t(languageKey(lang.id, 'mastery')),
+        value: lang.value,
+        segments: getSegments(lang.value),
+      })),
+    [data.languages, t]
+  );
 
   return (
     <Section id="education" title={t('menu.education')} evenSection={evenSection}>
-      <Grid gutter="xl">
-        <Grid.Col span={{ base: 12, md: 7 }}>
-          <Paper p="xl" withBorder shadow="md" radius="md" className={classes.card}>
-            <Stack>
-              <Title order={3} fw={600} ta="center">
-                {t('sections.education.studies.title')}
-              </Title>
-              
-              <div className={classes.timeline}>
-                {educationTimeline}
-              </div>
-            </Stack>
-          </Paper>
-        </Grid.Col>
-        
-        <Grid.Col span={{ base: 12, md: 5 }}>
-          <Paper px="xl" py={isMobile ? "md" : "xl"} withBorder shadow="md" radius="md" className={classes.card}>
-            <div className={classes.languageContainer}>
-              <Group justify="center" gap="xs" mb="md">
-                <IconLanguage size={24} />
-                <Title order={3} fw={600}>{t('sections.education.languages.title')}</Title>
-              </Group>
+      {/* Two-column layout */}
+      <div className={classes.columnsGrid}>
+        {/* Left — Studies with dashed timeline */}
+        <div className={classes.studiesColumn}>
+          <div className={classes.columnHeader}>
+            <IconSchool size={20} className={classes.columnHeaderIcon} />
+            <p className={classes.columnHeaderTitle}>{t('sections.education.studies.title')}</p>
+          </div>
 
-              {languagesGrid}
+          <div className={classes.timeline}>
+            {educationItems.map((item, index) => (
+              <div key={index} className={classes.timelineEntry}>
+                <span className={classes.entryYear}>{item.year}</span>
+
+                <div className={classes.entryIcon}>
+                  <IconSchool className={classes.entryIconSvg} stroke={2} />
+                </div>
+
+                <div className={classes.entryCard}>
+                  <p className={classes.entryTitle}>{item.title}</p>
+                  <p className={classes.entryInstitution}>{item.institution}</p>
+                  {item.description && (
+                    <p className={classes.entryDescription}>{item.description}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right — Languages card */}
+        <div>
+          <div className={classes.columnHeader}>
+            <IconLanguage size={20} className={classes.columnHeaderIcon} />
+            <p className={classes.columnHeaderTitle}>{t('sections.education.languages.title')}</p>
+          </div>
+
+          <div className={classes.languagesCard}>
+            <div className={classes.languagesList}>
+              {languageItems.map((lang, index) => (
+                <div key={lang.id}>
+                  <div className={classes.languageItem}>
+                    <div className={classes.languageTopRow}>
+                      <p className={classes.languageName}>{lang.name}</p>
+                      <span className={classes.languagePercentage}>{lang.value}%</span>
+                    </div>
+                    <Text className={classes.languageMastery}>{lang.mastery}</Text>
+
+                    {/* Segmented proficiency bar */}
+                    <div className={classes.segmentedBar} role="meter" aria-valuenow={lang.value} aria-valuemin={0} aria-valuemax={100} aria-label={lang.name}>
+                      {lang.segments.map((state, si) => {
+                        const stateClass =
+                          state === 'filled' ? classes.segmentFilled
+                          : state === 'partial' ? classes.segmentPartial
+                          : classes.segmentEmpty;
+                        return (
+                          <div
+                            key={si}
+                            className={`${classes.segment} ${stateClass}`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {index < languageItems.length - 1 && (
+                    <div className={classes.languageDivider} style={{ marginTop: '1.25rem' }} />
+                  )}
+                </div>
+              ))}
             </div>
-          </Paper>
-        </Grid.Col>
-      </Grid>
+
+            {/* CEFR info box */}
+            <div className={classes.cefrBox}>
+              <IconInfoCircle size={14} className={classes.cefrIcon} />
+              <p className={classes.cefrText}>{t('sections.education.languages.cefrInfo')}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </Section>
   );
 };
 
-// Export with section registration
 export default createRegisteredSection<EducationProps>('education', EducationSectionComponent);

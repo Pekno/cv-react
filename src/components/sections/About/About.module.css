@@ -1,43 +1,445 @@
+/* ─── Section wrapper ─────────────────────────────────────────────────────── */
 .aboutSection {
-    padding-top: var(--space-md);
+    position: relative;
+    overflow: hidden;
     scroll-margin-top: 80px;
-    transition: opacity var(--transition-normal);
+    padding-top: var(--space-lg, 2rem);
+    padding-bottom: var(--space-lg, 2rem);
 }
 
-.textCenter {
+/* ─── Background decoration ───────────────────────────────────────────────── */
+.bgOrb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.18;
+    background: var(--mantine-color-brand-filled);
+}
+
+.bgOrbLeft {
+    width: 420px;
+    height: 420px;
+    top: -120px;
+    left: -80px;
+}
+
+.bgOrbRight {
+    width: 320px;
+    height: 320px;
+    bottom: -60px;
+    right: -60px;
+    opacity: 0.12;
+}
+
+/* ─── Content grid ────────────────────────────────────────────────────────── */
+.contentGrid {
+    position: relative;
+    z-index: 1;
+}
+
+/* ─── LEFT COLUMN ─────────────────────────────────────────────────────────── */
+.leftCol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 }
 
-/* More efficient media query - use standard syntax */
-@media (max-width: 768px) {
-    .aboutSection {
-        padding-top: var(--space-sm);
+/* Profile picture wrapper with floating badge */
+.pictureWrapper {
+    position: relative;
+    display: inline-flex;
+    align-self: center;
+}
+
+.codeBadge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--mantine-color-brand-filled);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    z-index: 2;
+    color: #fff;
+}
+
+/* Name */
+.name {
+    font-size: clamp(2.75rem, 6vw, 3.75rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+}
+
+/* Job title */
+.jobTitle {
+    font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+    font-weight: 500;
+    color: var(--text-secondary, var(--mantine-color-dimmed));
+    margin: 0;
+    line-height: 1.4;
+}
+
+.jobTitleHighlight {
+    color: var(--mantine-color-brand-filled);
+    font-weight: 700;
+}
+
+/* ─── Experience counter ──────────────────────────────────────────────────── */
+.counterBlock {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+}
+
+.counterNumber {
+    font-size: clamp(3.5rem, 7vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--mantine-color-brand-filled);
+    letter-spacing: -0.04em;
+    text-shadow: 0 2px 16px color-mix(in srgb, var(--mantine-color-brand-filled) 40%, transparent);
+    font-variant-numeric: tabular-nums;
+}
+
+.counterLabel {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-secondary, var(--mantine-color-dimmed));
+    line-height: 1.5;
+}
+
+/* ─── Social link cards ───────────────────────────────────────────────────── */
+.socialCardList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.socialCard {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid light-dark(
+        var(--mantine-color-gray-3),
+        color-mix(in srgb, var(--mantine-color-gray-7) 60%, transparent)
+    );
+    background: light-dark(
+        rgba(255,255,255,0.7),
+        rgba(255,255,255,0.03)
+    );
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.18s ease, background 0.18s ease, transform 0.15s ease;
+    backdrop-filter: blur(4px);
+}
+
+.socialCard:hover {
+    border-color: var(--mantine-color-brand-filled);
+    background: light-dark(
+        color-mix(in srgb, var(--mantine-color-brand-filled) 5%, white),
+        color-mix(in srgb, var(--mantine-color-brand-filled) 10%, transparent)
+    );
+    transform: translateX(3px);
+}
+
+.socialCardIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: light-dark(
+        var(--mantine-color-gray-1),
+        rgba(255,255,255,0.07)
+    );
+    flex-shrink: 0;
+    color: var(--mantine-color-brand-filled);
+}
+
+.socialCardLabel {
+    flex: 1;
+    font-size: var(--mantine-font-size-sm);
+    font-weight: 500;
+}
+
+.socialCardArrow {
+    color: var(--text-secondary, var(--mantine-color-dimmed));
+    flex-shrink: 0;
+    transition: color 0.15s ease;
+}
+
+.socialCard:hover .socialCardArrow {
+    color: var(--mantine-color-brand-filled);
+}
+
+/* ─── Download button ─────────────────────────────────────────────────────── */
+.downloadBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    background: var(--mantine-color-brand-filled);
+    color: #fff;
+    font-size: var(--mantine-font-size-sm);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: opacity 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--mantine-color-brand-filled) 40%, transparent);
+}
+
+.downloadBtn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px color-mix(in srgb, var(--mantine-color-brand-filled) 50%, transparent);
+}
+
+.downloadBtn:active {
+    transform: translateY(0);
+}
+
+.downloadBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ─── RIGHT COLUMN ────────────────────────────────────────────────────────── */
+.rightCol {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+/* Summary card */
+.summaryCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    border: 1px solid light-dark(
+        var(--mantine-color-gray-3),
+        color-mix(in srgb, var(--mantine-color-gray-6) 40%, transparent)
+    );
+    background: light-dark(
+        rgba(255,255,255,0.75),
+        rgba(255,255,255,0.03)
+    );
+    backdrop-filter: blur(12px);
+}
+
+.quoteIconWrap {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--mantine-color-brand-filled) 12%, transparent);
+    color: var(--mantine-color-brand-filled);
+    opacity: 0.7;
+    z-index: 2;
+}
+
+.summaryBody {
+    flex: 1;
+    padding: 2.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Summary paragraphs - each newline becomes its own paragraph */
+.summaryParagraph {
+    font-size: var(--mantine-font-size-sm);
+    line-height: 1.75;
+    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+    margin: 0 0 1rem 0;
+}
+
+.summaryParagraph:last-child {
+    margin-bottom: 0;
+}
+
+/* Company name links inside summary */
+.companyLink {
+    color: var(--mantine-color-brand-filled);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s ease;
+}
+
+.companyLink:hover {
+    border-bottom-color: var(--mantine-color-brand-filled);
+}
+
+/* ─── Mini stats bar ──────────────────────────────────────────────────────── */
+.statsBar {
+    padding: 1rem 2rem;
+    border-top: 1px solid light-dark(
+        var(--mantine-color-gray-2),
+        color-mix(in srgb, var(--mantine-color-gray-6) 40%, transparent)
+    );
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.statLabel {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-secondary, var(--mantine-color-dimmed));
+}
+
+.statValue {
+    font-size: var(--mantine-font-size-sm);
+    font-weight: 600;
+    color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-2));
+}
+
+.statValueAvailability {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--mantine-font-size-sm);
+    font-weight: 600;
+    color: #40c057;
+}
+
+/* ─── Pulsing availability dot ────────────────────────────────────────────── */
+.pulsingDot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #40c057;
+    animation: pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(64, 192, 87, 0.55);
+    }
+    50% {
+        opacity: 0.8;
+        box-shadow: 0 0 0 5px rgba(64, 192, 87, 0);
     }
 }
 
-.name {
-    font-weight: 700;
-    color: var(--mantine-color-brand-filled);
-    margin-bottom: 0;
-}
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .aboutSection {
+        padding-top: var(--space-md, 1.5rem);
+        padding-bottom: var(--space-md, 1.5rem);
+    }
 
-.title {
-    font-size: var(--mantine-font-size-xl);
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 0;
-}
+    .pictureWrapper {
+        align-self: center;
+    }
 
-/* Optimized counter styles */
-.counterWrap {
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: var(--space-md);
-}
+    .leftCol {
+        align-items: center;
+        text-align: center;
+    }
 
-.counter {
-    font-weight: 700;
-    font-size: var(--mantine-font-size-xl);
-    color: var(--mantine-color-brand-filled);
-    margin-right: var(--space-xs);
+    .name {
+        text-align: center;
+    }
+
+    .jobTitle {
+        text-align: center;
+    }
+
+    .counterBlock {
+        justify-content: center;
+    }
+
+    .socialCardList {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.6rem;
+        width: auto;
+    }
+
+    .socialCard {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .socialCardIcon {
+        width: auto;
+        height: auto;
+        background: none;
+        border-radius: 0;
+    }
+
+    .socialCardLabel,
+    .socialCardArrow {
+        display: none;
+    }
+
+    .downloadBtn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border-radius: 50%;
+        margin-top: 0;
+    }
+
+    .downloadLabel {
+        display: none;
+    }
+
+    .summaryBody {
+        padding: 2rem 1.25rem 1.25rem;
+    }
+
+    .statsBar {
+        padding: 0.875rem 1.25rem;
+        gap: 1.25rem;
+    }
 }

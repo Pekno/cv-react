@@ -1,5 +1,5 @@
-import { TranslationKey } from "@/types/translations.types";
-import { SectionProps } from "../../../types/profile-data.types";
+import { TranslationKey } from "@app-types/translations.types";
+import { SectionProps } from "@app-types/profile-data.types";
 
 export interface ProjectItem {
   id: string;
@@ -12,13 +12,14 @@ export interface ProjectsData {
   projects: ProjectItem[];
 }
 
-export interface ProjectsProps extends SectionProps<ProjectsData> {}
+export interface ProjectsProps extends SectionProps<ProjectsData> { }
 
 // Define translations for this section
 export interface ProjectsTranslations {
   intro: string;
   items: ProjectItemsTranslations;
   actions: ProjectActionsTranslations;
+  categories?: { [key: string]: string }; // optional category labels
 }
 
 export interface ProjectActionsTranslations {
@@ -34,9 +35,10 @@ export interface ProjectItemsTranslations {
 export interface ProjectItemTranslations {
   title: string;
   desc: string;
+  category?: string; // optional per-item category override
 }
 
-// Helper function for experience translation keys
+// Helper function for project translation keys
 export function itemKey(
   id: string,
   property: keyof ProjectItemTranslations
@@ -44,11 +46,16 @@ export function itemKey(
   return `sections.projects.items.${id}.${property}` as TranslationKey;
 }
 
-// Helper function for experience translation keys
+// Helper function for action translation keys
 export function actionKey(
   action: keyof ProjectActionsTranslations
 ): TranslationKey {
   return `sections.projects.actions.${action}` as TranslationKey;
+}
+
+// Helper function for category translation keys
+export function categoryKey(key: string): TranslationKey {
+  return `sections.projects.categories.${key}` as TranslationKey;
 }
 
 // Extend the section type registry

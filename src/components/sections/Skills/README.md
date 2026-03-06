@@ -20,7 +20,7 @@ src/components/sections/Skills/
 - Functional qualities display with icons and badges
 - Technical skills organized by categories
 - Key competencies list
-- Badge-based display of technologies using shields.io
+- Technology pills with white SVG icons from [Simple Icons](https://simpleicons.org/)
 - Responsive grid layout
 
 ## Data Structure
@@ -42,10 +42,19 @@ The `Skills` section requires the following data structure:
     categories: [
       {
         id: string;           // ID matching translation key (e.g., "programmingLanguages")
-        items: string[];      // Array of shield.io badge URLs
+        items: [
+          {
+            name: string;     // Display name (e.g., "TypeScript")
+            icon: string;     // Simple Icons slug (e.g., "typescript") — find slugs at https://simpleicons.org/
+          }
+        ]
       }
     ],
-    competencies: string[];   // Array of competency IDs matching translation keys
+    competencies: [
+      {
+        id: string;           // ID matching translation key (e.g., "participate")
+      }
+    ]
   }
 }
 ```
@@ -110,22 +119,27 @@ sections: {
       {
         id: "programmingLanguages",
         items: [
-          "https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat&logo=typescript&logoColor=white",
-          "https://img.shields.io/badge/javascript-%23323330.svg?style=flat&logo=javascript&logoColor=%23F7DF1E",
+          { name: "TypeScript", icon: "typescript" },
+          { name: "JavaScript", icon: "javascript" },
           // More items...
         ],
       },
       {
         id: "frontend",
         items: [
-          "https://img.shields.io/badge/react-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB",
-          "https://img.shields.io/badge/angular-%23DD0031.svg?style=flat&logo=angular&logoColor=white",
+          { name: "React", icon: "react" },
+          { name: "Angular", icon: "angular" },
           // More items...
         ],
       },
       // More categories...
     ],
-    competencies: ["participate", "estimate", "analysis", "quality"],
+    competencies: [
+      { id: "participate" },
+      { id: "estimate" },
+      { id: "analysis" },
+      { id: "quality" },
+    ],
   }
 }
 ```
@@ -257,8 +271,8 @@ interface TechCategoryProps {
 
 ## Notes for Implementation
 
-1. The component uses icons from `@tabler/icons-react`. Make sure the icon names in your data match actual icons from this library.
+1. The component uses icons from `@tabler/icons-react` for skill cards. Make sure the icon names in your data match actual icons from this library.
 
-2. For technical skills, the component uses shield.io badges. You can generate these badges from [shields.io](https://shields.io/) or use the preconfigured ones in the example.
+2. Technology pills use icons from `@icons-pack/react-simple-icons`. To find the correct icon slug for a technology, browse [Simple Icons](https://simpleicons.org/) and use the slug shown on the icon's page (e.g., `typescript`, `react`, `nodedotjs`, `docker`). If no matching icon exists, the pill will display the name without an icon.
 
 3. The layout is responsive and will adjust based on screen size, displaying 1, 2, or 3 columns of skills depending on available space.

@@ -1,6 +1,6 @@
 # Experiences Section
 
-This section displays your professional work experiences in a timeline format, showcasing your career progression, job responsibilities, and technical skills used in each role.
+This section displays your professional work experiences in an accordion format, showcasing your career progression, job responsibilities, and technical skills used in each role.
 
 ## Component Structure
 
@@ -14,12 +14,13 @@ src/components/sections/Experiences/
 
 ## Features
 
-- Chronological timeline of work experiences
+- Accordion-based display of work experiences
 - Company logos and job titles
 - Duration calculation for each position
 - Context/responsibility bullets for each role
-- Technologies used in each position
+- Technologies displayed as TechPill components (with icons)
 - Current position highlighting
+- Deep-linking support (e.g. `#work-CompanyA`)
 - Responsive layout
 
 ## Data Structure
@@ -33,17 +34,28 @@ The `Experiences` section requires the following data structure:
   data: {
     experiences: [
       {
-        id: string;                 // Company ID matching translation key
-        startDate: Date;            // Start date of employment
-        endDate?: Date;             // End date (omit for current position)
-        companyName: string;        // Company name
-        companyLogo: string;        // Path to company logo
-        contexts: number[];         // Array of context indices (matching translation keys)
-        technologies: string[][];   // Array of technology arrays for each context
-        isCurrent?: boolean;        // Flag for current position
+        id: string;                    // Company ID matching translation key
+        startDate: Date;               // Start date of employment
+        endDate?: Date;                // End date (omit for current position)
+        companyName: string;           // Company name
+        companyLogo: string;           // Path to company logo
+        contexts: number[];            // Array of context indices (matching translation keys)
+        technologies: TechItem[][];    // Array of TechItem arrays for each context
+        isCurrent?: boolean;           // Flag for current position
       }
     ]
   }
+}
+```
+
+### TechItem
+
+Technologies are now represented as `TechItem` objects (from `@components/common/TechPill/TechPill`):
+
+```typescript
+interface TechItem {
+  name: string;   // Display name (e.g. "React")
+  icon: string;   // Simple Icons slug (e.g. "react")
 }
 ```
 
@@ -81,8 +93,16 @@ sections: {
         companyLogo: "./src/assets/companies/companyA.png",
         contexts: [1, 2],
         technologies: [
-          ["React", "TypeScript", "AWS"],
-          ["Node.js", "MongoDB", "Docker"]
+          [
+            { name: "React", icon: "react" },
+            { name: "TypeScript", icon: "typescript" },
+            { name: "AWS", icon: "aws" },
+          ],
+          [
+            { name: "Node.js", icon: "nodedotjs" },
+            { name: "MongoDB", icon: "mongodb" },
+            { name: "Docker", icon: "docker" },
+          ]
         ],
         isCurrent: true
       },
@@ -94,20 +114,18 @@ sections: {
         companyLogo: "./src/assets/companies/companyB.png",
         contexts: [1, 2, 3],
         technologies: [
-          ["Angular", "JavaScript"],
-          ["Express", "MySQL"],
-          ["Git", "Jenkins"]
-        ]
-      },
-      {
-        id: "CompanyC",
-        startDate: new Date("2018-03-01"),
-        endDate: new Date("2020-05-31"),
-        companyName: "Company C",
-        companyLogo: "./src/assets/companies/companyC.png",
-        contexts: [1],
-        technologies: [
-          ["Vue.js", "JavaScript", "PHP", "Laravel"]
+          [
+            { name: "Angular", icon: "angular" },
+            { name: "JavaScript", icon: "javascript" },
+          ],
+          [
+            { name: "Express", icon: "express" },
+            { name: "MySQL", icon: "mysql" },
+          ],
+          [
+            { name: "Git", icon: "git" },
+            { name: "Jenkins", icon: "jenkins" },
+          ]
         ]
       }
     ]
@@ -123,52 +141,16 @@ experiences: {
     CompanyA: {
       jobTitle: "Senior Frontend Developer",
       contexts: [
-        "Led the development of a new customer-facing portal using React and TypeScript, improving user engagement by 30%",
-        "Architected and implemented a microservices-based backend infrastructure using Node.js and MongoDB"
+        "Led the development of a new customer-facing portal using React and TypeScript",
+        "Architected and implemented a microservices-based backend infrastructure"
       ]
     },
     CompanyB: {
       jobTitle: "Full Stack Developer",
       contexts: [
-        "Developed and maintained multiple Angular-based web applications for enterprise clients",
-        "Built RESTful APIs using Express and MySQL to support frontend applications",
-        "Implemented CI/CD pipelines using Jenkins and Git for automated testing and deployment"
-      ]
-    },
-    CompanyC: {
-      jobTitle: "Junior Web Developer",
-      contexts: [
-        "Created responsive web interfaces using Vue.js and integrated them with Laravel backends"
-      ]
-    }
-  }
-}
-```
-
-### Translation Example (fr.ts)
-
-```typescript
-experiences: {
-  companies: {
-    CompanyA: {
-      jobTitle: "Développeur Frontend Senior",
-      contexts: [
-        "Dirigé le développement d'un nouveau portail client utilisant React et TypeScript, améliorant l'engagement des utilisateurs de 30%",
-        "Architecturé et implémenté une infrastructure backend basée sur des microservices utilisant Node.js et MongoDB"
-      ]
-    },
-    CompanyB: {
-      jobTitle: "Développeur Full Stack",
-      contexts: [
-        "Développé et maintenu plusieurs applications web basées sur Angular pour des clients entreprise",
-        "Construit des API RESTful utilisant Express et MySQL pour soutenir les applications frontend",
-        "Implémenté des pipelines CI/CD utilisant Jenkins et Git pour les tests et déploiements automatisés"
-      ]
-    },
-    CompanyC: {
-      jobTitle: "Développeur Web Junior",
-      contexts: [
-        "Créé des interfaces web responsives utilisant Vue.js et intégré avec des backends Laravel"
+        "Developed and maintained multiple Angular-based web applications",
+        "Built RESTful APIs using Express and MySQL",
+        "Implemented CI/CD pipelines using Jenkins and Git"
       ]
     }
   }
@@ -180,46 +162,41 @@ experiences: {
 The `Experiences` component is automatically registered using the `registerSection` decorator:
 
 ```typescript
-export default registerSection<ExperiencesData>({ type: 'experiences' })(Experiences);
+export default createRegisteredSection<ExperiencesProps>('experiences', ExperiencesSectionComponent);
 ```
 
 ## Implementation Details
 
-### Timeline Generation
+### Accordion Display
 
-The component generates a visual timeline by sorting experiences by start date (newest first) and calculating:
+The component renders each experience as an accordion card. Clicking a card expands it to show context details and technologies.
 
-- Duration for each position
-- Proper formatting of dates
-- Visual indicators for current position
+### Deep Linking
 
-### Context Mapping
+Each experience card has an `id` anchor (e.g. `work-CompanyA`). The component listens to URL hash changes and auto-opens the matching accordion item when navigating from other sections (e.g. the About section's company name links).
 
-Each experience can have multiple contexts (job responsibilities). These are mapped from the `contexts` array in the data to the corresponding entries in the translations.
-
-### Technology Display
-
-Technologies used in each context are displayed as badges/chips, providing a quick visual indication of your technical skills for each responsibility.
-
-## Styling
-
-The component uses CSS modules for styling. The main styles are defined in `Experiences.module.css`. Key styling features include:
-
-- Timeline connecting elements
-- Alternating layout for better readability
-- Highlighting for current position
-- Responsive adjustments for different screen sizes
-
-## Date Formatting
-
-Dates are formatted according to the current locale (determined by the active language) using the `Intl.DateTimeFormat` API. This ensures dates are displayed in a format familiar to users based on their language preference.
-
-## Duration Calculation
+### Duration Calculation
 
 The component automatically calculates the duration of each position in years and months, handling:
 - Current positions (calculating up to the present date)
 - Short durations (displaying in months when less than a year)
 - Long durations (displaying in years and months)
+
+### Technology Display
+
+Technologies used in each context are displayed as `TechPill` components, showing an icon (from Simple Icons) alongside the technology name.
+
+## Styling
+
+The component uses CSS modules for styling. The main styles are defined in `Experiences.module.css`. Key styling features include:
+
+- Accordion card layout
+- Highlighting for current position
+- Responsive adjustments for different screen sizes
+
+## Date Formatting
+
+Dates are formatted using a short month + year format (e.g. "Jan 2023"). Current positions display a translated "Present" label.
 
 ## Notes for Implementation
 
@@ -229,4 +206,6 @@ The component automatically calculates the duration of each position in years an
 
 3. For the current position, you can either omit the `endDate` or set `isCurrent: true` (or both).
 
-4. The `technologies` array should have the same length as the `contexts` array, with each sub-array containing the technologies used for the corresponding context.
+4. The `technologies` array should have the same length as the `contexts` array, with each sub-array containing the `TechItem` objects used for the corresponding context.
+
+5. The `icon` field in `TechItem` should be a valid [Simple Icons](https://simpleicons.org/) slug.

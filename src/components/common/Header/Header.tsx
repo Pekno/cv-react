@@ -27,15 +27,11 @@ const Header: React.FC<HeaderProps> = ({ opened, toggle, menuItems }) => {
     selector: "section[id]",
   });
 
-  // Handle menu item click
   const handleMenuClick = (key: string) => {
-    const element = scrollSpy.data.find((element) => element.id === key);
+    const element = scrollSpy.data.find((el) => el.id === key);
     if (!element) return;
 
-    if (scrollSpy) {
-      // Use the scrollToElement function from scrollSpy hook
-      element.getNode().scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    element.getNode().scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -59,21 +55,21 @@ const Header: React.FC<HeaderProps> = ({ opened, toggle, menuItems }) => {
           
           <Group gap={15} visibleFrom="md">
             {menuItems.map((item) => (
-              <Link   
-                key={item.key} 
-                to={`#${item.key}`} 
+              <Link
+                key={item.key}
+                to={`#${item.key}`}
                 className={`${classes.link} ${scrollSpy.data[scrollSpy.active]?.id.startsWith(item.key) ? classes.active : ''}`}
                 onClick={() => handleMenuClick(item.key)}
               >
                 {item.label}
-              </Link >
+              </Link>
             ))}
             <Group gap="xs">
               <ThemeToggle />
               <LanguageSwitcher />
             </Group>
           </Group>
-          
+
           {/* On mobile, only show theme toggle and language switcher in header */}
           <Group gap="xs" hiddenFrom="md">
             <ThemeToggle />

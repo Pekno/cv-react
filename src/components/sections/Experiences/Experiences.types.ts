@@ -1,5 +1,6 @@
-import { SectionProps } from "../../../types/profile-data.types";
-import { TranslationKey } from "../../../types/translations.types";
+import { SectionProps } from "@app-types/profile-data.types";
+import { TranslationKey } from "@app-types/translations.types";
+import { TechItem } from "@components/common/TechPill/TechPill";
 
 export interface ExperienceItem {
   id: string;
@@ -7,10 +8,9 @@ export interface ExperienceItem {
   endDate?: Date;
   companyName: string;
   companyLogo: string;
-  technologies: string[][];
+  technologies: TechItem[][];
   contexts: number[];
   isCurrent?: boolean;
-  // We'll remove jobTitleKey and contexts since they'll be accessed by index
 }
 
 export interface ExperiencesData {

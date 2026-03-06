@@ -1,5 +1,5 @@
-import { TranslationKey } from "@/types/translations.types";
-import { SectionProps } from "../../../types/profile-data.types";
+import { TranslationKey } from "@app-types/translations.types";
+import { SectionProps } from "@app-types/profile-data.types";
 
 export interface EducationItem {
   year: string;
@@ -16,7 +16,7 @@ export interface EducationData {
   languages: LanguageItem[];
 }
 
-export interface EducationProps extends SectionProps<EducationData> {}
+export interface EducationProps extends SectionProps<EducationData> { }
 
 // Define translations for this section
 export interface EducationTranslations {
@@ -26,6 +26,7 @@ export interface EducationTranslations {
   };
   languages: {
     title: string;
+    cefrInfo: string;
     list: {
       [language: string]: EducationLanguageTranslations;
     };
@@ -35,6 +36,7 @@ export interface EducationTranslations {
 export interface EducationHistoryTranslations {
   name: string;
   location: string;
+  description: string;
 }
 
 export interface EducationLanguageTranslations {

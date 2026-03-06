@@ -15,6 +15,8 @@ const en: Translations = {
       active: "Auto-advancing every 15 seconds",
       paused: "Auto-advance paused",
     },
+    lookingForWork: "Looking for work",
+    present: "Present",
   },
   theme: {
     toggleLight: "Switch to light mode",
@@ -30,14 +32,21 @@ const en: Translations = {
   },
   sections: {
     about: {
-      jobTitle: "Full Stack Developer",
-      experienceText: "years of experience",
+      jobTitle: "Software Engineer",
+      jobTitleHighlight: "Full Stack",
+      experienceYears: "YEARS OF",
+      experienceLabel: "EXPERIENCE",
       summary:
-        "I'm Alex Morgan, a passionate full stack developer with 8+ years of experience building web applications and digital solutions. I specialize in creating robust, scalable applications using modern technologies like React, Node.js, and AWS. My expertise spans from designing user-friendly interfaces (TechInnovate Solutions) to implementing secure backend systems and setting up efficient CI/CD pipelines. I'm dedicated to writing clean, maintainable code and love tackling complex technical challenges. When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, or enjoying outdoor adventures.",
+        "I am a dedicated software architect specializing in building robust, high-performance web applications that scale effortlessly. My journey in the tech landscape has been defined by a relentless pursuit of clean code and user-centric design principles, ensuring every line of code serves a meaningful purpose.\n\nThroughout my career, I've had the privilege of leading transformative engineering projects at TechInnovate Solutions and DataSphere Analytics. My expertise spans the entire stack, from reactive frontend interfaces to distributed microservices.\n\nI am currently refining core architecture at CodeCraft Technologies and frequently collaborate with Web Pioneers Inc. on open-source initiatives. My philosophy remains simple: solve complex problems with elegant, maintainable solutions.",
+      downloadResume: "Download Curriculum Vitae",
+      stackFocusLabel: "Stack Focus",
+      locationLabel: "Location",
+      availabilityLabel: "Availability",
+      openForCollaboration: "Open for Collaboration",
     },
     skills: {
       functional: {
-        libraries: "Technologies / Libraries",
+        libraries: "Technologies & Libraries",
         qualities: {
           leadership: {
             title: "Leadership & Team Management",
@@ -99,14 +108,26 @@ const en: Translations = {
         keyCompetencies: {
           title: "Key Professional Competencies",
           competencies: {
-            participate:
-              "Participation in projects using both agile and traditional methodologies",
-            estimate:
-              "Estimation, planning, monitoring, coordination, and technical support",
-            analysis:
-              "Requirements analysis, design, specification writing, and methodology definition",
-            quality:
-              "Quality processes, code reviews, continuous integration and deployment",
+            systemArchitecture: {
+              title: "System Architecture Design",
+              desc: "Designing robust, distributed systems with scalability and high availability.",
+            },
+            agileScrum: {
+              title: "Agile Methodology & Scrum",
+              desc: "Proven implementing teams in fast-paced iterative environments.",
+            },
+            apiIntegration: {
+              title: "API Development & Integration",
+              desc: "Building secure RESTful and GraphQL APIs for seamless data exchange.",
+            },
+            uiuxImplementation: {
+              title: "UI/UX Implementation",
+              desc: "Translating complex designs into responsive, pixel-perfect user interfaces.",
+            },
+            cicdDevOps: {
+              title: "CI/CD & DevOps Practices",
+              desc: "Automating deployment pipelines and managing cloud infrastructure.",
+            },
           },
         },
       },
@@ -123,40 +144,45 @@ const en: Translations = {
     },
     education: {
       studies: {
-        title: "Education",
+        title: "Studies",
         history: [
           {
             name: "Master of Science in Computer Science",
-            location: "Stanford University (Palo Alto, CA)",
+            location: "Stanford University",
+            description: "Specialized in Distributed Systems and Cloud Architecture. Graduated with honors.",
           },
           {
             name: "Bachelor of Science in Computer Science",
-            location: "University of California (Berkeley, CA)",
+            location: "University of California",
+            description: "Core focus on Algorithms, Data Structures, and Software Engineering principles.",
           },
           {
             name: "Associate Degree in Computer Systems",
-            location: "De Anza College (Cupertino, CA)",
+            location: "De Anza College",
+            description: "Fundamental IT operations, networking basics, and hardware troubleshooting.",
           },
           {
             name: "High School Diploma",
-            location: "Palo Alto High School (Palo Alto, CA)",
+            location: "Palo Alto High School",
+            description: "",
           },
         ],
       },
       languages: {
         title: "Languages",
+        cefrInfo: "Proficiency levels are based on the Common European Framework of Reference for Languages (CEFR).",
         list: {
           english: {
             type: "English",
-            mastery: "Native Language",
+            mastery: "Native Speaker",
           },
           french: {
             type: "French",
-            mastery: "Advanced (C1)",
+            mastery: "Fluent / Professional",
           },
           spanish: {
             type: "Spanish",
-            mastery: "Intermediate (B1)",
+            mastery: "Basic / Elementary",
           },
           german: {
             type: "German",
@@ -233,40 +259,32 @@ const en: Translations = {
       },
     },
     hobbies: {
-      intro:
-        "When I'm not coding, I enjoy exploring the world and engaging in various activities that keep me balanced and inspired. I'm passionate about outdoor adventures, cultural experiences, and continuous learning in different domains.",
-      travels: {
+      subtitle:
+        "Beyond the screen, I seek out experiences that expand my perspective — from mountain trails to temple gardens, from the kitchen to the darkroom.",
+      items: {
         japan: {
-          title: "Japan in 2023",
-          desc: "Exploring the perfect blend of ancient traditions and cutting-edge technology in Tokyo, Kyoto, and Osaka. Highlights included peaceful temples, vibrant street life, and incredible cuisine.",
+          title: "Japan 2023",
+          desc: "An immersive journey through the blend of ancient tradition and futuristic innovation — from the quiet temples of Kyoto to the bustling streets of Shibuya. Japan provides endless inspiration for design and mindfulness.",
         },
         hiking: {
-          title: "Hiking in the Swiss Alps",
-          desc: "Challenging myself with multi-day treks through stunning Alpine landscapes. Experiencing breathtaking views, pristine mountain lakes, and the serene beauty of nature at high altitudes.",
-        },
-        scubaDiving: {
-          title: "Scuba Diving in Thailand",
-          desc: "Discovering the vibrant underwater world of the Andaman Sea. Encountered colorful coral reefs, diverse marine life, and enjoyed the peaceful tranquility of being beneath the waves.",
-        },
-        norway: {
-          title: "Northern Lights in Norway",
-          desc: "Witnessing the breathtaking aurora borealis in Tromsø, Norway. Spent nights photographing the dancing lights while learning about this fascinating natural phenomenon.",
+          title: "Alpine Trekking",
+          desc: "Multi-day treks through the Swiss and French Alps, crossing glaciers and remote passes. The physical challenge strips everything back to essentials, leaving only the mountain and the moment.",
         },
         cooking: {
-          title: "Culinary Explorations",
-          desc: "Developing my passion for international cuisine by taking cooking classes and experimenting with recipes collected from my travels. My specialty is fusion dishes that combine techniques from different culinary traditions.",
-        },
-        chess: {
-          title: "Strategic Chess",
-          desc: "Engaging in regular chess tournaments and puzzles to sharpen my strategic thinking. Enjoying both the competitive aspect and the mental exercise that chess provides.",
-        },
-        cycling: {
-          title: "Road Cycling",
-          desc: "Exploring scenic routes on my road bike, covering long distances and challenging terrain. Cycling provides both physical exercise and an opportunity to discover new landscapes.",
+          title: "Culinary Arts",
+          desc: "Exploring world cuisines through hands-on cooking classes during travels. From Kyoto ramen workshops to Provençal pastry masterclasses, food is how I decode a culture's identity.",
         },
         photography: {
           title: "Landscape Photography",
-          desc: "Capturing the beauty of natural and urban landscapes during my travels. I focus on composition and natural lighting to convey the feeling and atmosphere of each location.",
+          desc: "Capturing light across natural and urban landscapes — pre-dawn alpine starts, golden-hour coastal cliffs. The pursuit of the perfect frame teaches patience and a deep attention to the world.",
+        },
+        gaming: {
+          title: "Virtual Worlds",
+          desc: "Exploring immersive game worlds and early VR experiences. I'm particularly drawn to narrative-driven RPGs and simulation games that reward curiosity and strategic thinking.",
+        },
+        skiing: {
+          title: "Winter Sports",
+          desc: "Chasing powder from Whistler to Chamonix, with a few off-piste detours along the way. Winter in the mountains is as much about the silence between runs as the speed on them.",
         },
       },
     },

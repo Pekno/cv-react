@@ -22,6 +22,7 @@ src/components/sections/Projects/
 - Autoplay functionality with pause/resume controls
 - Project image showcase
 - Project descriptions and titles
+- Optional category labels
 - External links to live demos or source code
 - Responsive design for all device sizes
 - Keyboard navigation support
@@ -60,6 +61,7 @@ sections: {
       [projectId: string]: {
         title: string;        // Project title
         desc: string;         // Project description
+        category?: string;    // Optional per-item category override
       }
     },
     actions: {
@@ -67,6 +69,9 @@ sections: {
       testIt: string;         // Text for "Test it" action links
       sourceCodeHere: string; // Text for "Source code" action links
       // Any other action text keys
+    },
+    categories?: {            // Optional category labels
+      [key: string]: string;
     }
   }
 }
@@ -113,60 +118,35 @@ sections: {
 
 ```typescript
 projects: {
-  intro: "Here are some of my personal and professional projects that showcase my skills and interests. Each project demonstrates different technologies and approaches to problem-solving.",
+  intro: "Here are some of my personal and professional projects that showcase my skills and interests.",
   items: {
     projectA: {
       title: "Task Management API",
-      desc: "A REST API built with Node.js and Express that provides task management functionality. Features JWT authentication, role-based permissions, and MongoDB integration."
+      desc: "A REST API built with Node.js and Express that provides task management functionality.",
     },
     projectB: {
       title: "Weather Dashboard",
-      desc: "A React application that displays current weather and forecasts for multiple locations. Uses the OpenWeather API and features interactive charts with recharts."
+      desc: "A React application that displays current weather and forecasts for multiple locations.",
+      category: "Frontend",
     },
     projectC: {
       title: "E-commerce Platform",
-      desc: "A full-stack e-commerce solution with a React frontend and Django backend. Includes product catalog, shopping cart, user accounts, and payment processing."
+      desc: "A full-stack e-commerce solution with a React frontend and Django backend.",
     },
     projectD: {
       title: "Algorithm Visualizer",
-      desc: "An educational tool that visualizes sorting and pathfinding algorithms. Built with vanilla JavaScript and HTML Canvas for rendering."
+      desc: "An educational tool that visualizes sorting and pathfinding algorithms.",
     }
   },
   actions: {
     tryIt: "Try it here",
     testIt: "Test it there",
     sourceCodeHere: "Source code"
-  }
-}
-```
-
-### Translation Example (fr.ts)
-
-```typescript
-projects: {
-  intro: "Voici quelques-uns de mes projets personnels et professionnels qui mettent en valeur mes compétences et intérêts. Chaque projet démontre différentes technologies et approches de résolution de problèmes.",
-  items: {
-    projectA: {
-      title: "API de Gestion de Tâches",
-      desc: "Une API REST développée avec Node.js et Express qui fournit des fonctionnalités de gestion de tâches. Comprend l'authentification JWT, les autorisations basées sur les rôles et l'intégration MongoDB."
-    },
-    projectB: {
-      title: "Tableau de Bord Météo",
-      desc: "Une application React qui affiche la météo actuelle et les prévisions pour plusieurs emplacements. Utilise l'API OpenWeather et propose des graphiques interactifs avec recharts."
-    },
-    projectC: {
-      title: "Plateforme E-commerce",
-      desc: "Une solution e-commerce complète avec une interface React et un backend Django. Comprend un catalogue de produits, un panier d'achat, des comptes utilisateurs et un traitement des paiements."
-    },
-    projectD: {
-      title: "Visualiseur d'Algorithmes",
-      desc: "Un outil éducatif qui visualise les algorithmes de tri et de recherche de chemin. Construit avec JavaScript vanilla et HTML Canvas pour le rendu."
-    }
   },
-  actions: {
-    tryIt: "Essayez-le ici",
-    testIt: "Testez-le là",
-    sourceCodeHere: "Code source"
+  categories: {
+    frontend: "Frontend",
+    backend: "Backend",
+    fullstack: "Full Stack"
   }
 }
 ```
@@ -176,7 +156,7 @@ projects: {
 The `Projects` component is automatically registered using the `registerSection` decorator:
 
 ```typescript
-export default registerSection<ProjectsData>({ type: 'projects' })(Projects);
+export default createRegisteredSection<ProjectsProps>('projects', ProjectsSectionComponent);
 ```
 
 ## Implementation Details
@@ -210,6 +190,12 @@ The component dynamically renders appropriate link text based on the `linkTextKe
 - `testIt` for links to test environments
 - `sourceCodeHere` for links to repositories
 
+### Helper Functions
+
+- `itemKey(id, property)` — builds translation key for a project item
+- `actionKey(action)` — builds translation key for an action label
+- `categoryKey(key)` — builds translation key for a category label
+
 ## Styling
 
 The component uses CSS modules for styling. The main styles are defined in `Projects.module.css`. Key styling features include:
@@ -237,4 +223,4 @@ The `ProjectCarousel` sub-component has its own styling for carousel-specific el
 
 3. The autoplay feature is set to 15 seconds by default but can be customized in the `useCarouselAutoplay` hook.
 
-4. If internationalization is important for your project links, consider using relative paths that work regardless of language settings, or provide language-specific links in your data structure.
+4. The `categories` translation object and per-item `category` field are optional and can be omitted if not needed.

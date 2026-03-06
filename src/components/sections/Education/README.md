@@ -14,8 +14,9 @@ src/components/sections/Education/
 
 ## Features
 
-- Timeline display of educational history
-- Progress bar visualization of language proficiency levels
+- Timeline display of educational history with descriptions
+- Segmented bar visualization of language proficiency levels
+- CEFR info tooltip for language proficiency context
 - Responsive layout that adapts to different screen sizes
 - Visual icons for different education stages
 
@@ -58,11 +59,13 @@ sections: {
         {
           name: string;         // Degree/education name
           location: string;     // Institution and location
+          description: string;  // Additional description of the degree/program
         }
       ]
     },
     languages: {
       title: string;            // Section title for languages
+      cefrInfo: string;         // Tooltip text explaining the CEFR proficiency scale
       list: {
         [languageId: string]: {
           type: string;         // Language name
@@ -102,16 +105,16 @@ sections: {
     ],
     languages: [
       {
-        id: "french",
+        id: "english",
         value: 100,
       },
       {
-        id: "english",
-        value: 95,
+        id: "french",
+        value: 85,
       },
       {
         id: "spanish",
-        value: 20,
+        value: 40,
       }
     ]
   }
@@ -126,82 +129,42 @@ education: {
     title: "Studies",
     history: [
       {
-        name: "Master's in Computer Science",
-        location: "University of Example (City)",
+        name: "Master of Science in Computer Science",
+        location: "Stanford University",
+        description: "Specialized in Distributed Systems and Cloud Architecture. Graduated with honors.",
       },
       {
-        name: "Bachelor's in Computer Science",
-        location: "University of Example (City)",
+        name: "Bachelor of Science in Computer Science",
+        location: "University of California",
+        description: "Core focus on Algorithms, Data Structures, and Software Engineering principles.",
       },
       {
-        name: "Associate's Degree in IT",
-        location: "Community College (City)",
+        name: "Associate Degree in Computer Systems",
+        location: "De Anza College",
+        description: "Fundamental IT operations, networking basics, and hardware troubleshooting.",
       },
       {
         name: "High School Diploma",
-        location: "Example High School (City)",
+        location: "Palo Alto High School",
+        description: "",
       }
     ]
   },
   languages: {
     title: "Languages",
+    cefrInfo: "Proficiency levels are based on the Common European Framework of Reference for Languages (CEFR).",
     list: {
-      french: {
-        type: "French",
-        mastery: "Native Language",
-      },
       english: {
         type: "English",
-        mastery: "Fluent (TOEIC: 975/990)",
+        mastery: "Native Speaker",
+      },
+      french: {
+        type: "French",
+        mastery: "Fluent / Professional",
       },
       spanish: {
         type: "Spanish",
-        mastery: "Basic",
-      }
-    }
-  }
-}
-```
-
-### Translation Example (fr.ts)
-
-```typescript
-education: {
-  studies: {
-    title: "Études",
-    history: [
-      {
-        name: "Master en Informatique",
-        location: "Université d'Exemple (Ville)",
-      },
-      {
-        name: "Licence en Informatique",
-        location: "Université d'Exemple (Ville)",
-      },
-      {
-        name: "DUT Informatique",
-        location: "IUT (Ville)",
-      },
-      {
-        name: "Baccalauréat Scientifique",
-        location: "Lycée Exemple (Ville)",
-      }
-    ]
-  },
-  languages: {
-    title: "Langues",
-    list: {
-      french: {
-        type: "Français",
-        mastery: "Langue maternelle",
-      },
-      english: {
-        type: "Anglais",
-        mastery: "Courant (TOEIC: 975/990)",
-      },
-      spanish: {
-        type: "Espagnol",
-        mastery: "Notions",
+        mastery: "Basic / Elementary",
       }
     }
   }
@@ -213,7 +176,7 @@ education: {
 The `Education` component is automatically registered using the `registerSection` decorator:
 
 ```typescript
-export default registerSection<EducationData>({ type: 'education' })(Education);
+export default createRegisteredSection<EducationProps>('education', EducationSectionComponent);
 ```
 
 ## Implementation Details
@@ -226,30 +189,26 @@ The component generates a timeline visualization by mapping through the `history
 - Appropriate icon
 - Degree/education name
 - Institution and location
+- Description of the program
 
 The timeline is laid out vertically with connecting lines between entries.
 
 ### Language Proficiency Display
 
-Language proficiency is visualized using progress bars:
+Language proficiency is visualized using segmented bars (10 segments per language):
 
 - Each language has its own row
-- The progress bar width corresponds to the `value` percentage
+- Segments are filled, partially filled, or empty based on the `value` percentage
 - The language name and mastery level are displayed alongside the bar
+- A CEFR info icon provides context about the proficiency scale
 
 ## Styling
 
 The component uses CSS modules for styling. The main styles are defined in `Education.module.css`. Key styling features include:
 
 - Timeline connecting lines
-- Progress bar animations
-- Responsive grid layout
-
-## Accessibility Considerations
-
-- Progress bars include `aria-valuenow` and `aria-valuemax` attributes
-- Icons have appropriate aria-labels
-- Education timeline maintains proper reading order
+- Segmented proficiency bar animations
+- Responsive layout
 
 ## Notes for Implementation
 
@@ -258,5 +217,3 @@ The component uses CSS modules for styling. The main styles are defined in `Educ
 2. The order of entries in the `history` array should match the order of entries in the translation `history` array.
 
 3. For best visual appearance, language proficiency values should be between 0 and 100, with 100 representing full proficiency.
-
-4. Colors can be specified using Mantine theme values (e.g., `brand.6`) or standard CSS color values.

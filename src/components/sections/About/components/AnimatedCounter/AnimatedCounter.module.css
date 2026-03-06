@@ -3,8 +3,6 @@
   display: inline-block;
   font-weight: 700;
   color: var(--mantine-color-brand-filled);
-  font-size: var(--mantine-font-size-xl);
-  margin-right: 5px;
   user-select: none;
 }
 

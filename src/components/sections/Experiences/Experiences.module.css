@@ -1,165 +1,55 @@
-/* Enhanced Experiences CSS with variables */
+/* =====================================================
+   Experiences Section — Zigzag Timeline (Stitch Design)
+   ===================================================== */
+
 .experienceContainer {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-lg);
   position: relative;
-}
-
-/* Timeline styling */
-.timeline {
-  position: relative;
-  z-index: 1;
-}
-
-.timelineItem {
-  padding-bottom: var(--space-xl);
-  transition: all var(--transition-normal);
-}
-
-.timelineBullet {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-normal);
-  border-radius: 50%;
-  color: white;
-  box-shadow: 0 0 0 rgba(43, 104, 156, 0.4);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(43, 104, 156, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(43, 104, 156, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(43, 104, 156, 0);
-  }
-}
-
-.timelineHeader {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  flex-wrap: wrap;
-}
-
-.companyYear {
-  font-size: var(--mantine-font-size-lg);
-  color: var(--mantine-color-brand-filled);
-}
-
-/* Accordion styling */
-.accordionItem {
-  border: 1px solid var(--mantine-color-gray-3);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: all var(--transition-normal);
-  margin: var(--space-xs) 0;
-  background-color: white;
-}
-
-.accordionItem:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--mantine-color-brand-filled-light);
-}
-
-.accordionControl {
-  padding: var(--space-md);
-  background: linear-gradient(
-    to right,
-    rgba(43, 104, 156, 0.02),
-    rgba(43, 104, 156, 0.07)
-  );
-  transition: background var(--transition-normal);
-}
-
-.accordionControl:hover {
-  background: linear-gradient(
-    to right,
-    rgba(43, 104, 156, 0.05),
-    rgba(43, 104, 156, 0.1)
-  ) !important;
-}
-
-.accordionChevron {
-  color: var(--mantine-color-brand-filled);
-  transition: transform var(--transition-normal);
-  margin-right: var(--space-xs);
-}
-
-.accordionChevronIcon {
-  width: 50px;
-  height: 50px;
-}
-
-.durationBadge {
-  background-color: rgba(43, 104, 156, 0.1);
-  color: var(--mantine-color-brand-filled-dark);
-  border-color: var(--mantine-color-brand-filled-light);
-  transition: all var(--transition-normal);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-md);
-}
-
-.contextWrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  animation: fadeIn 0.5s ease;
+  align-items: center;
+  gap: 0;
 }
 
-.contextItem {
-  padding: var(--space-sm);
-  border-radius: var(--radius-md);
-  background-color: rgba(var(--mantine-color-gray-2), 0.5);
-  border: 1px solid var(--mantine-color-gray-2);
-  transition: all var(--transition-normal);
+/* ── Center vertical line ── */
+.timelineLine {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  z-index: 0;
 }
 
-.contextItem:hover {
-  background-color: rgba(var(--mantine-color-gray-3), 0.8);
-  border-color: var(--mantine-color-gray-3);
+/* ── Entry row (one per experience) ── */
+.entryRow {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  padding-bottom: 48px;
+  animation: entryReveal 0.5s ease both;
 }
 
-.contextHeader {
-  flex-wrap: wrap;
-  margin-bottom: var(--space-xs);
+.entryRow:last-child {
+  padding-bottom: 0;
 }
 
-.contextTitle {
-  font-weight: 600;
-  margin-right: var(--space-xs);
-  color: var(--mantine-color-brand-filled);
-}
+/* staggered delays */
+.entryRow:nth-child(1) { animation-delay: 0.05s; }
+.entryRow:nth-child(2) { animation-delay: 0.15s; }
+.entryRow:nth-child(3) { animation-delay: 0.25s; }
+.entryRow:nth-child(4) { animation-delay: 0.35s; }
+.entryRow:nth-child(5) { animation-delay: 0.45s; }
+.entryRow:nth-child(6) { animation-delay: 0.55s; }
 
-.techGroup {
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-
-.techBadge {
-  text-transform: none;
-  transition: all var(--transition-fast);
-  background-color: rgba(43, 104, 156, 0.1);
-  color: var(--mantine-color-brand-filled-dark);
-  border-color: var(--mantine-color-brand-filled-light);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-}
-
-.techBadge:hover {
-  transform: translateY(-2px);
-  background-color: rgba(43, 104, 156, 0.2);
-}
-
-/* Animation keyframes */
-@keyframes fadeIn {
+@keyframes entryReveal {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -167,12 +57,302 @@
   }
 }
 
-@media (max-width: 576px) {
-  .accordionPanel {
-    padding: var(--space-xs);
+/* ── Layout sides ── */
+.entryRowLeft {
+  flex-direction: row;
+}
+
+.entryRowRight {
+  flex-direction: row-reverse;
+}
+
+.cardSide {
+  width: calc(50% - 32px);
+  flex-shrink: 0;
+}
+
+.spacerSide {
+  width: calc(50% - 32px);
+  flex-shrink: 0;
+}
+
+/* ── Center node ── */
+.nodeCenter {
+  width: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 24px;
+  z-index: 2;
+}
+
+.nodeIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--mantine-color-brand-filled);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nodeIconInactive {
+  background: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-4));
+}
+
+.nodeIconSvg {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* ── Card ── */
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  background: light-dark(white, var(--mantine-color-dark-6));
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.3));
+  border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3));
+  transform: translateY(-2px);
+}
+
+/* ── Accordion overrides ── */
+.accordionItem {
+  border: none !important;
+  background: transparent !important;
+}
+
+.accordionControl {
+  padding: 10px 14px !important;
+  background: transparent !important;
+  cursor: pointer;
+}
+
+.accordionControl:hover {
+  background: light-dark(
+    var(--mantine-color-gray-0),
+    rgba(255, 255, 255, 0.03)
+  ) !important;
+}
+
+.accordionChevron {
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+  transition: transform 0.25s ease, color 0.2s ease !important;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.accordionChevronIcon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Card header content ── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.logoFrame {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  border-radius: 15%;
+  border: 2px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: border-color 0.25s ease;
+}
+
+.card:hover .logoFrame {
+  border-color: var(--mantine-color-brand-filled);
+}
+
+.companyLogo {
+  max-height: 32px;
+  max-width: 36px;
+  object-fit: contain;
+}
+
+.headerContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.jobTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--mantine-color-brand-filled);
+  display: block;
+}
+
+.companyName {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  display: block;
+  margin-top: 2px;
+}
+
+.dateLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.dateRange {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-gray-5));
+}
+
+.durationPill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: light-dark(
+    rgba(var(--mantine-color-brand-3-rgb, 43, 104, 156), 0.1),
+    rgba(var(--mantine-color-brand-3-rgb, 43, 104, 156), 0.2)
+  );
+  color: light-dark(var(--mantine-color-brand-7), var(--mantine-color-brand-3));
+  white-space: nowrap;
+}
+
+/* ── Panel content ── */
+.accordionPanel {
+  /* let Mantine handle the slide */
+}
+
+.accordionContent {
+  padding: 0 24px 20px !important;
+}
+
+.contextWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: panelReveal 0.35s ease both;
+}
+
+@keyframes panelReveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
-  
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Bullet point items ── */
+.contextItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.bulletDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mantine-color-brand-filled);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+.contextText {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-3));
+}
+
+/* ── Tech pills ── */
+.techGroup {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+}
+
+/* ================================================================
+   RESPONSIVE — Stack vertically on mobile
+   ================================================================ */
+
+@media (max-width: 768px) {
+  .timelineLine {
+    left: 18px;
+  }
+
+  .entryRow,
+  .entryRowLeft,
+  .entryRowRight {
+    flex-direction: row !important;
+  }
+
+  .nodeCenter {
+    width: 36px;
+    padding-top: 20px;
+    position: absolute;
+    left: 0;
+  }
+
+  .nodeIcon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cardSide {
+    width: calc(100% - 36px);
+    margin-left: 36px;
+  }
+
+  .spacerSide {
+    display: none;
+  }
+
+  .accordionControl {
+    padding: 16px 16px !important;
+  }
+
   .accordionContent {
-    padding: 0 !important;
-  }  
+    padding: 0 16px 16px !important;
+  }
+
+  .companyLogo {
+    max-height: 26px;
+    max-width: 30px;
+  }
+
+  .jobTitle {
+    font-size: 0.9rem;
+  }
+
+  .companyName {
+    font-size: 0.8rem;
+  }
+
+  .contextText {
+    font-size: 0.8rem;
+  }
 }

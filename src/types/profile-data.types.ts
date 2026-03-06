@@ -52,6 +52,7 @@ export interface MetaData {
     [lang: string]: string;
   };
   socials: SocialLink[];
+  lookingForWork?: boolean;
 }
 
 // Define a union of supported social platforms for strict type safety

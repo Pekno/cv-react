@@ -15,6 +15,8 @@ const fr: Translations = {
       active: "Défilement automatique toutes les 15 secondes",
       paused: "Défilement automatique en pause",
     },
+    lookingForWork: "En recherche d'emploi",
+    present: "Aujourd'hui",
   },
   theme: {
     toggleLight: "Passer au mode clair",
@@ -30,14 +32,21 @@ const fr: Translations = {
   },
   sections: {
     about: {
-      jobTitle: "Développeur Full Stack",
-      experienceText: "ans d'expérience",
+      jobTitle: "Ingénieur Logiciel",
+      jobTitleHighlight: "Full Stack",
+      experienceYears: "ANS D'",
+      experienceLabel: "EXPÉRIENCE",
       summary:
-        "Je suis Alex Morgan, un développeur full stack passionné avec plus de 8 ans d'expérience dans la création d'applications web et de solutions numériques. Je suis spécialisé dans la création d'applications robustes et évolutives utilisant des technologies modernes comme React, Node.js et AWS. Mon expertise s'étend de la conception d'interfaces conviviales (TechInnovate Solutions) à l'implémentation de systèmes backend sécurisés et à la mise en place de pipelines CI/CD efficaces. Je m'engage à écrire du code propre et maintenable, et j'aime relever des défis techniques complexes. Quand je ne code pas, vous pouvez me trouver en train d'explorer de nouvelles technologies, de contribuer à des projets open-source ou de profiter d'aventures en plein air.",
+        "Je suis un architecte logiciel dédié, spécialisé dans la création d'applications web robustes et performantes qui évoluent sans effort. Mon parcours dans le paysage technologique a été défini par une quête incessante de code propre et de principes de conception centrés sur l'utilisateur.\n\nTout au long de ma carrière, j'ai eu le privilège de diriger des projets d'ingénierie transformateurs chez TechInnovate Solutions et DataSphere Analytics. Mon expertise couvre l'ensemble du stack, des interfaces frontend réactives aux microservices distribués.\n\nJe perfectionne actuellement l'architecture principale chez CodeCraft Technologies et collabore fréquemment avec Web Pioneers Inc. sur des initiatives open-source. Ma philosophie reste simple : résoudre des problèmes complexes avec des solutions élégantes et maintenables.",
+      downloadResume: "Télécharger le Curriculum Vitae",
+      stackFocusLabel: "Stack Ciblé",
+      locationLabel: "Localisation",
+      availabilityLabel: "Disponibilité",
+      openForCollaboration: "Ouvert à la Collaboration",
     },
     skills: {
       functional: {
-        libraries: "Technologies / Librairies",
+        libraries: "Technologies & Librairies",
         qualities: {
           leadership: {
             title: "Leadership & Gestion d'Équipe",
@@ -99,14 +108,26 @@ const fr: Translations = {
         keyCompetencies: {
           title: "Compétences Professionnelles Clés",
           competencies: {
-            participate:
-              "Participation dans des projets en méthodologie agile et traditionnelle",
-            estimate:
-              "Estimation, planification, suivi, coordination et support technique",
-            analysis:
-              "Analyse des besoins, conception, rédaction de spécifications techniques et fonctionnelles, définition de la méthodologie",
-            quality:
-              "Processus qualité, revues de code, intégration et déploiement continus",
+            systemArchitecture: {
+              title: "Conception d'Architecture Système",
+              desc: "Conception de systèmes robustes et distribués avec scalabilité et haute disponibilité.",
+            },
+            agileScrum: {
+              title: "Méthodologie Agile & Scrum",
+              desc: "Expérience avérée dans des équipes en environnements itératifs et dynamiques.",
+            },
+            apiIntegration: {
+              title: "Développement & Intégration d'API",
+              desc: "Construction d'APIs RESTful et GraphQL sécurisées pour des échanges de données fluides.",
+            },
+            uiuxImplementation: {
+              title: "Implémentation UI/UX",
+              desc: "Traduction de designs complexes en interfaces utilisateur responsives et pixel-perfect.",
+            },
+            cicdDevOps: {
+              title: "CI/CD & Pratiques DevOps",
+              desc: "Automatisation des pipelines de déploiement et gestion de l'infrastructure cloud.",
+            },
           },
         },
       },
@@ -123,28 +144,33 @@ const fr: Translations = {
     },
     education: {
       studies: {
-        title: "Formation",
+        title: "Études",
         history: [
           {
             name: "Master en Informatique",
-            location: "Université Stanford (Palo Alto, CA)",
+            location: "Université Stanford",
+            description: "Spécialisé en Systèmes Distribués et Architecture Cloud. Diplômé avec mention.",
           },
           {
             name: "Licence en Informatique",
-            location: "Université de Californie (Berkeley, CA)",
+            location: "Université de Californie",
+            description: "Accent sur les Algorithmes, Structures de Données et principes de Génie Logiciel.",
           },
           {
             name: "Diplôme Associé en Systèmes Informatiques",
-            location: "De Anza College (Cupertino, CA)",
+            location: "De Anza College",
+            description: "Opérations IT fondamentales, bases de la mise en réseau et dépannage matériel.",
           },
           {
             name: "Baccalauréat",
-            location: "Lycée de Palo Alto (Palo Alto, CA)",
+            location: "Lycée de Palo Alto",
+            description: "",
           },
         ],
       },
       languages: {
         title: "Langues",
+        cefrInfo: "Les niveaux de compétence sont basés sur le Cadre Européen Commun de Référence pour les Langues (CECRL).",
         list: {
           english: {
             type: "Anglais",
@@ -152,11 +178,11 @@ const fr: Translations = {
           },
           french: {
             type: "Français",
-            mastery: "Avancé (C1)",
+            mastery: "Courant / Professionnel",
           },
           spanish: {
             type: "Espagnol",
-            mastery: "Intermédiaire (B1)",
+            mastery: "Basique / Élémentaire",
           },
           german: {
             type: "Allemand",
@@ -233,40 +259,32 @@ const fr: Translations = {
       },
     },
     hobbies: {
-      intro:
-        "Quand je ne code pas, j'aime explorer le monde et m'adonner à diverses activités qui me maintiennent équilibré et inspiré. Je suis passionné par les aventures en plein air, les expériences culturelles et l'apprentissage continu dans différents domaines.",
-      travels: {
+      subtitle:
+        "Au-delà de l'écran, je recherche des expériences qui élargissent ma perspective — des sentiers de montagne aux jardins de temples, de la cuisine à la chambre noire.",
+      items: {
         japan: {
-          title: "Japon en 2023",
-          desc: "Explorer le mélange parfait de traditions anciennes et de technologie de pointe à Tokyo, Kyoto et Osaka. Points forts : temples paisibles, vie urbaine animée et cuisine incroyable.",
+          title: "Japon 2023",
+          desc: "Un voyage immersif à travers le mélange de tradition ancienne et d'innovation futuriste — des temples silencieux de Kyoto aux rues animées de Shibuya. Le Japon offre une inspiration inépuisable pour le design et la pleine conscience.",
         },
         hiking: {
-          title: "Randonnée dans les Alpes Suisses",
-          desc: "Me défier avec des randonnées de plusieurs jours à travers de magnifiques paysages alpins. Expérience de vues à couper le souffle, de lacs de montagne immaculés et de la beauté sereine de la nature en altitude.",
-        },
-        scubaDiving: {
-          title: "Plongée sous-marine en Thaïlande",
-          desc: "Découverte du monde sous-marin vibrant de la mer d'Andaman. Rencontre avec des récifs coralliens colorés, une vie marine diversifiée et appréciation de la tranquillité paisible sous les vagues.",
-        },
-        norway: {
-          title: "Aurores boréales en Norvège",
-          desc: "Observation des aurores boréales à couper le souffle à Tromsø, Norvège. Nuits passées à photographier les lumières dansantes tout en apprenant sur ce fascinant phénomène naturel.",
+          title: "Trekking Alpin",
+          desc: "Randonnées de plusieurs jours dans les Alpes suisses et françaises, traversant glaciers et cols reculés. Le défi physique ramène à l'essentiel, ne laissant que la montagne et l'instant présent.",
         },
         cooking: {
-          title: "Explorations Culinaires",
-          desc: "Développement de ma passion pour la cuisine internationale en prenant des cours de cuisine et en expérimentant des recettes collectées lors de mes voyages. Ma spécialité est les plats fusion qui combinent des techniques de différentes traditions culinaires.",
-        },
-        chess: {
-          title: "Échecs Stratégiques",
-          desc: "Participation à des tournois d'échecs réguliers et résolution de puzzles pour aiguiser ma pensée stratégique. Appréciation tant de l'aspect compétitif que de l'exercice mental que les échecs procurent.",
-        },
-        cycling: {
-          title: "Cyclisme sur Route",
-          desc: "Exploration de routes pittoresques à vélo de route, couvrant de longues distances et des terrains difficiles. Le cyclisme offre à la fois un exercice physique et une opportunité de découvrir de nouveaux paysages.",
+          title: "Arts Culinaires",
+          desc: "Exploration des cuisines du monde à travers des cours de cuisine lors de mes voyages. Des ateliers ramen à Kyoto aux masterclasses de pâtisserie provençale, la nourriture est ma façon de décoder l'identité d'une culture.",
         },
         photography: {
           title: "Photographie de Paysage",
-          desc: "Capture de la beauté des paysages naturels et urbains lors de mes voyages. Je me concentre sur la composition et l'éclairage naturel pour transmettre le sentiment et l'atmosphère de chaque lieu.",
+          desc: "Capturer la lumière à travers des paysages naturels et urbains — départs alpins avant l'aube, falaises côtières à l'heure dorée. La quête du cadre parfait enseigne la patience et une profonde attention au monde.",
+        },
+        gaming: {
+          title: "Mondes Virtuels",
+          desc: "Exploration de mondes de jeux immersifs et d'expériences VR naissantes. Je suis particulièrement attiré par les RPG narratifs et les jeux de simulation qui récompensent la curiosité et la pensée stratégique.",
+        },
+        skiing: {
+          title: "Sports d'Hiver",
+          desc: "À la poursuite de la poudreuse de Whistler à Chamonix, avec quelques détours hors-piste en chemin. L'hiver en montagne tient autant au silence entre les descentes qu'à la vitesse sur les pistes.",
         },
       },
     },

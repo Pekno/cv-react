@@ -14,6 +14,8 @@ export interface GlobalTranslations {
     active: string;
     paused: string;
   };
+  lookingForWork: string;
+  present: string;
 }
 
 // Theme translations
@@ -52,7 +54,9 @@ export type GlobalTranslationKeys =
   | "global.units.years"
   | "global.thanks"
   | "global.autoplay.active"
-  | "global.autoplay.paused";
+  | "global.autoplay.paused"
+  | "global.lookingForWork"
+  | "global.present";
 
 // Create keys for theme namespace
 export type ThemeTranslationKeys =

@@ -1,145 +1,230 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { 
+import React, { useState, useCallback } from 'react';
+import {
   Text,
-  Card,
-  Image,
-  Grid,
+  Modal,
+  Stack,
+  ActionIcon,
   Box,
-  Blockquote
 } from '@mantine/core';
 import { useLanguage } from '@hooks/useLanguage';
 import Section from '@components/common/Section/Section';
 import classes from './Hobbies.module.css';
-import { HobbiesProps, TravelItem, travelKey } from './Hobbies.types';
+import { HobbiesProps, HobbyItem, hobbyKey } from './Hobbies.types';
 import { createRegisteredSection } from '@decorators/section.decorator';
-import { TranslationKey } from '@/types/translations.types';
 
-// Interface for the expanded image state
-interface ExpandedImageState {
-  img: string; 
-  title: string; 
-  desc: string;
+// ── Bento Card ────────────────────────────────────────────────────────────────
+
+const BentoCard = React.memo(({
+  item,
+  onClick,
+  t,
+}: {
+  item: HobbyItem;
+  onClick: (item: HobbyItem) => void;
+  t: (key: ReturnType<typeof hobbyKey>) => string;
+}) => {
+  const colSpan = item.colSpan ?? 1;
+  const rowSpan = item.rowSpan ?? 1;
+
+  return (
+    <div
+      className={classes.card}
+      data-col-span={colSpan}
+      data-row-span={rowSpan}
+      style={{
+        gridColumn: `span ${colSpan}`,
+        gridRow: `span ${rowSpan}`,
+      }}
+      onClick={() => onClick(item)}
+      role="button"
+      tabIndex={0}
+      aria-label={t(hobbyKey(item.id, 'title'))}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(item); }}
+    >
+      {/* Background image */}
+      <div
+        className={classes.cardImage}
+        style={{ backgroundImage: `url(${item.image})` }}
+        aria-hidden="true"
+      />
+
+      {/* Gradient overlay */}
+      <div className={classes.cardOverlay} aria-hidden="true" />
+
+      {/* Card content — slides up on hover */}
+      <div className={classes.cardContent}>
+        <div className={classes.cardMeta}>
+          <span className={classes.cardIcon} aria-hidden="true">
+            <span className="material-symbols-outlined">{item.icon}</span>
+          </span>
+          <span className={classes.cardSubtitle}>{item.subtitle}</span>
+        </div>
+        <p className={classes.cardTitle}>{t(hobbyKey(item.id, 'title'))}</p>
+      </div>
+    </div>
+  );
+});
+
+BentoCard.displayName = 'BentoCard';
+
+// ── Lightbox Modal ────────────────────────────────────────────────────────────
+
+interface LightboxState {
+  item: HobbyItem;
+  index: number;
 }
 
-// Create a memoized travel card component
-const TravelCard = React.memo(({
-  travel, 
-  index, 
-  t, 
-  onClick
+const HobbiesLightbox = ({
+  state,
+  items,
+  onClose,
+  onNavigate,
+  t,
 }: {
-  travel: TravelItem;
-  index: number;
-  t: (key: TranslationKey, options?: any) => string;
-  onClick: (travel: TravelItem) => void;
-}) => (
-  <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={index}>
-    <Card 
-      shadow="sm" 
-      padding="lg" 
-      radius="md" 
-      withBorder 
-      className={classes.card}
-      data-aos={index % 2 === 0 ? "fadeInLeft" : "fadeInRight"}
-      onClick={() => onClick(travel)}
-      style={{ cursor: 'pointer' }}
-    >
-      <Card.Section className={classes.imageContainer}>
-        <Image
-          src={travel.image}
-          alt={t(travelKey(travel.id, 'title'))}
-          className={classes.image}
-          style={{ width: '100%', cursor: 'pointer' }}
-        />
-      </Card.Section>
-      <Text fw={500} size="lg" mt="md" style={{ cursor: 'pointer' }}>
-        {t(travelKey(travel.id, 'title'))}
-      </Text>
-    </Card>
-  </Grid.Col>
-));
+  state: LightboxState;
+  items: HobbyItem[];
+  onClose: () => void;
+  onNavigate: (index: number) => void;
+  t: (key: ReturnType<typeof hobbyKey>) => string;
+}) => {
+  const { item, index } = state;
+  const hasPrev = index > 0;
+  const hasNext = index < items.length - 1;
 
-// Create the Hobbies component as a regular function
+  return (
+    <Modal
+      opened
+      onClose={onClose}
+      size="xl"
+      padding={0}
+      radius="lg"
+      classNames={{
+        content: classes.modalContent,
+        body: classes.modalBody,
+        overlay: classes.modalOverlay,
+        header: classes.modalHeader,
+        close: classes.modalClose,
+      }}
+      withCloseButton
+      centered
+    >
+      <div className={classes.lightbox}>
+        {/* Left: image panel (2/3) */}
+        <div className={classes.lightboxImage}>
+          <img
+            src={item.image}
+            alt={t(hobbyKey(item.id, 'title'))}
+            className={classes.lightboxImg}
+          />
+        </div>
+
+        {/* Right: content panel (1/3) */}
+        <div className={classes.lightboxPanel}>
+          <Stack gap="md" className={classes.lightboxPanelInner}>
+            {/* Location label */}
+            <div className={classes.lightboxMeta}>
+              <span className={`material-symbols-outlined ${classes.lightboxMetaIcon}`}>
+                location_on
+              </span>
+              <span className={classes.lightboxSubtitle}>{item.subtitle}</span>
+            </div>
+
+            {/* Title */}
+            <Text className={classes.lightboxTitle} component="h2">
+              {t(hobbyKey(item.id, 'title'))}
+            </Text>
+
+            {/* Description */}
+            <Text className={classes.lightboxDesc}>
+              {t(hobbyKey(item.id, 'desc'))}
+            </Text>
+
+            {/* Navigation */}
+            <div className={classes.lightboxNav}>
+              <ActionIcon
+                variant="subtle"
+                size="lg"
+                disabled={!hasPrev}
+                onClick={() => onNavigate(index - 1)}
+                className={classes.lightboxNavBtn}
+                aria-label="Previous"
+              >
+                <span className="material-symbols-outlined">arrow_back</span>
+              </ActionIcon>
+              <Text className={classes.lightboxNavLabel} size="sm">
+                {index + 1} / {items.length}
+              </Text>
+              <ActionIcon
+                variant="subtle"
+                size="lg"
+                disabled={!hasNext}
+                onClick={() => onNavigate(index + 1)}
+                className={classes.lightboxNavBtn}
+                aria-label="Next"
+              >
+                <span className="material-symbols-outlined">arrow_forward</span>
+              </ActionIcon>
+            </div>
+          </Stack>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+// ── Main Section ──────────────────────────────────────────────────────────────
+
 const HobbiesSectionComponent = ({ data, evenSection = false }: HobbiesProps) => {
   const { t } = useLanguage();
-  const [expandedImage, setExpandedImage] = useState<ExpandedImageState | null>(null);
+  const [lightbox, setLightbox] = useState<LightboxState | null>(null);
 
-  // Memoize the handler to prevent recreation on every render
-  const handleImageClick = useCallback((travel: TravelItem) => {
-    setExpandedImage({
-      img: travel.image,
-      title: t(travelKey(travel.id, 'title')),
-      desc: t(travelKey(travel.id, 'desc'))
-    });
-  }, [t]);
+  const handleCardClick = useCallback((item: HobbyItem) => {
+    const index = data.items.indexOf(item);
+    setLightbox({ item, index });
+  }, [data.items]);
 
-  const closeExpandedImage = useCallback(() => {
-    setExpandedImage(null);
-  }, []);
+  const handleNavigate = useCallback((index: number) => {
+    const item = data.items[index];
+    if (item) setLightbox({ item, index });
+  }, [data.items]);
 
-  // Get hobbies data from props
-  const { travels } = data;
+  const handleClose = useCallback(() => setLightbox(null), []);
 
-  // Memoize the expanded image overlay to prevent unnecessary re-renders
-  const expandedImageOverlay = useMemo(() => {
-    if (!expandedImage) return null;
-    
-    return (
-      <Box 
-        className={classes.expandedImageOverlay} 
-        onClick={closeExpandedImage}
-        role="button"
-        aria-label="Close expanded image"
-        style={{ display: 'flex' }}
-      >
-        <div className={classes.expandedImageWrapper}>
-          <img 
-            src={expandedImage.img} 
-            alt={expandedImage.title} 
-            className={classes.expandedImage} 
-            onClick={(e) => e.stopPropagation()}
-          />
-          <div className={classes.blockquoteContainer} onClick={(e) => e.stopPropagation()}>
-            <div className={classes.blockquoteTitle}>{expandedImage.title}</div>
-            <Blockquote 
-              className={classes.blockquote}
-              color="brand"
-            >
-              {expandedImage.desc}
-            </Blockquote>
-          </div>
-        </div>
-      </Box>
-    );
-  }, [expandedImage, closeExpandedImage]);
-
-  // Memoize the travel cards grid to prevent unnecessary re-renders
-  const travelCardsGrid = useMemo(() => (
-    <Grid gutter="lg">
-      {travels.map((travel, index) => (
-        <TravelCard 
-          key={index}
-          travel={travel}
-          index={index}
-          t={t}
-          onClick={handleImageClick}
-        />
-      ))}
-    </Grid>
-  ), [travels, t, handleImageClick]);
+  // Cast t to be compatible with hobbyKey return type
+  const typedT = t as unknown as (key: ReturnType<typeof hobbyKey>) => string;
 
   return (
     <Section id="hobbies" title={t('menu.hobbies')} evenSection={evenSection}>
-      <Text className={classes.introText} mb={30}>
-        {t('sections.hobbies.intro')}
-      </Text>
-      
-      {expandedImageOverlay}
-      
-      {travelCardsGrid}
+      <Box mb="xl">
+        <p className={classes.introText}>
+          {t('sections.hobbies.subtitle')}
+        </p>
+      </Box>
+
+      {/* Bento grid */}
+      <div className={classes.bentoGrid}>
+        {data.items.map((item) => (
+          <BentoCard
+            key={item.id}
+            item={item}
+            onClick={handleCardClick}
+            t={typedT}
+          />
+        ))}
+      </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <HobbiesLightbox
+          state={lightbox}
+          items={data.items}
+          onClose={handleClose}
+          onNavigate={handleNavigate}
+          t={typedT}
+        />
+      )}
     </Section>
   );
 };
 
-// Export with section registration
 export default createRegisteredSection<HobbiesProps>('hobbies', HobbiesSectionComponent);

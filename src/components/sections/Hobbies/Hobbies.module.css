@@ -1,149 +1,371 @@
-/* Optimized Hobbies CSS */
-.introText {
-  margin: 0 auto var(--space-xl);
-  text-align: center;
-  color: var(--text-secondary);
-  line-height: 1.6;
+/* ── Google Material Symbols font ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'OPSZ' 24;
 }
 
+/* ── Section subtitle ────────────────────────────────────────────────────────── */
+.introText {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-5));
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto var(--mantine-spacing-xl);
+}
+
+/* ── Bento grid container ────────────────────────────────────────────────────── */
+.bentoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 300px;
+  gap: 16px;
+}
+
+/* ── Individual bento card ───────────────────────────────────────────────────── */
 .card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  transition: transform var(--transition-normal), 
-              box-shadow var(--transition-normal);
   position: relative;
+  overflow: hidden;
+  border-radius: 16px;
   cursor: pointer;
-  border-radius: var(--radius-md);
+  isolation: isolate;
+  /* Subtle ring */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), var(--shadow-sm);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  outline: none;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 0 0 1px var(--mantine-color-brand-filled), var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
-/* Make all content within the card have the pointer cursor */
-.card * {
-  cursor: pointer;
+.card:focus-visible {
+  box-shadow: 0 0 0 2px var(--mantine-color-brand-filled);
 }
 
-.imageContainer {
-  height: 200px;
-  overflow: hidden;
-  position: relative;
-  transition: all var(--transition-slow);
-  border-top-left-radius: var(--radius-md);
-  border-top-right-radius: var(--radius-md);
+/* ── Background image — scales on hover ────────────────────────────────────── */
+.cardImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
 }
 
-.expandedImageOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
-  z-index: var(--z-modal);
-  justify-content: center;
+.card:hover .cardImage {
+  transform: scale(1.08);
+}
+
+/* ── Gradient overlay — darkens on hover ────────────────────────────────────── */
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.88) 0%,
+    rgba(15, 23, 42, 0.35) 50%,
+    rgba(15, 23, 42, 0.0) 100%
+  );
+  transition: background 0.35s ease;
+}
+
+.card:hover .cardOverlay {
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.96) 0%,
+    rgba(15, 23, 42, 0.55) 60%,
+    rgba(15, 23, 42, 0.1) 100%
+  );
+}
+
+/* ── Card content (icon + label + title) ───────────────────────────────────── */
+.cardContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+  transform: translateY(4px);
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card:hover .cardContent {
+  transform: translateY(-4px);
+}
+
+.cardMeta {
+  display: flex;
   align-items: center;
-  cursor: pointer;
-  animation: fadeIn 0.3s ease;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
-.expandedImageWrapper {
-  position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
-  animation: zoomIn 0.3s ease;
+.cardIcon {
+  display: flex;
+  align-items: center;
+  color: var(--mantine-color-brand-filled);
+  font-size: 16px;
+  line-height: 1;
 }
 
-.expandedImage {
-  max-width: 100%;
-  max-height: 90vh;
-  object-fit: contain;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+.cardIcon .material-symbols-outlined {
+  font-size: 16px;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'OPSZ' 20;
 }
 
-.blockquoteContainer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: var(--space-md);
-  background-color: rgba(0, 0, 0, 0.7);
-  border-bottom-left-radius: var(--radius-md);
-  border-bottom-right-radius: var(--radius-md);
-  backdrop-filter: blur(4px);
-  margin: var(--space-md);
+.cardSubtitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.blockquote {
-  border-left-color: var(--mantine-color-brand-filled);
-  color: white;
+.cardTitle {
   margin: 0;
-}
-
-.blockquoteTitle {
-  color: var(--mantine-color-brand-filled-light);
-  margin-bottom: var(--space-sm);
-  font-weight: 600;
   font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
-.image {
-  transition: all var(--transition-normal);
+/* Double-row cards get slightly bigger title */
+[data-row-span="2"] .cardTitle {
+  font-size: 1.45rem;
+}
+
+/* ── Lightbox modal overrides ────────────────────────────────────────────────── */
+.modalOverlay {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.65) !important;
+}
+
+.modalContent {
+  overflow: hidden;
+  background: var(--mantine-color-body) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modalBody {
+  padding: 0 !important;
+}
+
+.modalHeader {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  background: transparent !important;
+  padding: 12px !important;
+}
+
+.modalClose {
+  color: #fff !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+}
+
+.modalClose:hover {
+  background: rgba(0, 0, 0, 0.65) !important;
+}
+
+/* ── Lightbox layout ─────────────────────────────────────────────────────────── */
+.lightbox {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  min-height: 480px;
+}
+
+.lightboxImage {
+  position: relative;
+  overflow: hidden;
+  min-height: 320px;
+}
+
+.lightboxImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  cursor: pointer;
+  display: block;
 }
 
-.card:hover .image {
-  opacity: 0.9;
-  transform: scale(1.05);
+/* ── Lightbox content panel ─────────────────────────────────────────────────── */
+.lightboxPanel {
+  display: flex;
+  flex-direction: column;
+  padding: 36px 28px;
+  background: var(--mantine-color-body);
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  overflow-y: auto;
 }
 
-/* Animations */
+.lightboxPanelInner {
+  flex: 1;
+}
+
+/* location row */
+.lightboxMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lightboxMetaIcon {
+  font-size: 16px;
+  color: var(--mantine-color-brand-filled);
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'OPSZ' 20;
+}
+
+.lightboxSubtitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Title */
+.lightboxTitle {
+  font-size: 1.65rem !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  color: var(--mantine-color-text) !important;
+  margin: 0 !important;
+}
+
+/* Description */
+.lightboxDesc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* Tags */
+.lightboxTags {
+  flex-wrap: wrap;
+}
+
+.lightboxTag {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  border-color: var(--mantine-color-brand-filled) !important;
+  color: var(--mantine-color-brand-filled) !important;
+  border-radius: 999px !important;
+  padding: 2px 10px !important;
+}
+
+/* Navigation */
+.lightboxNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.lightboxNavBtn {
+  color: var(--mantine-color-text) !important;
+}
+
+.lightboxNavBtn:disabled {
+  opacity: 0.3;
+}
+
+.lightboxNavLabel {
+  flex: 1;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.8rem !important;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────────── */
+
+/* Tablet: 2 columns, spans capped to 1 */
+@media (max-width: 900px) {
+  .bentoGrid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 260px;
+  }
+
+  /* On 2-col grid, don't allow 2-col span (would break layout) */
+  .card[data-col-span="2"] {
+    grid-column: span 1;
+  }
+
+  .lightbox {
+    grid-template-columns: 1fr;
+    grid-template-rows: 280px auto;
+  }
+
+  .lightboxPanel {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 24px 20px;
+  }
+
+  .lightboxTitle {
+    font-size: 1.35rem !important;
+  }
+}
+
+/* Mobile: 1 column, no spans */
+@media (max-width: 576px) {
+  .introText {
+    font-size: 0.875rem;
+    margin-bottom: var(--mantine-spacing-lg);
+  }
+
+  .bentoGrid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 240px;
+    gap: 12px;
+  }
+
+  .card[data-col-span="2"],
+  .card[data-row-span="2"] {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+
+  .cardTitle {
+    font-size: 1.05rem;
+  }
+
+  .lightboxImage {
+    min-height: 220px;
+  }
+
+  .lightboxPanel {
+    padding: 20px 16px;
+  }
+
+  .lightboxTitle {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes zoomIn {
-  from { 
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to { 
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  to { 
+  to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 576px) {
-  .expandedImageWrapper {
-    width: 95vw;
-  }
-  
-  .blockquoteContainer {
-    padding: var(--space-sm);
-    margin: var(--space-sm);
-  }
-  
-  .blockquoteTitle {
-    font-size: 1rem;
   }
 }

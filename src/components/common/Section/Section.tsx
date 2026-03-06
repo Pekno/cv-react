@@ -10,49 +10,40 @@ interface SectionProps {
   evenSection?: boolean;
 }
 
-/**
- * Reusable Section component for consistent section styling throughout the app
- * 
- * @param {string} id - Section ID for navigation anchor
- * @param {string} title - Section title
- * @param {React.ReactNode} children - Section content
- * @param {string} className - Additional CSS classes
- * @param {boolean} evenSection - Force even section styling (otherwise determined by context)
- */
-const Section: React.FC<SectionProps> = ({ 
-  id, 
-  title, 
-  children, 
+const Section: React.FC<SectionProps> = ({
+  id,
+  title,
+  children,
   className = '',
   evenSection,
 }) => {
-  // Use a class-based approach for the component
   const sectionClasses = [
     classes.section,
     'mantine-Section-root',
     className
   ];
-  
-  // If evenSection is explicitly provided, use that value
+
   if (evenSection !== undefined) {
     sectionClasses.push(evenSection ? classes.sectionEven : classes.sectionOdd);
   }
-  
+
   return (
-    <Box 
-      component="section" 
+    <Box
+      component="section"
       id={id}
       className={sectionClasses.join(' ')}
       data-order={0}
     >
       <Container>
         {title && (
-          <Title 
-            className={classes.sectionTitle} 
-            order={2}
-          >
-            {title}
-          </Title>
+          <div className={classes.headingRow}>
+            <div className={classes.headingLeft}>
+              <Title className={classes.sectionTitle} order={2}>
+                {title}
+              </Title>
+            </div>
+            <div className={classes.accentBar} />
+          </div>
         )}
         <div className={classes.fadeIn}>
           {children}

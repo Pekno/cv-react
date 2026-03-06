@@ -14,19 +14,14 @@ const Navbar: React.FC<NavbarProps> = ({ menuItems, toggle }) => {
     selector: "section[id]",
   });
 
-  // Handle menu item click
   const handleMenuClick = (key: string) => {
-    const element = scrollSpy.data.find((element) => element.id === key);
+    const element = scrollSpy.data.find((el) => el.id === key);
     if (!element) return;
 
-    if (scrollSpy) {
-      // Use the scrollToElement function from scrollSpy hook
-      element.getNode().scrollIntoView({ behavior: "smooth", block: "start" });
-      
-      // Close the mobile menu if needed
-      if (window.innerWidth < 768) {
-        toggle();
-      }
+    element.getNode().scrollIntoView({ behavior: "smooth", block: "start" });
+
+    if (window.innerWidth < 768) {
+      toggle();
     }
   };
 
@@ -36,9 +31,9 @@ const Navbar: React.FC<NavbarProps> = ({ menuItems, toggle }) => {
         <Stack>
           <Text fw={700} size="sm">Navigation</Text>
           {menuItems.map((item) => (
-            <Link 
-              key={item.key} 
-              to={`#${item.key}`} 
+            <Link
+              key={item.key}
+              to={`#${item.key}`}
               className={`${classes.link} ${scrollSpy.data[scrollSpy.active]?.id.startsWith(item.key) ? classes.active : ''}`}
               onClick={() => handleMenuClick(item.key)}
             >
