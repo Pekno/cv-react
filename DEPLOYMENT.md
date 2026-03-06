@@ -57,7 +57,30 @@ Once you push the merged changes, Netlify or Vercel will automatically trigger a
 
 This approach allows you to maintain your personal profile data separately from the main application code and automate the build process with Docker containers.
 
-### Overview
+### Quick Setup (Recommended)
+
+Download and run the setup script. No need to clone the repository.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Pekno/cv-react/main/scripts/setup.sh -o setup.sh
+chmod +x setup.sh
+./setup.sh
+```
+
+> **Windows users:** Run this in Git Bash (included with [Git for Windows](https://git-scm.com/downloads/win)) or WSL.
+
+The script will:
+- Create the full folder structure
+- Generate the GitHub Actions workflow (with your GitHub username)
+- Optionally download example data files as a starting point
+
+After running the script, follow the printed next steps to initialize and push your private repo.
+
+### Manual Setup
+
+If you prefer to set things up manually, follow the steps below.
+
+#### Overview
 
 The deployment process follows these steps:
 1. Create a private GitHub repository to store your personal data
@@ -65,7 +88,7 @@ The deployment process follows these steps:
 3. Configure GitHub Actions to build a Docker image
 4. Deploy the container image to your hosting service
 
-### 1. Create Your Personal Data Repository
+#### 1. Create Your Personal Data Repository
 
 First, create a new private repository on GitHub to store your personal profile data:
 
@@ -75,7 +98,7 @@ First, create a new private repository on GitHub to store your personal profile 
 4. Initialize with a README file
 5. Click "Create repository"
 
-### 2. Set Up Your Folder Structure
+#### 2. Set Up Your Folder Structure
 
 Your repository needs to follow this specific folder structure:
 
@@ -119,7 +142,7 @@ cv-react-private/
 4. **Public Files (`public/` folder)**:
    - Additional files like PDFs that need to be accessible
 
-### 3. Add GitHub Actions Workflow
+#### 3. Add GitHub Actions Workflow
 
 Create the `.github/workflows/docker-build.yml` file with the following content:
 
@@ -130,6 +153,11 @@ on:
   push:
     branches: [main]  # Automatically trigger on pushes to main branch
   workflow_dispatch:  # Also allows manual triggering from GitHub UI
+    inputs:
+      cv_react_version:
+        description: 'cv-react version tag (e.g. v1.0.0). Leave empty to use the latest tag.'
+        required: false
+        default: ''
 
 jobs:
   build:
@@ -137,22 +165,35 @@ jobs:
     permissions:
       contents: read
       packages: write
-    
+
     steps:
       # Step 1: Check out your private repository
       - name: Checkout private repository
         uses: actions/checkout@v4
         with:
           path: private
-      
-      # Step 2: Check out the main CV React repository
+
+      # Step 2: Resolve cv-react version (use input if provided, otherwise fetch latest tag)
+      - name: Resolve cv-react version
+        id: resolve-version
+        run: |
+          if [ -n "${{ github.event.inputs.cv_react_version }}" ]; then
+            echo "ref=${{ github.event.inputs.cv_react_version }}" >> $GITHUB_OUTPUT
+          else
+            LATEST_TAG=$(git ls-remote --tags --sort=-v:refname https://github.com/Pekno/cv-react.git | head -n1 | sed 's/.*refs\/tags\///')
+            echo "ref=${LATEST_TAG}" >> $GITHUB_OUTPUT
+          fi
+          echo "Using cv-react version: $(cat $GITHUB_OUTPUT | grep ref= | cut -d= -f2)"
+
+      # Step 3: Check out the main CV React repository at the resolved version
       - name: Checkout main repository
         uses: actions/checkout@v4
         with:
           repository: Pekno/cv-react  # The main repository
+          ref: ${{ steps.resolve-version.outputs.ref }}
           path: main
       
-      # Step 3: Copy your personal profile data and translations
+      # Step 4: Copy your personal profile data and translations
       - name: Copy profile data and translations
         run: |
           cp -r private/data/profile-data.ts main/src/data/
@@ -169,17 +210,17 @@ jobs:
           
           echo "Copied profile data and translations successfully"
       
-      # Step 4: Convert repository owner to lowercase
+      # Step 5: Convert repository owner to lowercase
       - id: lowercase-owner
         name: Repository owner to lowercase
         run: |
           echo "owner=${GITHUB_REPOSITORY_OWNER@L}" >> $GITHUB_OUTPUT
       
-      # Step 5: Set up Docker Buildx
+      # Step 6: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       
-      # Step 6: Log in to GitHub Container Registry
+      # Step 7: Log in to GitHub Container Registry
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -187,7 +228,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      # Step 7: Build the Docker image and push it to GitHub Container Registry
+      # Step 8: Build the Docker image and push it to GitHub Container Registry
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -201,11 +242,13 @@ jobs:
 ```
 
 This workflow will:
-- Check out both your private repository and the main CV React repository
+- Check out both your private repository and the main CV React repository (at the latest tag, or a specific tag if provided)
 - Copy your personal data, translations, and assets into the main repository
 - Build a Docker image and push it to GitHub Container Registry
 
-### 4. Deploy the Container
+> **Version pinning:** By default, the workflow uses the latest git tag from `Pekno/cv-react`. To pin a specific version, trigger the workflow manually from the Actions tab and provide a tag (e.g. `v1.0.0`) in the `cv_react_version` input.
+
+#### 4. Deploy the Container
 
 Once your GitHub Actions workflow has successfully built and pushed your Docker image, you can deploy it using any container platform that supports Docker.
 
@@ -227,17 +270,17 @@ Replace `yourusername` with your GitHub username (in lowercase).
 
 This image can be deployed on any platform that supports Docker containers including Docker standalone, TrueNAS SCALE with Dockge, Kubernetes, Docker Swarm, or cloud container services.
 
-### 5. Keeping Your Fork Updated
+#### 5. Keeping Your Fork Updated
 
 To keep your deployment up-to-date with changes from the main repository, you don't need to do anything special. Each time you push changes to your private repository, the GitHub Actions workflow will automatically check out the latest version of the main repository.
 
 If you want to trigger a new build manually, you can use the "Run workflow" button in the Actions tab of your GitHub repository.
 
-### Customizing Your Data
+#### Customizing Your Data
 
 For details on how to structure your profile data and translations, please refer to the README.md file in the main repository. It contains comprehensive documentation on the data model and internationalization setup.
 
-### Troubleshooting
+#### Troubleshooting
 
 #### Image Not Building
 
@@ -251,12 +294,12 @@ For details on how to structure your profile data and translations, please refer
 2. Verify that your server has access to pull from GitHub Container Registry
 3. Check the container logs for any runtime errors
 
-### Security Considerations
+#### Security Considerations
 
 1. Keep your repository private to protect personal information
 2. Consider using GitHub's security features like Dependabot
 3. Regularly update the main repository to get security fixes
 
-### Conclusion
+#### Conclusion
 
 Following this guide allows you to maintain your personal data separately from the application code while still benefiting from updates to the main CV React project. The automated GitHub Actions workflow makes deploying updates as simple as pushing changes to your private repository.
