@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import {
   Accordion,
   Text,
-  Image,
 } from '@mantine/core';
 import {
   IconChevronDown,
@@ -143,6 +142,7 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
       }, 50);
       return () => clearTimeout(timeoutId);
     }
+    return undefined;
   }, [location.hash]);
 
   const processedExperiences = useMemo((): ProcessedExperience[] => {
