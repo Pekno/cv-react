@@ -5,7 +5,6 @@ export interface HobbyItem {
   id: string;
   image: string;
   icon: string; // Material Symbols Outlined icon name e.g. "travel_explore"
-  subtitle: string; // Location or category label shown on card (e.g. "KYOTO, JAPAN")
   colSpan?: 1 | 2; // How many columns this card spans (default: 1)
   rowSpan?: 1 | 2; // How many rows this card spans (default: 1)
 }
@@ -19,6 +18,7 @@ export interface HobbiesProps extends SectionProps<HobbiesData> { }
 // Define translations for this section
 export interface HobbyTranslations {
   title: string;
+  subtitle: string;
   desc: string;
 }
 

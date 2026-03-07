@@ -264,26 +264,32 @@ const en: Translations = {
       items: {
         japan: {
           title: "Japan 2023",
+          subtitle: "Kyoto, Japan",
           desc: "An immersive journey through the blend of ancient tradition and futuristic innovation — from the quiet temples of Kyoto to the bustling streets of Shibuya. Japan provides endless inspiration for design and mindfulness.",
         },
         hiking: {
           title: "Alpine Trekking",
+          subtitle: "Swiss Alps",
           desc: "Multi-day treks through the Swiss and French Alps, crossing glaciers and remote passes. The physical challenge strips everything back to essentials, leaving only the mountain and the moment.",
         },
         cooking: {
           title: "Culinary Arts",
+          subtitle: "Culinary Arts",
           desc: "Exploring world cuisines through hands-on cooking classes during travels. From Kyoto ramen workshops to Provençal pastry masterclasses, food is how I decode a culture's identity.",
         },
         photography: {
           title: "Landscape Photography",
+          subtitle: "Landscape Photography",
           desc: "Capturing light across natural and urban landscapes — pre-dawn alpine starts, golden-hour coastal cliffs. The pursuit of the perfect frame teaches patience and a deep attention to the world.",
         },
         gaming: {
           title: "Virtual Worlds",
+          subtitle: "Metaverse, VR",
           desc: "Exploring immersive game worlds and early VR experiences. I'm particularly drawn to narrative-driven RPGs and simulation games that reward curiosity and strategic thinking.",
         },
         skiing: {
           title: "Winter Sports",
+          subtitle: "Whistler, BC",
           desc: "Chasing powder from Whistler to Chamonix, with a few off-piste detours along the way. Winter in the mountains is as much about the silence between runs as the speed on them.",
         },
       },

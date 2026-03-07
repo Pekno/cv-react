@@ -264,26 +264,32 @@ const fr: Translations = {
       items: {
         japan: {
           title: "Japon 2023",
+          subtitle: "Kyoto, Japon",
           desc: "Un voyage immersif à travers le mélange de tradition ancienne et d'innovation futuriste — des temples silencieux de Kyoto aux rues animées de Shibuya. Le Japon offre une inspiration inépuisable pour le design et la pleine conscience.",
         },
         hiking: {
           title: "Trekking Alpin",
+          subtitle: "Alpes Suisses",
           desc: "Randonnées de plusieurs jours dans les Alpes suisses et françaises, traversant glaciers et cols reculés. Le défi physique ramène à l'essentiel, ne laissant que la montagne et l'instant présent.",
         },
         cooking: {
           title: "Arts Culinaires",
+          subtitle: "Arts Culinaires",
           desc: "Exploration des cuisines du monde à travers des cours de cuisine lors de mes voyages. Des ateliers ramen à Kyoto aux masterclasses de pâtisserie provençale, la nourriture est ma façon de décoder l'identité d'une culture.",
         },
         photography: {
           title: "Photographie de Paysage",
+          subtitle: "Photographie de Paysage",
           desc: "Capturer la lumière à travers des paysages naturels et urbains — départs alpins avant l'aube, falaises côtières à l'heure dorée. La quête du cadre parfait enseigne la patience et une profonde attention au monde.",
         },
         gaming: {
           title: "Mondes Virtuels",
+          subtitle: "Métavers, VR",
           desc: "Exploration de mondes de jeux immersifs et d'expériences VR naissantes. Je suis particulièrement attiré par les RPG narratifs et les jeux de simulation qui récompensent la curiosité et la pensée stratégique.",
         },
         skiing: {
           title: "Sports d'Hiver",
+          subtitle: "Whistler, BC",
           desc: "À la poursuite de la poudreuse de Whistler à Chamonix, avec quelques détours hors-piste en chemin. L'hiver en montagne tient autant au silence entre les descentes qu'à la vitesse sur les pistes.",
         },
       },

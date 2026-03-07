@@ -58,7 +58,7 @@ const BentoCard = React.memo(({
           <span className={classes.cardIcon} aria-hidden="true">
             <span className="material-symbols-outlined">{item.icon}</span>
           </span>
-          <span className={classes.cardSubtitle}>{item.subtitle}</span>
+          <span className={classes.cardSubtitle}>{t(hobbyKey(item.id, 'subtitle'))}</span>
         </div>
         <p className={classes.cardTitle}>{t(hobbyKey(item.id, 'title'))}</p>
       </div>
@@ -132,7 +132,7 @@ const HobbiesLightbox = ({
               <span className={`material-symbols-outlined ${classes.lightboxMetaIcon}`}>
                 location_on
               </span>
-              <span className={classes.lightboxSubtitle}>{item.subtitle}</span>
+              <span className={classes.lightboxSubtitle}>{t(hobbyKey(item.id, 'subtitle'))}</span>
             </div>
 
             {/* Title */}
