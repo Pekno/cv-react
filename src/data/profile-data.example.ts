@@ -281,6 +281,7 @@ export const profileData: ProfileData = {
             image: "./src/assets/projects/smart-home.webp",
             link: "https://github.com/alexmorgan-dev/smart-home-hub",
             linkTextKey: "sourceCodeHere",
+            live: false,
           },
           {
             id: "aiImageGenerator",
@@ -299,6 +300,7 @@ export const profileData: ProfileData = {
             image: "./src/assets/projects/booking-system.webp",
             link: "https://github.com/alexmorgan-dev/booking-system",
             linkTextKey: "sourceCodeHere",
+            live: false,
           },
         ],
       },

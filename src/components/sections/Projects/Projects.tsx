@@ -22,6 +22,7 @@ const ProjectsSectionComponent = ({ data, evenSection = false }: ProjectsProps) 
       image: project.image,
       link: project.link,
       linkText: project.linkTextKey ? t(actionKey(project.linkTextKey)) : undefined,
+      live: project.live,
     }));
   }, [data.projects, t]);
 

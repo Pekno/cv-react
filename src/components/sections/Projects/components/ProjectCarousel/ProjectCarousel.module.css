@@ -170,6 +170,15 @@
   animation: pulse 2s ease-in-out infinite;
 }
 
+.statusDotInactive {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f87171;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #f87171 30%, transparent);
+  flex-shrink: 0;
+}
+
 @keyframes pulse {
   0%, 100% { box-shadow: 0 0 0 2px color-mix(in srgb, #4ade80 30%, transparent); }
   50%       { box-shadow: 0 0 0 5px color-mix(in srgb, #4ade80 10%, transparent); }

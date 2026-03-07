@@ -42,6 +42,7 @@ The `Projects` section requires the following data structure:
         image: string;       // Path to project image
         link?: string;       // Optional URL to project demo or repository
         linkTextKey?: string; // Translation key for link text (e.g., "tryIt", "sourceCodeHere")
+        live?: boolean;      // Whether the project is actively maintained (default: true)
       }
     ]
   }
@@ -106,8 +107,9 @@ sections: {
       },
       {
         id: "projectD",
-        image: "./src/assets/projects/projectD.webp"
+        image: "./src/assets/projects/projectD.webp",
         // No link for this project
+        live: false // Red dot, no longer maintained
       }
     ]
   }

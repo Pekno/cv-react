@@ -6,6 +6,7 @@ export interface ProjectItem {
   image: string;
   link?: string;
   linkTextKey?: keyof ProjectActionsTranslations;
+  live?: boolean; // Whether the project is still actively maintained (default: true)
 }
 
 export interface ProjectsData {
@@ -26,6 +27,7 @@ export interface ProjectActionsTranslations {
   tryIt: string;
   testIt: string;
   sourceCodeHere: string;
+  dockerHub: string;
 }
 
 export interface ProjectItemsTranslations {

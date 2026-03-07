@@ -256,6 +256,7 @@ const fr: Translations = {
         tryIt: "Essayez ici",
         testIt: "Testez ici",
         sourceCodeHere: "Voir le code source",
+        dockerHub: "Voir sur Docker Hub",
       },
     },
     hobbies: {

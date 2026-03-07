@@ -10,6 +10,7 @@ interface ProjectItem {
   linkText?: string;
   category?: string;
   tags?: string[];
+  live?: boolean;
 }
 
 interface ProjectCarouselProps {
@@ -82,7 +83,7 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects }) =>
                 <IconArrowUpRight size={14} className={classes.buttonArrow} />
               </a>
               <span className={classes.statusLink}>
-                <span className={classes.statusDot} />
+                <span className={featured.live === false ? classes.statusDotInactive : classes.statusDot} />
                 Live Status
               </span>
             </div>
