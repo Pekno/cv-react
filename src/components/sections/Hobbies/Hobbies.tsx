@@ -4,6 +4,7 @@ import {
   Modal,
   Stack,
   ActionIcon,
+  CloseButton,
   Box,
 } from '@mantine/core';
 import { useLanguage } from '@hooks/useLanguage';
@@ -102,10 +103,8 @@ const HobbiesLightbox = ({
         content: classes.modalContent,
         body: classes.modalBody,
         overlay: classes.modalOverlay,
-        header: classes.modalHeader,
-        close: classes.modalClose,
       }}
-      withCloseButton
+      withCloseButton={false}
       centered
     >
       <div className={classes.lightbox}>
@@ -117,6 +116,13 @@ const HobbiesLightbox = ({
             className={classes.lightboxImg}
           />
         </div>
+
+        {/* Close button — top-right of modal */}
+        <CloseButton
+          onClick={onClose}
+          className={classes.lightboxClose}
+          aria-label="Close"
+        />
 
         {/* Right: content panel (1/3) */}
         <div className={classes.lightboxPanel}>

@@ -155,31 +155,12 @@
   padding: 0 !important;
 }
 
-.modalHeader {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 10;
-  background: transparent !important;
-  padding: 12px !important;
-}
-
-.modalClose {
-  color: #fff !important;
-  background: rgba(0, 0, 0, 0.4) !important;
-  backdrop-filter: blur(4px);
-  border-radius: 50%;
-}
-
-.modalClose:hover {
-  background: rgba(0, 0, 0, 0.65) !important;
-}
-
 /* ── Lightbox layout ─────────────────────────────────────────────────────────── */
 .lightbox {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  min-height: 480px;
+  max-height: 80vh;
+  position: relative;
 }
 
 .lightboxImage {
@@ -191,6 +172,7 @@
 .lightboxImg {
   width: 100%;
   height: 100%;
+  max-height: 80vh;
   object-fit: cover;
   display: block;
 }
@@ -200,9 +182,25 @@
   display: flex;
   flex-direction: column;
   padding: 36px 28px;
+  padding-top: 50px;
   background: var(--mantine-color-body);
   border-left: 1px solid rgba(255, 255, 255, 0.07);
   overflow-y: auto;
+}
+
+.lightboxClose {
+  position: absolute !important;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  color: #fff !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(4px);
+  border-radius: 50%;
+}
+
+.lightboxClose:hover {
+  background: rgba(0, 0, 0, 0.65) !important;
 }
 
 .lightboxPanelInner {
