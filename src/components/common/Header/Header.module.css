@@ -8,8 +8,8 @@
 }
 
 .sticky {
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: light-dark(white, var(--mantine-color-dark-7));
+    box-shadow: 0 1px 3px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
     padding: 0.5rem 1rem;
 }
 
@@ -24,11 +24,11 @@
 }
 
 .link:hover {
-    background-color: var(--mantine-primary-color-0);
+    background-color: light-dark(var(--mantine-primary-color-0), rgba(255, 255, 255, 0.07));
 }
 
 .active {
-    background-color: var(--mantine-primary-color-0);
+    background-color: light-dark(var(--mantine-primary-color-0), rgba(255, 255, 255, 0.07));
     font-weight: 600;
     position: relative;
 }

@@ -81,15 +81,10 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects }) =>
                 {featured.linkText ?? 'Source Code'}
                 <IconArrowUpRight size={14} className={classes.buttonArrow} />
               </a>
-              <a
-                href={featured.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={classes.statusLink}
-              >
+              <span className={classes.statusLink}>
                 <span className={classes.statusDot} />
                 Live Status
-              </a>
+              </span>
             </div>
           )}
         </div>

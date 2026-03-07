@@ -29,11 +29,11 @@
 .companyName {
     font-size: var(--mantine-font-size-lg);
     margin-bottom: 4px;
-    color: var(--mantine-color-dark-7);
+    color: light-dark(var(--mantine-color-dark-7), var(--mantine-color-gray-1));
 }
   
 .jobTitle {
-    color: var(--mantine-color-gray-7);
+    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
 }
 
 @media (max-width: 768px) {

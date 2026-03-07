@@ -99,7 +99,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: light-dark(#f1f1f1, #1a1b1e);
 }
 
 ::-webkit-scrollbar-thumb {

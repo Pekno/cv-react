@@ -140,7 +140,7 @@ function MantineThemeConsumer({ children }: MantineThemeProviderProps): JSX.Elem
   const theme = createAppTheme(colorScheme, brandColor);
   
   return (
-    <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
+    <MantineProvider theme={theme} forceColorScheme={colorScheme === 'dark' ? 'dark' : 'light'}>
       {children}
     </MantineProvider>
   );

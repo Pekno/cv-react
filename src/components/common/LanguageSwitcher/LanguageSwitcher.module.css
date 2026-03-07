@@ -12,5 +12,5 @@
 
 .activeLanguage {
   font-weight: 600;
-  background-color: var(--mantine-primary-color-0);
+  background-color: light-dark(var(--mantine-primary-color-0), rgba(255, 255, 255, 0.07));
 }

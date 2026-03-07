@@ -72,7 +72,8 @@
 }
 
 /* Dark mode color variables */
-[data-color-scheme="dark"] {  
+[data-color-scheme="dark"],
+[data-mantine-color-scheme="dark"] {
   --text-color: #e0e0e0;
   --text-primary: #e0e0e0;
   --text-secondary: #a0a0a0;
