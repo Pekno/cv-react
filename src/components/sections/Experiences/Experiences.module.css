@@ -183,8 +183,7 @@
 }
 
 .companyLogo {
-  max-height: 32px;
-  max-width: 36px;
+  width: 100%;
   object-fit: contain;
 }
 
@@ -337,11 +336,6 @@
 
   .accordionContent {
     padding: 0 16px 16px !important;
-  }
-
-  .companyLogo {
-    max-height: 26px;
-    max-width: 30px;
   }
 
   .jobTitle {

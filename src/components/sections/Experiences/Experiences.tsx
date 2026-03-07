@@ -70,11 +70,10 @@ const ExperienceCard = React.memo(({ exp, isOpen, onToggle, t }: ExperienceCardP
           <Accordion.Control>
             <div className={classes.cardHeader}>
               <div className={classes.logoFrame}>
-                <Image
+                <img
                   src={exp.companyLogo}
                   alt={exp.companyName}
                   className={classes.companyLogo}
-                  fit="contain"
                 />
               </div>
               <div className={classes.headerContent}>
