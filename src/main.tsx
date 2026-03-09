@@ -1,3 +1,7 @@
+import '@fontsource/signika/400.css';
+import '@fontsource/signika/500.css';
+import '@fontsource/signika/600.css';
+import '@fontsource/signika/700.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';

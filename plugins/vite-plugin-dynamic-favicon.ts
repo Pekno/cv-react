@@ -3,9 +3,25 @@ import { Plugin } from "vite";
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
+import { createRequire } from "module";
 import { getInitials } from "../src/utils/faviconGenerator";
 import { getLighterColor } from "../src/utils/colorUtils";
 import { loadProfileData } from "./load-profile-data";
+
+const require = createRequire(import.meta.url);
+
+/**
+ * Resolves the Signika Bold woff2 font file from @fontsource/signika
+ * and returns it as a base64-encoded data URI for SVG embedding.
+ */
+function getEmbeddedFontStyle(): string {
+  const fontPath = require.resolve(
+    "@fontsource/signika/files/signika-latin-700-normal.woff2"
+  );
+  const fontBuffer = fs.readFileSync(fontPath);
+  const fontBase64 = fontBuffer.toString("base64");
+  return `<defs><style>@font-face { font-family: 'Signika'; font-weight: 700; src: url('data:font/woff2;base64,${fontBase64}') format('woff2'); }</style></defs>`;
+}
 
 interface DynamicFaviconOptions {
   profilePath: string;
@@ -116,11 +132,19 @@ export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
         const color = themeColor || "#2b689c";
         const lighterColor = getLighterColor(color, 0.8);
 
-        const svg = processTemplate(templateContent, {
+        const rawSvg = processTemplate(templateContent, {
           color,
           lightColor: lighterColor,
           text: initials,
         });
+
+        // Embed the font directly in the SVG so it renders correctly
+        // in CI/Docker environments where Signika isn't installed
+        const fontStyle = getEmbeddedFontStyle();
+        const svg = rawSvg.replace(
+          /(<svg[^>]*>)/,
+          `$1${fontStyle}`
+        );
 
         logger.info(`Color: ${color} / ${lighterColor}`);
 
