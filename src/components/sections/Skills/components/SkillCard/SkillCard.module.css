@@ -8,7 +8,6 @@
   border-radius: 0.75rem;
   padding: var(--mantine-spacing-lg);
   background: light-dark(rgba(255, 255, 255, 0.7), var(--bg-secondary));
-  backdrop-filter: blur(10px);
   border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
 }
 

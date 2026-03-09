@@ -16,6 +16,8 @@
     z-index: 0;
     opacity: 0.18;
     background: var(--mantine-color-brand-filled);
+    will-change: transform;
+    contain: layout paint;
 }
 
 .bgOrbLeft {
@@ -149,7 +151,6 @@
     text-decoration: none;
     color: inherit;
     transition: border-color 0.18s ease, background 0.18s ease, transform 0.15s ease;
-    backdrop-filter: blur(4px);
 }
 
 .socialCard:hover {
@@ -252,7 +253,6 @@
         rgba(255,255,255,0.75),
         rgba(255,255,255,0.03)
     );
-    backdrop-filter: blur(12px);
 }
 
 .quoteIconWrap {

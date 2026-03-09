@@ -1,18 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import classes from './AnimatedCounter.module.css';
-import { useMantineTheme } from '@mantine/core';
-import useColorPalette from '@/hooks/useColorPalette';
-
-interface Particle {
-  id: number;
-  x: number;
-  y: number;
-  color: string;
-  size: number;
-  speed: number;
-  angle: number;
-  opacity: number;
-}
 
 interface AnimatedCounterProps {
   start: number;
@@ -23,6 +10,11 @@ interface AnimatedCounterProps {
   className?: string;
 }
 
+// Max particles at the final value
+const MAX_PARTICLES = 16;
+// Min particles at the first value
+const MIN_PARTICLES = 4;
+
 const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   start,
   end,
@@ -32,146 +24,85 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   className,
 }) => {
   const [count, setCount] = useState(start);
-  const [scale, setScale] = useState(1);
-  const [particles, setParticles] = useState<Particle[]>([]);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const counterRef = useRef<HTMLDivElement>(null);
-  const lastValue = useRef(start);
-  const particleIdCounter = useRef(0);
-  const theme = useMantineTheme();
+  const [burstKey, setBurstKey] = useState(0);
+  const [done, setDone] = useState(false);
 
-  // Using the enhanced useColorPalette hook with null check for theme.colors
-  const { palette } = useColorPalette(theme.colors['brand']?.[6] || '#2b689c', 5);
+  const range = end - start;
 
-  // Generate random color from a set of vibrant colors
-  const getRandomColor = () => {
-    return palette[Math.floor(Math.random() * palette.length)];
-  };
+  // Progress from 0 to 1 based on current count
+  const progress = range > 0 ? (count - start) / range : 1;
 
-  // Create particles when counter changes
-  const createParticles = (newValue: number) => {
-    if (!counterRef.current || newValue === lastValue.current) return;
-    
-    const rect = counterRef.current.getBoundingClientRect();
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    const newParticles: Particle[] = [];
-    
-    // Number of particles to create - more particles for higher numbers
-    const particleCount = 5 + Math.min(20, Math.floor(newValue * 3));
-    
-    for (let i = 0; i < particleCount; i++) {
-      newParticles.push({
-        id: particleIdCounter.current++,
-        x: centerX,
-        y: centerY,
-        color: getRandomColor() ?? "red",
-        size: 5 + Math.random() * 5,
-        speed: 1 + Math.random() * 3,
-        angle: Math.random() * Math.PI * 2,
-        opacity: 1
-      });
-    }
-    
-    setParticles(prev => [...prev, ...newParticles]);
-    lastValue.current = newValue;
-    
-    // Trigger the scaling effect
-    // Add a level-up effect with a bigger scale for the final value
-    if (newValue === end) {
-      setScale(1.5);
-      setTimeout(() => {
-        setScale(1.2);
-        setTimeout(() => setScale(1), 200);
-      }, 300);
-    } else {
-      setScale(1 + Math.min(0.4, newValue * 0.05));
-      setTimeout(() => setScale(1), 250);
-    }
-  };
+  // Number of particles scales with progress
+  const particleCount = Math.round(MIN_PARTICLES + (MAX_PARTICLES - MIN_PARTICLES) * progress);
 
-  // Animate the particles
-  useEffect(() => {
-    if (particles.length === 0) return;
-    
-    const animationFrame = requestAnimationFrame(() => {
-      setParticles(prevParticles => {
-        if (prevParticles.length === 0) return prevParticles;
-        
-        return prevParticles
-          .map(particle => ({
-            ...particle,
-            x: particle.x + Math.cos(particle.angle) * particle.speed,
-            y: particle.y + Math.sin(particle.angle) * particle.speed,
-            opacity: particle.opacity - 0.02,
-            size: Math.max(0.1, particle.size - 0.1)
-          }))
-          .filter(particle => particle.opacity > 0);
-      });
+  // Scale grows from 0.6 to 1.0 as counter progresses
+  const scale = 0.6 + 0.4 * progress;
+
+  // Pre-compute particle config so we don't recalculate every render
+  const particleElements = useMemo(() => {
+    return Array.from({ length: particleCount }, (_, i) => {
+      const angle = (360 / particleCount) * i;
+      const dist = 25 + Math.random() * 30;
+      const size = 3 + Math.random() * 4;
+      const delay = Math.random() * 60;
+      return (
+        <span
+          key={i}
+          className={classes.particle}
+          style={{
+            '--angle': `${angle}deg`,
+            '--dist': `${dist}px`,
+            '--size': `${size}px`,
+            animationDelay: `${delay}ms`,
+          } as React.CSSProperties}
+        />
+      );
     });
-    
-    return () => cancelAnimationFrame(animationFrame);
-  }, [particles]);
+  }, [burstKey, particleCount]);
 
-  // Animate the counter
+  // Animate the counter value
   useEffect(() => {
-    if (isAnimating) return;
-    
-    setIsAnimating(true);
     let startTimestamp: number | null = null;
-    let animationFrameId: number;
-    
+    let frameId: number;
+    let lastValue = start;
+
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      const currentValue = Math.floor(progress * (end - start) + start);
-      
-      setCount(currentValue);
-      
-      if (currentValue !== lastValue.current) {
-        createParticles(currentValue);
+      const p = Math.min((timestamp - startTimestamp) / duration, 1);
+      const currentValue = Math.floor(p * (end - start) + start);
+
+      if (currentValue !== lastValue) {
+        lastValue = currentValue;
+        setCount(currentValue);
+        // Remount particle container to restart CSS animations
+        setBurstKey((k) => k + 1);
       }
-      
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(step);
+
+      if (p < 1) {
+        frameId = requestAnimationFrame(step);
       } else {
-        setIsAnimating(false);
-        if (onComplete) onComplete();
+        setDone(true);
+        onComplete?.();
       }
     };
-    
-    animationFrameId = requestAnimationFrame(step);
-    
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      setIsAnimating(false);
-    };
+
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
   }, [start, end, duration, onComplete]);
 
   return (
-    <div ref={counterRef} className={`${classes.counterContainer} ${className || ''}`}>
-      <div 
-        className={classes.counterValue} 
-        style={{ transform: `scale(${scale})` }}
+    <div className={`${classes.counterContainer} ${className || ''}`}>
+      <div
+        className={`${classes.counterValue} ${done ? classes.popFinal : classes.bump}`}
+        key={`val-${burstKey}`}
+        style={{ '--base-scale': scale } as React.CSSProperties}
       >
         {count}{suffix}
       </div>
-      
-      {particles.map(particle => (
-        <div
-          key={particle.id}
-          className={classes.particle}
-          style={{
-            left: `${particle.x}px`,
-            top: `${particle.y}px`,
-            backgroundColor: particle.color,
-            width: `${particle.size}px`,
-            height: `${particle.size}px`,
-            opacity: particle.opacity
-          }}
-        />
-      ))}
+
+      <div key={burstKey} className={classes.particles} aria-hidden>
+        {particleElements}
+      </div>
     </div>
   );
 };
