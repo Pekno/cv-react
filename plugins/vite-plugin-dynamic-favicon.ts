@@ -11,16 +11,27 @@ import { loadProfileData } from "./load-profile-data";
 const require = createRequire(import.meta.url);
 
 /**
- * Resolves the Signika Bold woff2 font file from @fontsource/signika
- * and returns it as a base64-encoded data URI for SVG embedding.
+ * Converts text to an SVG <path> element using the Signika Bold font.
+ * This avoids any font rendering dependency at the OS/container level.
  */
-function getEmbeddedFontStyle(): string {
+function textToSvgPath(text: string, fill: string): string {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const opentype = require("opentype.js");
   const fontPath = require.resolve(
-    "@fontsource/signika/files/signika-latin-700-normal.woff2"
+    "@fontsource/signika/files/signika-latin-700-normal.woff"
   );
-  const fontBuffer = fs.readFileSync(fontPath);
-  const fontBase64 = fontBuffer.toString("base64");
-  return `<defs><style>@font-face { font-family: 'Signika'; font-weight: 700; src: url('data:font/woff2;base64,${fontBase64}') format('woff2'); }</style></defs>`;
+  const font = opentype.loadSync(fontPath);
+
+  const fontSize = 16;
+  const centerX = 16;
+  const baselineY = 22;
+
+  // Measure the text width to center it horizontally
+  const advanceWidth = font.getAdvanceWidth(text, fontSize);
+  const x = centerX - advanceWidth / 2;
+
+  const svgPath = font.getPath(text, x, baselineY, fontSize);
+  return `<path d="${svgPath.toPathData()}" fill="${fill}" />`;
 }
 
 interface DynamicFaviconOptions {
@@ -132,19 +143,13 @@ export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
         const color = themeColor || "#2b689c";
         const lighterColor = getLighterColor(color, 0.8);
 
-        const rawSvg = processTemplate(templateContent, {
-          color,
-          lightColor: lighterColor,
-          text: initials,
-        });
+        // Convert initials to SVG path (no font rendering dependency)
+        const textPath = textToSvgPath(initials, lighterColor);
 
-        // Embed the font directly in the SVG so it renders correctly
-        // in CI/Docker environments where Signika isn't installed
-        const fontStyle = getEmbeddedFontStyle();
-        const svg = rawSvg.replace(
-          /(<svg[^>]*>)/,
-          `$1${fontStyle}`
-        );
+        const svg = processTemplate(templateContent, {
+          color,
+          textPath,
+        });
 
         logger.info(`Color: ${color} / ${lighterColor}`);
 
