@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
+# Netlify serves static files first (e.g., /en/index.html, /assets/*.js).
+# This catch-all handles any path that doesn't match a static file,
+# redirecting to the root page which auto-redirects to the user's language.
 [[redirects]]
   from = "/*"
   to = "/index.html"

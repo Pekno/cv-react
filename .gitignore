@@ -27,8 +27,11 @@ codemcp.toml
 
 # Ignore content of asset directories but keep their structure
 /public/pdf/*
-/public/favicon-adaptive.svg
-/public/favicon.svg
+/public/favicon.ico
+/public/favicon-*.png
+/public/apple-touch-icon.png
+/public/android-chrome-*.png
+/public/site.webmanifest
 !/public/pdf/.gitkeep
 
 /src/assets/profiles/*

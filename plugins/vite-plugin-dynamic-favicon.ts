@@ -2,47 +2,23 @@
 import { Plugin } from "vite";
 import fs from "fs";
 import path from "path";
+import sharp from "sharp";
 import { getInitials } from "../src/utils/faviconGenerator";
 import { getLighterColor } from "../src/utils/colorUtils";
 import { loadProfileData } from "./load-profile-data";
 
 interface DynamicFaviconOptions {
-  /**
-   * Path to profile data file (main or example based on build mode)
-   */
   profilePath: string;
-
-  /**
-   * Path to SVG template file
-   */
   templatePath: string;
-
-  /**
-   * Output path for favicon (relative to public directory)
-   */
   outputPath: string;
-
-  /**
-   * Default light mode primary color (used if not specified in profile)
-   */
-  defaultLightColor?: string;
-
-  /**
-   * Default dark mode primary color (used if not specified in profile)
-   */
-  defaultDarkColor?: string;
 }
 
-/**
- * Process an SVG template by replacing placeholders with values
- */
 function processTemplate(
   template: string,
   values: Record<string, string>
 ): string {
   let result = template;
 
-  // Replace each placeholder with its corresponding value
   for (const [key, value] of Object.entries(values)) {
     const placeholder = "${" + key + "}";
     result = result.replaceAll(placeholder, value);
@@ -51,8 +27,57 @@ function processTemplate(
   return result;
 }
 
+async function svgToPng(svg: string, size: number): Promise<Buffer> {
+  const scaledSvg = svg.replace(
+    /viewBox="0 0 32 32"/,
+    `viewBox="0 0 32 32" width="${size}" height="${size}"`
+  );
+
+  return sharp(Buffer.from(scaledSvg))
+    .resize(size, size)
+    .png()
+    .toBuffer();
+}
+
 /**
- * Vite plugin that generates a dynamic favicon based on profile data and theme colors
+ * Create an ICO file from multiple PNG buffers.
+ * Uses the ICO format with embedded PNG payloads.
+ */
+function createIco(pngBuffers: { buffer: Buffer; size: number }[]): Buffer {
+  const headerSize = 6;
+  const entrySize = 16;
+  const numImages = pngBuffers.length;
+
+  let dataOffset = headerSize + entrySize * numImages;
+  const entries: Buffer[] = [];
+  const imageData: Buffer[] = [];
+
+  for (const { buffer, size } of pngBuffers) {
+    const entry = Buffer.alloc(entrySize);
+    entry.writeUInt8(size >= 256 ? 0 : size, 0);
+    entry.writeUInt8(size >= 256 ? 0 : size, 1);
+    entry.writeUInt8(0, 2);
+    entry.writeUInt8(0, 3);
+    entry.writeUInt16LE(1, 4);
+    entry.writeUInt16LE(32, 6);
+    entry.writeUInt32LE(buffer.length, 8);
+    entry.writeUInt32LE(dataOffset, 12);
+
+    entries.push(entry);
+    imageData.push(buffer);
+    dataOffset += buffer.length;
+  }
+
+  const header = Buffer.alloc(headerSize);
+  header.writeUInt16LE(0, 0);
+  header.writeUInt16LE(1, 2);
+  header.writeUInt16LE(numImages, 4);
+
+  return Buffer.concat([header, ...entries, ...imageData]);
+}
+
+/**
+ * Vite plugin that generates favicon PNG/ICO variants from profile data and theme colors
  */
 export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
   const {
@@ -60,16 +85,12 @@ export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
     templatePath = path.resolve("./src/assets/static/favicon-template.svg"),
   } = options;
 
-  // Create a logger function in closure scope
   const logger = {
     info(msg: string): void {
-      const prefix = `[dynamic-favicon-plugin]`;
-      console.log(`\x1b[36m${prefix}\x1b[0m ${msg}`);
+      console.log(`\x1b[36m[dynamic-favicon-plugin]\x1b[0m ${msg}`);
     },
-
     error(msg: string): void {
-      const prefix = `[dynamic-favicon-plugin]`;
-      console.error(`\x1b[31m${prefix}\x1b[0m ${msg}`);
+      console.error(`\x1b[31m[dynamic-favicon-plugin]\x1b[0m ${msg}`);
     },
   };
 
@@ -79,100 +100,91 @@ export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
 
     async buildStart(): Promise<void> {
       try {
-        // Read the SVG template
         if (!fs.existsSync(templatePath)) {
           throw new Error(`Template file not found at ${templatePath}`);
         }
 
         const templateContent = fs.readFileSync(templatePath, "utf-8");
 
-        // Load profile data using esbuild
         logger.info(`Using profile data from: ${path.basename(profilePath)}`);
         const profileData = await loadProfileData(profilePath);
 
         const name = profileData.meta.name || "CV React";
         const themeColor = profileData.theme?.primaryColor ?? null;
-
-        // Get the initials
         const initials = getInitials(name);
 
-        // Generate light mode version using theme color if available
-        const lightColor = themeColor || "#2b689c";
-        const lightLighterColor = getLighterColor(lightColor, 0.8);
+        const color = themeColor || "#2b689c";
+        const lighterColor = getLighterColor(color, 0.8);
 
-        const lightModeSvg = processTemplate(templateContent, {
-          color: lightColor,
-          lightColor: lightLighterColor,
+        const svg = processTemplate(templateContent, {
+          color,
+          lightColor: lighterColor,
           text: initials,
         });
 
-        // Generate dark mode version
-        // For dark mode, we use a darker shade of the theme color
-        const darkColor = themeColor
-          ? getLighterColor(themeColor, -0.5) // Darken the theme color by 20%
-          : "#23547f";
-        const darkLighterColor = getLighterColor(darkColor, 0.8);
+        logger.info(`Color: ${color} / ${lighterColor}`);
 
-        const darkModeSvg = processTemplate(templateContent, {
-          color: darkColor,
-          lightColor: darkLighterColor,
-          text: initials,
-        });
-
-        logger.info(`${lightColor} - ${darkColor}`);
-        logger.info(`${lightLighterColor} - ${darkLighterColor}`);
-
-        // Create public directory if it doesn't exist
         const publicDir = path.resolve("./public");
         if (!fs.existsSync(publicDir)) {
           fs.mkdirSync(publicDir, { recursive: true });
         }
 
-        // Create a prefers-color-scheme version if dark mode is available
-        // This uses a media query within the SVG to switch between light/dark versions
-        const combinedSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-        <style>
-          @media (prefers-color-scheme: dark) {
-            #favicon { display: none; }
-            #favicon-dark { display: block; }
-          }
-          @media (prefers-color-scheme: light) {
-            #favicon { display: block; }
-            #favicon-dark { display: none; }
-          }
-        </style>
+        const variants = [
+          { name: "favicon-16x16.png", size: 16 },
+          { name: "favicon-32x32.png", size: 32 },
+          { name: "apple-touch-icon.png", size: 180 },
+          { name: "android-chrome-192x192.png", size: 192 },
+          { name: "android-chrome-512x512.png", size: 512 },
+        ];
 
-        <g id="favicon">${lightModeSvg
-          .replace(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">',
-            ""
-          )
-          .replace("</svg>", "")}</g>
+        // Generate all PNG variants in parallel
+        const pngResults = await Promise.all(
+          variants.map(async ({ name: fileName, size }) => {
+            const buffer = await svgToPng(svg, size);
+            fs.writeFileSync(path.join(publicDir, fileName), buffer);
+            return { fileName, size, buffer };
+          })
+        );
 
-        <g id="favicon-dark" style="display:none">${darkModeSvg
-          .replace(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">',
-            ""
-          )
-          .replace("</svg>", "")}</g>
-        </svg>`;
+        // Generate favicon.ico (16x16 + 32x32)
+        const ico16 = pngResults.find((r) => r.fileName === "favicon-16x16.png")!;
+        const ico32 = pngResults.find((r) => r.fileName === "favicon-32x32.png")!;
+        const icoBuffer = createIco([
+          { buffer: ico16.buffer, size: 16 },
+          { buffer: ico32.buffer, size: 32 },
+        ]);
+        fs.writeFileSync(path.join(publicDir, "favicon.ico"), icoBuffer);
 
-        // Write the combined adaptive SVG
-        const adaptiveOutputPath = path.join(publicDir, "favicon-adaptive.svg");
-        fs.writeFileSync(adaptiveOutputPath, combinedSvg);
+        // Generate site.webmanifest
+        const manifest = {
+          name,
+          short_name: initials,
+          icons: [
+            { src: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+            { src: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+          ],
+          theme_color: color,
+          background_color: "#ffffff",
+          display: "standalone",
+        };
+        fs.writeFileSync(
+          path.join(publicDir, "site.webmanifest"),
+          JSON.stringify(manifest, null, 2)
+        );
 
-        // Log color information
         const colorInfo = themeColor
           ? `using theme color: ${themeColor}`
-          : `using default colors (no theme color found in profile)`;
+          : `using default colors`;
 
         logger.info(
-          `Generated dynamic favicon with initials "${initials}" (${colorInfo})`
+          `Generated favicons with initials "${initials}" (${colorInfo})`
         );
-        logger.info(`- Adaptive favicon: ${adaptiveOutputPath}`);
+        logger.info(
+          `  -> favicon.ico, ${variants.map((v) => v.name).join(", ")}, site.webmanifest`
+        );
       } catch (err) {
         const error = err as Error;
-        logger.error(`Error generating dynamic favicon: ${error.message}`);
+        logger.error(`Error generating favicons: ${error.message}`);
       }
     },
   };

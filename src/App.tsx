@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { AppShell } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import './App.css';
@@ -9,13 +10,31 @@ import { useLanguage } from './hooks/useLanguage';
 import { useProfileData } from './hooks/useProfileData';
 import { getI18nKey, sectionRegistry } from './decorators/section.decorator';
 import Footer from './components/common/Footer/Footer';
+import i18n from './i18n/i18n';
 
 // The build process will replace this with explicit imports of only the used sections
 import.meta.glob('./components/sections/*/*.tsx', { eager: true });
 
 const App: React.FC = () => {
+  const { lang } = useParams<{ lang: string }>();
+  const navigate = useNavigate();
   const { t } = useLanguage();
   const { data } = useProfileData();
+
+  // Sync URL language parameter with i18n
+  useEffect(() => {
+    const supportedLngs = (i18n.options.supportedLngs || []).filter(
+      (l): l is string => typeof l === 'string' && l !== 'cimode' && l !== 'dev'
+    );
+
+    if (lang && supportedLngs.includes(lang)) {
+      if (i18n.language !== lang) {
+        i18n.changeLanguage(lang);
+      }
+    } else {
+      navigate(`/${i18n.language}`, { replace: true });
+    }
+  }, [lang, navigate]);
   const [opened, { toggle }] = useDisclosure(false);
 
   // Get all registered sections in the registry

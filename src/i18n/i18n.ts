@@ -61,7 +61,8 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: ["localStorage", "navigator"],
+      order: ["path", "localStorage", "navigator"],
+      lookupFromPathIndex: 0,
       caches: ["localStorage"],
     },
   });

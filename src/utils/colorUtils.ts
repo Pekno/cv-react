@@ -139,12 +139,13 @@ export function hslToHex(hsl: HSL): string {
  */
 export function getLighterColor(hexColor: string, factor: number): string {
   const rgb = hexToRgb(hexColor);
-  
+
   // Mix with white based on the factor
-  const mixR = Math.round(rgb.r + (255 - rgb.r) * factor);
-  const mixG = Math.round(rgb.g + (255 - rgb.g) * factor);
-  const mixB = Math.round(rgb.b + (255 - rgb.b) * factor);
-  
+  const clamp = (v: number) => Math.max(0, Math.min(255, v));
+  const mixR = clamp(Math.round(rgb.r + (255 - rgb.r) * factor));
+  const mixG = clamp(Math.round(rgb.g + (255 - rgb.g) * factor));
+  const mixB = clamp(Math.round(rgb.b + (255 - rgb.b) * factor));
+
   return rgbToHex({ r: mixR, g: mixG, b: mixB });
 }
 

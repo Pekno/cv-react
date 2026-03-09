@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => {
           __dirname,
           "./src/assets/static/favicon-template.svg"
         ),
-        outputPath: "favicon.svg",
+        outputPath: "favicon",
       }),
       // SEO metadata plugin injects meta tags from profile data and translations
       seoMetadataPlugin({

@@ -61,10 +61,18 @@ function sanitizeText(text: string): string {
 }
 
 /**
+ * Escapes HTML special characters for safe injection into attributes.
+ */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/**
  * Resolves the first profile picture to a source file path.
- * Profile pictures are imported as ES modules (e.g. `import pp from "../assets/profiles/pp.jpg"`),
- * so after esbuild evaluation with the stub plugin, their value is the original relative import path.
- * This function resolves that relative path against the profile-data file's directory.
  */
 function resolveProfilePicturePath(
   profileData: PluginProfileData,
@@ -73,14 +81,10 @@ function resolveProfilePicturePath(
   const firstPicture = profileData.meta.profilePictures?.[0];
   if (!firstPicture) return null;
 
-  // Try resolving relative to the profile-data file (for ES module imports
-  // processed by the stub plugin, e.g. "../assets/profiles/pp.jpg")
   const profileDir = path.dirname(profilePath);
   const relativeToFile = path.resolve(profileDir, firstPicture);
   if (fs.existsSync(relativeToFile)) return relativeToFile;
 
-  // Try resolving relative to the project root (for string literal paths
-  // like "./src/assets/profiles/default.jpg" in example data)
   const relativeToRoot = path.resolve(firstPicture);
   if (fs.existsSync(relativeToRoot)) return relativeToRoot;
 
@@ -108,7 +112,7 @@ function buildJsonLd(
 
   if (siteUrl) {
     jsonLd["url"] = siteUrl;
-    jsonLd["image"] = `${siteUrl}/${OG_IMAGE_FILENAME}`;
+    jsonLd["image"] = `${siteUrl.replace(/\/[a-z]{2}\/?$/, "")}/${OG_IMAGE_FILENAME}`;
   }
 
   if (socialUrls.length > 0) {
@@ -138,19 +142,32 @@ function langToLocale(lang: string): string {
   return LANG_TO_LOCALE[lang] ?? `${lang}_${lang.toUpperCase()}`;
 }
 
+interface SeoValues {
+  name: string;
+  fullTitle: string;
+  description: string;
+  keywords: string;
+  themeColor: string;
+  socialUrls: string[];
+  locale: string;
+  jobTitle: string;
+  imageAlt: string;
+  cleanSummary: string;
+}
+
 /**
  * Extracts SEO values from profile data and translations.
  */
 function extractSeoValues(
   profileData: PluginProfileData,
   translations: PluginTranslations,
-  defaultLang: string
-) {
+  lang: string
+): SeoValues {
   const name = profileData.meta.name;
   const themeColor = profileData.theme?.primaryColor ?? "#2b689c";
   const socials = profileData.meta.socials ?? [];
   const socialUrls = socials.map((s) => s.url);
-  const locale = langToLocale(defaultLang);
+  const locale = langToLocale(lang);
 
   const jobTitle = translations.sections?.about?.jobTitle ?? "";
   const jobTitleHighlight =
@@ -159,11 +176,11 @@ function extractSeoValues(
   const menuItems = Object.values(translations.menu ?? {}).filter(Boolean);
 
   const fullTitle = jobTitleHighlight
-    ? `${name} | ${jobTitleHighlight} ${jobTitle}`
+    ? `${name} | ${jobTitleHighlight} — ${jobTitle}`
     : `${name} | ${jobTitle}`;
 
   const fullJobTitle = jobTitleHighlight
-    ? `${jobTitleHighlight} ${jobTitle}`
+    ? `${jobTitleHighlight} — ${jobTitle}`
     : jobTitle;
 
   const cleanSummary = sanitizeText(rawSummary);
@@ -187,8 +204,237 @@ function extractSeoValues(
 }
 
 /**
+ * Replaces all language-specific SEO tags in an HTML string.
+ */
+function replaceLanguageSeo(
+  html: string,
+  lang: string,
+  seo: SeoValues,
+  baseUrl: string | undefined,
+  _hasImage: boolean
+): string {
+  const escaped = {
+    fullTitle: escapeHtml(seo.fullTitle),
+    description: escapeHtml(seo.description),
+    keywords: escapeHtml(seo.keywords),
+  };
+
+  // Replace html lang attribute
+  html = html.replace(/<html\s+lang="[^"]*"/, `<html lang="${lang}"`);
+
+  // Replace title
+  html = html.replace(/<title>[^<]*<\/title>/, `<title>${escaped.fullTitle}</title>`);
+
+  // Replace inline meta tags
+  html = html.replace(
+    /<meta\s+name="description"\s+content="[^"]*"\s*\/?>/,
+    `<meta name="description" content="${escaped.description}" />`
+  );
+  html = html.replace(
+    /<meta\s+name="keywords"\s+content="[^"]*"\s*\/?>/,
+    `<meta name="keywords" content="${escaped.keywords}" />`
+  );
+
+  // Replace Open Graph tags
+  html = html.replace(
+    /<meta\s+property="og:locale"\s+content="[^"]*"\s*\/?>/,
+    `<meta property="og:locale" content="${seo.locale}" />`
+  );
+  html = html.replace(
+    /<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/,
+    `<meta property="og:title" content="${escaped.fullTitle}" />`
+  );
+  html = html.replace(
+    /<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/,
+    `<meta property="og:description" content="${escaped.description}" />`
+  );
+
+  // Replace URL-dependent tags
+  if (baseUrl) {
+    html = html.replace(
+      /<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/,
+      `<meta property="og:url" content="${baseUrl}/${lang}" />`
+    );
+    html = html.replace(
+      /<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/,
+      `<link rel="canonical" href="${baseUrl}/${lang}" />`
+    );
+  }
+
+  // Replace Twitter Card tags
+  html = html.replace(
+    /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/,
+    `<meta name="twitter:title" content="${escaped.fullTitle}" />`
+  );
+  html = html.replace(
+    /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/,
+    `<meta name="twitter:description" content="${escaped.description}" />`
+  );
+
+  // Replace JSON-LD structured data
+  const jsonLd = buildJsonLd(
+    seo.name,
+    seo.jobTitle,
+    seo.cleanSummary,
+    baseUrl ? `${baseUrl}/${lang}` : undefined,
+    seo.socialUrls
+  );
+  html = html.replace(
+    /<script\s+type="application\/ld\+json">[\s\S]*?<\/script>/,
+    `<script type="application/ld+json">\n${JSON.stringify(jsonLd, null, 2)}\n</script>`
+  );
+
+  return html;
+}
+
+/**
+ * Generates hreflang link tags for all languages.
+ */
+function buildHreflangTags(
+  allLangs: string[],
+  defaultLang: string,
+  baseUrl: string
+): string {
+  const links = allLangs.map(
+    (l) => `<link rel="alternate" hreflang="${l}" href="${baseUrl}/${l}" />`
+  );
+  links.push(
+    `<link rel="alternate" hreflang="x-default" href="${baseUrl}/${defaultLang}" />`
+  );
+  return links.join("\n    ");
+}
+
+/**
+ * Generates a root redirect page that sends users to their preferred language.
+ */
+function generateRedirectPage(
+  defaultLang: string,
+  allLangs: string[],
+  baseUrl: string | undefined
+): string {
+  const langList = allLangs.map((l) => `'${l}'`).join(", ");
+  const canonicalUrl = baseUrl
+    ? `${baseUrl}/${defaultLang}`
+    : `/${defaultLang}`;
+
+  const hreflangTags = baseUrl
+    ? `\n    ${buildHreflangTags(allLangs, defaultLang, baseUrl)}`
+    : "";
+
+  return `<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=/${defaultLang}" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="${canonicalUrl}" />${hreflangTags}
+    <title>Redirecting...</title>
+    <script>
+      (function() {
+        var supported = [${langList}];
+        var stored = localStorage.getItem('i18nextLng');
+        var lang = stored && supported.indexOf(stored) !== -1 ? stored : '${defaultLang}';
+        window.location.replace('/' + lang + window.location.hash);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to <a href="/${defaultLang}">/${defaultLang}</a>...</p>
+  </body>
+</html>`;
+}
+
+/**
+ * Generates a robots.txt file content.
+ */
+function generateRobotsTxt(baseUrl: string | undefined): string {
+  const lines = ["User-agent: *", "Allow: /"];
+  if (baseUrl) {
+    lines.push("", `Sitemap: ${baseUrl}/sitemap.xml`);
+  }
+  return lines.join("\n") + "\n";
+}
+
+/**
+ * Generates a sitemap.xml with all language URLs and alternate links.
+ */
+function generateSitemapXml(
+  baseUrl: string,
+  allLangs: string[],
+  defaultLang: string
+): string {
+  const today = new Date().toISOString().split("T")[0];
+
+  const urls = allLangs.map((lang) => {
+    const alternates = allLangs
+      .map(
+        (l) =>
+          `    <xhtml:link rel="alternate" hreflang="${l}" href="${baseUrl}/${l}" />`
+      )
+      .concat(
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/${defaultLang}" />`
+      )
+      .join("\n");
+
+    return `  <url>
+    <loc>${baseUrl}/${lang}</loc>
+    <lastmod>${today}</lastmod>
+${alternates}
+  </url>`;
+  });
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urls.join("\n")}
+</urlset>
+`;
+}
+
+/**
+ * Discovers and loads all translation files from the locales directory.
+ */
+async function loadAllTranslations(
+  localesDir: string,
+  isDemo: boolean
+): Promise<Map<string, PluginTranslations>> {
+  const translations = new Map<string, PluginTranslations>();
+  const files = fs.readdirSync(localesDir);
+
+  for (const file of files) {
+    const isExample = file.includes(".example.");
+
+    // In demo mode, only load .example files; otherwise, skip them
+    if ((isDemo && !isExample) || (!isDemo && isExample)) continue;
+
+    // Extract language code from filename
+    const match = file
+      .replace(".example", "")
+      .match(/^(.+)\.(ts|js|json)$/);
+
+    if (match?.[1]) {
+      const lang = match[1];
+      const filePath = path.join(localesDir, file);
+      try {
+        const t = await loadTranslations(filePath);
+        translations.set(lang, t);
+      } catch (err) {
+        const error = err as Error;
+        logger.error(`Failed to load translations for "${lang}": ${error.message}`);
+      }
+    }
+  }
+
+  return translations;
+}
+
+/**
  * Vite plugin that generates SEO metadata from profile data and translations,
  * injecting it into index.html at build time via the transformIndexHtml hook.
+ *
+ * In production builds, it also generates per-language HTML files in subdirectories
+ * (e.g., dist/en/index.html, dist/fr/index.html) with language-specific SEO tags,
+ * hreflang alternate links, and a root redirect page.
  */
 export default function seoMetadataPlugin(
   options: SeoMetadataOptions
@@ -197,55 +443,114 @@ export default function seoMetadataPlugin(
 
   let baseUrl: string | undefined;
   let profilePictureSrcPath: string | null = null;
+  let cachedProfileData: PluginProfileData;
+  let allTranslationsMap: Map<string, PluginTranslations>;
+  let allLangs: string[];
 
   /**
-   * Resolves the translation file path based on defaultLang from profile data.
+   * Resolves the translation file path based on a language code.
    */
-  function resolveTranslationPath(defaultLang: string): string {
+  function resolveTranslationPath(lang: string): string {
     const suffix = isDemo ? ".example" : "";
-    return path.join(localesDir, `${defaultLang}${suffix}.ts`);
+    return path.join(localesDir, `${lang}${suffix}.ts`);
   }
 
   return {
     name: "vite-plugin-seo-metadata",
 
-    // Resolve siteUrl and profile picture path from profile data
     async buildStart(): Promise<void> {
       try {
-        const profileData = await loadProfileData(profilePath);
+        cachedProfileData = await loadProfileData(profilePath);
 
-        // Read siteUrl from profile data, clean trailing slash
-        baseUrl = profileData.meta.siteUrl?.replace(/\/+$/, "");
+        baseUrl = cachedProfileData.meta.siteUrl?.replace(/\/+$/, "");
 
         if (baseUrl) {
           profilePictureSrcPath = resolveProfilePicturePath(
-            profileData,
+            cachedProfileData,
             profilePath
           );
         }
+
+        // Load translations for all available languages
+        allTranslationsMap = await loadAllTranslations(localesDir, isDemo);
+        allLangs = Array.from(allTranslationsMap.keys());
+
+        logger.info(`Loaded translations for: ${allLangs.join(", ")}`);
       } catch (err) {
         const error = err as Error;
-        logger.error(
-          `Error during buildStart: ${error.message}`
-        );
+        logger.error(`Error during buildStart: ${error.message}`);
       }
     },
 
-    // Copy profile picture to dist output after bundle is written
+    // Copy profile picture and generate per-language HTML files
     writeBundle(outputOptions): void {
-      if (!profilePictureSrcPath || !baseUrl) return;
+      const outDir = outputOptions.dir ?? path.resolve("dist");
 
-      try {
-        const outDir = outputOptions.dir ?? path.resolve("dist");
-        const destPath = path.join(outDir, OG_IMAGE_FILENAME);
-        fs.copyFileSync(profilePictureSrcPath, destPath);
-        logger.info(`Copied profile picture to ${OG_IMAGE_FILENAME}`);
-      } catch (err) {
-        const error = err as Error;
-        logger.error(
-          `Error copying profile picture: ${error.message}`
-        );
+      // Copy profile picture to dist output
+      if (profilePictureSrcPath && baseUrl) {
+        try {
+          const destPath = path.join(outDir, OG_IMAGE_FILENAME);
+          fs.copyFileSync(profilePictureSrcPath, destPath);
+          logger.info(`Copied profile picture to ${OG_IMAGE_FILENAME}`);
+        } catch (err) {
+          const error = err as Error;
+          logger.error(`Error copying profile picture: ${error.message}`);
+        }
       }
+
+      // Generate per-language HTML files (production build only)
+      if (!allLangs || allLangs.length === 0) return;
+
+      const defaultLang = cachedProfileData.meta.defaultLang ?? "en";
+      const hasImage = !!baseUrl && !!profilePictureSrcPath;
+      const builtHtmlPath = path.join(outDir, "index.html");
+
+      if (!fs.existsSync(builtHtmlPath)) {
+        logger.error("Built index.html not found, skipping language page generation");
+        return;
+      }
+
+      const builtHtml = fs.readFileSync(builtHtmlPath, "utf-8");
+
+      // Generate a page for each language
+      for (const lang of allLangs) {
+        const translations = allTranslationsMap.get(lang);
+        if (!translations) continue;
+
+        const seo = extractSeoValues(cachedProfileData, translations, lang);
+
+        // Start from the built HTML and replace language-specific content
+        let langHtml = replaceLanguageSeo(builtHtml, lang, seo, baseUrl, hasImage);
+
+        // Add hreflang alternate links
+        if (baseUrl) {
+          const hreflangTags = buildHreflangTags(allLangs, defaultLang, baseUrl);
+          langHtml = langHtml.replace("</head>", `    ${hreflangTags}\n  </head>`);
+        }
+
+        // Write to {outDir}/{lang}/index.html
+        const langDir = path.join(outDir, lang);
+        fs.mkdirSync(langDir, { recursive: true });
+        fs.writeFileSync(path.join(langDir, "index.html"), langHtml);
+        logger.info(`Generated ${lang}/index.html`);
+      }
+
+      // Generate robots.txt
+      const robotsTxt = generateRobotsTxt(baseUrl);
+      fs.writeFileSync(path.join(outDir, "robots.txt"), robotsTxt);
+      logger.info("Generated robots.txt");
+
+      // Generate sitemap.xml (only if baseUrl is set)
+      if (baseUrl) {
+        const sitemapXml = generateSitemapXml(baseUrl, allLangs, defaultLang);
+        fs.writeFileSync(path.join(outDir, "sitemap.xml"), sitemapXml);
+        logger.info("Generated sitemap.xml");
+      }
+
+      // Replace root index.html with redirect page
+      const redirectHtml = generateRedirectPage(defaultLang, allLangs, baseUrl);
+      fs.writeFileSync(builtHtmlPath, redirectHtml);
+      logger.info("Generated root redirect page");
     },
 
     transformIndexHtml: {
@@ -256,7 +561,7 @@ export default function seoMetadataPlugin(
         tags: HtmlTagDescriptor[];
       }> {
         try {
-          const profileData = await loadProfileData(profilePath);
+          const profileData = cachedProfileData ?? await loadProfileData(profilePath);
           const defaultLang = profileData.meta.defaultLang ?? "en";
           const translationPath = resolveTranslationPath(defaultLang);
           const translations = await loadTranslations(translationPath);
@@ -342,7 +647,7 @@ export default function seoMetadataPlugin(
               },
               injectTo: "head",
             },
-            // Twitter Card (summary_large_image when we have an image, summary otherwise)
+            // Twitter Card
             {
               tag: "meta",
               attrs: {
@@ -366,7 +671,7 @@ export default function seoMetadataPlugin(
             },
           ];
 
-          // URL-dependent tags (only if siteUrl is provided)
+          // URL-dependent tags
           if (baseUrl) {
             tags.push(
               {
@@ -381,7 +686,6 @@ export default function seoMetadataPlugin(
               }
             );
 
-            // og:image + alt from profile picture
             if (ogImageUrl) {
               tags.push(
                 {

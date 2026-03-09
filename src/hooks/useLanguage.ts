@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { TranslationKey } from "../types/translations.types";
 import { useProfileData } from "./useProfileData";
 
@@ -21,6 +22,7 @@ export const useLanguage = (): UseLanguageReturn => {
   // Use the standard i18n hook
   const { t: originalT, i18n } = useTranslation();
   const { data } = useProfileData();
+  const navigate = useNavigate();
 
   // Use i18n.language directly
   const currentLanguage = i18n.language;
@@ -41,18 +43,18 @@ export const useLanguage = (): UseLanguageReturn => {
     return data.meta.pdfResume[currentLanguage] ?? "";
   }, [currentLanguage, data.meta.pdfResume]);
 
-  // Set a specific language
+  // Set a specific language (updates both i18n state and URL)
   const setLanguage = useCallback(
     (lang: string): void => {
-      // Only change language if it's supported and different from current
       if (
-        lang !== currentLanguage && 
+        lang !== currentLanguage &&
         supportedLanguages.includes(lang)
       ) {
         i18n.changeLanguage(lang);
+        navigate(`/${lang}`, { replace: true });
       }
     },
-    [i18n, currentLanguage, supportedLanguages]
+    [i18n, navigate, currentLanguage, supportedLanguages]
   );
 
   // Type-safe translation function
