@@ -47,6 +47,17 @@ export interface ProfileData {
 
 export interface MetaData {
   name: string;
+  /**
+   * Default language code (e.g. "en", "fr").
+   * Used as the fallback language for i18n and for SEO metadata generation.
+   */
+  defaultLang: string;
+  /**
+   * Base URL of the deployed site (e.g. "https://example.com").
+   * Used for SEO metadata: og:url, og:image, canonical URL, and JSON-LD.
+   * If not provided, URL-dependent SEO tags are skipped.
+   */
+  siteUrl?: string;
   profilePictures: string[]; // Array of profile pictures (first one is the default)
   pdfResume: {
     [lang: string]: string;

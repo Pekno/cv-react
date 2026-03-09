@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { getInitials } from "../src/utils/faviconGenerator";
 import { getLighterColor } from "../src/utils/colorUtils";
+import { loadProfileData } from "./load-profile-data";
 
 interface DynamicFaviconOptions {
   /**
@@ -51,21 +52,6 @@ function processTemplate(
 }
 
 /**
- * Extract theme color from profile data
- */
-function extractThemeColor(profileContent: string): string | null {
-  // Try to extract color from theme configuration
-  const themeColorMatch = profileContent.match(
-    /primaryColor\s*:\s*["']([^"']+)["']/
-  );
-  if (themeColorMatch && themeColorMatch[1]) {
-    return themeColorMatch[1];
-  }
-
-  return null;
-}
-
-/**
  * Vite plugin that generates a dynamic favicon based on profile data and theme colors
  */
 export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
@@ -91,7 +77,7 @@ export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
     name: "vite-plugin-dynamic-favicon",
     enforce: "pre" as const,
 
-    buildStart(): void {
+    async buildStart(): Promise<void> {
       try {
         // Read the SVG template
         if (!fs.existsSync(templatePath)) {
@@ -100,23 +86,12 @@ export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
 
         const templateContent = fs.readFileSync(templatePath, "utf-8");
 
-        // Read the profile data file
-        if (!fs.existsSync(profilePath)) {
-          throw new Error(`Profile data file not found at ${profilePath}`);
-        }
-
+        // Load profile data using esbuild
         logger.info(`Using profile data from: ${path.basename(profilePath)}`);
+        const profileData = await loadProfileData(profilePath);
 
-        const profileFile = fs.readFileSync(profilePath, "utf-8");
-
-        // Extract the name from the profile data
-        const nameMatch = profileFile.match(/name:\s*["']([^"']+)["']/);
-        // Ensure name is always a string to satisfy TypeScript
-        const name: string =
-          nameMatch && nameMatch[1] ? nameMatch[1] : "CV React";
-
-        // Extract the theme color from profile data
-        const themeColor = extractThemeColor(profileFile);
+        const name = profileData.meta.name || "CV React";
+        const themeColor = profileData.theme?.primaryColor ?? null;
 
         // Get the initials
         const initials = getInitials(name);
@@ -166,14 +141,14 @@ export default function dynamicFavicon(options: DynamicFaviconOptions): Plugin {
             #favicon-dark { display: none; }
           }
         </style>
-        
+
         <g id="favicon">${lightModeSvg
           .replace(
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">',
             ""
           )
           .replace("</svg>", "")}</g>
-        
+
         <g id="favicon-dark" style="display:none">${darkModeSvg
           .replace(
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">',

@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 // Import our custom plugins
 import usedSectionsPlugin from "./plugins/vite-plugin-used-sections";
 import dynamicFavicon from "./plugins/vite-plugin-dynamic-favicon";
+import seoMetadataPlugin from "./plugins/vite-plugin-seo-metadata";
 
 // Get proper __dirname equivalent in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -39,6 +40,12 @@ export default defineConfig(({ mode }) => {
           "./src/assets/static/favicon-template.svg"
         ),
         outputPath: "favicon.svg",
+      }),
+      // SEO metadata plugin injects meta tags from profile data and translations
+      seoMetadataPlugin({
+        profilePath: activeProfilePath,
+        localesDir: resolve(__dirname, "./src/i18n/locales"),
+        isDemo,
       }),
 
       react({

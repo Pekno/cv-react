@@ -7,6 +7,8 @@ import { ProfileData } from "../types/profile-data.types";
 export const profileData: ProfileData = {
   meta: {
     name: "Alex Morgan",
+    defaultLang: "en",
+    siteUrl: "https://alexmorgan.dev",
     profilePictures: [
       "./src/assets/profiles/default.jpg",
       // Add more profile pictures if needed

@@ -1,9 +1,13 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import realProfileData from "../data/profile-data";
+import exampleProfileData from "../data/profile-data.example";
 
 // Declare the global variable for TypeScript
 declare const __USE_EXAMPLE_DATA__: boolean;
+
+const profileData = __USE_EXAMPLE_DATA__ ? exampleProfileData : realProfileData;
 
 // Dynamic import of all locale files
 const localeModules = import.meta.glob("./locales/*.{ts,js,json}", {
@@ -51,7 +55,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: supportedLngs[0],
+    fallbackLng: profileData.meta.defaultLang,
     supportedLngs,
     interpolation: {
       escapeValue: false,

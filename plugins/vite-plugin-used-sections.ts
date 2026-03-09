@@ -1,9 +1,8 @@
 // plugins/vite-plugin-used-sections.ts
 import { Plugin } from "vite";
-import fs from "fs";
 
-// Import type reference
 import type { SectionTypeRegistry } from "../src/types/profile-data.types";
+import { loadProfileData } from "./load-profile-data";
 
 interface UsedSectionsOptions {
   /**
@@ -41,46 +40,22 @@ export default function usedSectionsPlugin(
     name: "used-sections-plugin",
     enforce: "pre" as const,
 
-    // This runs at the beginning of the build process
-    buildStart(): void {
+    async buildStart(): Promise<void> {
       try {
         logger.info(`Analyzing profile data file(s) for used sections`);
 
-        const sectionsSet = new Set<string>();
+        const profileData = await loadProfileData(profilePath);
 
-        // Read each profile data file and extract section names
-        if (fs.existsSync(profilePath)) {
-          logger.info(`Processing file: ${profilePath}`);
-          const fileContent = fs.readFileSync(profilePath, "utf-8");
-          // Simple regex to extract section names
-          const sectionMatches =
-            fileContent.match(/sectionName:\s*["']([^"']+)["']/g) || [];
+        usedSections = profileData.sections.map(
+          (s) => s.sectionName as keyof SectionTypeRegistry
+        );
 
-          sectionMatches.forEach((match) => {
-            const nameMatch = match.match(/["']([^"']+)["']/);
-            if (nameMatch && nameMatch[1]) {
-              sectionsSet.add(nameMatch[1]);
-            }
-          });
-        } else {
-          logger.error(`File not found: ${profilePath}`);
-        }
-
-        // Convert Set to Array and store it
-        usedSections = Array.from(sectionsSet) as Array<
-          keyof SectionTypeRegistry
-        >;
-
-        // Use our logger instead of console.log
         logger.info(
-          `📦 Used sections detected in profile data: ${usedSections.join(
-            ", "
-          )}`
+          `Used sections detected in profile data: ${usedSections.join(", ")}`
         );
       } catch (error) {
-        // Log errors using our logger
         logger.error(`Error analyzing profile data: ${error}`);
-        usedSections = []; // Default to empty if there's an error
+        usedSections = [];
       }
     },
 
@@ -111,7 +86,7 @@ export default function usedSectionsPlugin(
 
           // Log the transformation
           logger.info(
-            `📄 Generated section imports for ${usedSections.length} sections in App.tsx`
+            `Generated section imports for ${usedSections.length} sections in App.tsx`
           );
 
           return code;
