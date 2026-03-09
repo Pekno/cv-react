@@ -21,8 +21,8 @@ import AnimatedCounter from './components/AnimatedCounter/AnimatedCounter';
 
 // Labels for social platforms (shown in card rows)
 const socialLabels: Record<string, string> = {
-  github: 'GitHub Profile',
-  linkedin: 'LinkedIn Network',
+  github: 'GitHub',
+  linkedin: 'LinkedIn',
   twitter: 'Twitter / X',
   instagram: 'Instagram',
   facebook: 'Facebook',

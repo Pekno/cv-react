@@ -311,7 +311,7 @@
         color-mix(in srgb, var(--mantine-color-gray-6) 40%, transparent)
     );
     display: flex;
-    gap: 2rem;
+    gap: 1.25rem;
     flex-wrap: wrap;
 }
 
@@ -440,6 +440,5 @@
 
     .statsBar {
         padding: 0.875rem 1.25rem;
-        gap: 1.25rem;
     }
 }
