@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ opened, toggle, menuItems }) => {
     selector: "section[id]",
   });
 
-  const handleMenuClick = (key: string) => {
+  const handleMenuClick = (key: string): void => {
     const element = scrollSpy.data.find((el) => el.id === key);
     if (!element) return;
 

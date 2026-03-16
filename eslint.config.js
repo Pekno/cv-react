@@ -5,7 +5,14 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'tests'] },
+  // Node.js files (Vite plugins, scripts) use Node globals
+  {
+    files: ['plugins/**/*.ts', 'scripts/**/*.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -24,7 +31,7 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': 'off',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
@@ -37,15 +44,11 @@ export default [
       'prefer-const': 'error',
       'no-var': 'error',
       
-      // TypeScript specific (for .ts and .tsx files)
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/explicit-function-return-type': 'warn',
     },
   },
   // TypeScript-specific configuration
   {
     files: ['**/*.{ts,tsx}'],
-    // Instead of spreading the config, explicitly set rules and other properties
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -57,6 +60,18 @@ export default [
     },
     rules: {
       ...tseslint.configs.recommended.rules,
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+      }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-function-return-type': ['warn', {
+        allowExpressions: true,
+        allowTypedFunctionExpressions: true,
+        allowHigherOrderFunctions: true,
+      }],
     },
   }
 ];

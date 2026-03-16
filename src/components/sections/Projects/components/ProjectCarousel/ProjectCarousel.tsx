@@ -25,7 +25,7 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects }) =>
 
   const featured = projects[selectedIndex];
 
-  const selectProject = useCallback((index: number) => {
+  const selectProject = useCallback((index: number): void => {
     setSelectedIndex(index);
     // Reset autoplay timer on manual interaction
     if (autoplayRef.current !== null) {
@@ -42,7 +42,7 @@ export const ProjectCarousel: React.FC<ProjectCarouselProps> = ({ projects }) =>
     autoplayRef.current = window.setInterval(() => {
       setSelectedIndex(prev => (prev + 1) % projects.length);
     }, AUTOPLAY_DELAY);
-    return () => {
+    return (): void => {
       if (autoplayRef.current !== null) clearInterval(autoplayRef.current);
     };
   }, [projects.length]);

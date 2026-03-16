@@ -9,7 +9,7 @@ import { TranslationKey } from "../types/translations.types";
 import { RegisteredSectionComponent } from "../types/section-component.types";
 
 // Enhanced registry interface with type discriminator
-export interface SectionRegistryItem<T extends SectionDataTypes = any> {
+export interface SectionRegistryItem<T extends SectionDataTypes = SectionDataTypes> {
   type: keyof SectionTypeRegistry; // Type discriminator for better type safety
   component: ComponentType<SectionProps<T>>;
 }
@@ -37,7 +37,7 @@ export const sectionRegistry: Record<
  *   );
  * });
  */
-export function createRegisteredSection<P extends SectionProps<any>>(
+export function createRegisteredSection<P extends SectionProps<SectionDataTypes>>(
   type: Extract<keyof SectionTypeRegistry, string>,
   renderFn: (props: P) => React.ReactElement | null
 ): RegisteredSectionComponent<typeof type> {

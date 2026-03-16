@@ -10,7 +10,7 @@ interface UseCarouselAutoplayOptions {
 export function useCarouselAutoplay(
   embla: Embla | null,
   options: UseCarouselAutoplayOptions = {}
-) {
+): { handleUserInteraction: () => void; startAutoplay: () => void; stopAutoplay: () => void; isAutoplayRunning: boolean } {
   const {
     delay = 5000, // Auto rotate every 15 seconds by default
     idleDelay = 10000, // Reset user interaction after 30 seconds of inactivity
@@ -75,7 +75,7 @@ export function useCarouselAutoplay(
       startAutoplay();
     }
 
-    return () => {
+    return (): void => {
       if (autoplayIntervalRef.current) {
         clearInterval(autoplayIntervalRef.current);
       }
@@ -95,7 +95,7 @@ export function useCarouselAutoplay(
   // Effect for user interaction reset
   useEffect(() => {
     resetUserInteraction();
-    return () => {
+    return (): void => {
       if (userIdleTimeoutRef.current) {
         clearTimeout(userIdleTimeoutRef.current);
       }
@@ -107,11 +107,11 @@ export function useCarouselAutoplay(
     if (!embla) return;
 
     // When user manually navigates, consider it an interaction
-    const onSelect = () => handleUserInteraction();
+    const onSelect = (): void => handleUserInteraction();
 
     embla.on("select", onSelect);
 
-    return () => {
+    return (): void => {
       embla.off("select", onSelect);
     };
   }, [embla, handleUserInteraction]);

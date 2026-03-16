@@ -55,7 +55,7 @@ function truncate(text: string, maxLen: number): string {
  */
 function sanitizeText(text: string): string {
   return text
-    .replace(/[\u200B\u200C\u200D\uFEFF]/g, "") // zero-width chars
+    .replace(/[\u200B\u200C\u200D\uFEFF]/g, "") // eslint-disable-line no-misleading-character-class -- intentional joined chars
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -210,8 +210,7 @@ function replaceLanguageSeo(
   html: string,
   lang: string,
   seo: SeoValues,
-  baseUrl: string | undefined,
-  _hasImage: boolean
+  baseUrl: string | undefined
 ): string {
   const escaped = {
     fullTitle: escapeHtml(seo.fullTitle),
@@ -502,7 +501,6 @@ export default function seoMetadataPlugin(
       if (!allLangs || allLangs.length === 0) return;
 
       const defaultLang = cachedProfileData.meta.defaultLang ?? "en";
-      const hasImage = !!baseUrl && !!profilePictureSrcPath;
       const builtHtmlPath = path.join(outDir, "index.html");
 
       if (!fs.existsSync(builtHtmlPath)) {
@@ -520,7 +518,7 @@ export default function seoMetadataPlugin(
         const seo = extractSeoValues(cachedProfileData, translations, lang);
 
         // Start from the built HTML and replace language-specific content
-        let langHtml = replaceLanguageSeo(builtHtml, lang, seo, baseUrl, hasImage);
+        let langHtml = replaceLanguageSeo(builtHtml, lang, seo, baseUrl);
 
         // Add hreflang alternate links
         if (baseUrl) {
@@ -579,7 +577,7 @@ export default function seoMetadataPlugin(
           );
 
           // Replace existing hardcoded tags in the HTML
-          let transformedHtml = html
+          const transformedHtml = html
             .replace(
               /<html\s+lang="[^"]*"/,
               `<html lang="${defaultLang}"`

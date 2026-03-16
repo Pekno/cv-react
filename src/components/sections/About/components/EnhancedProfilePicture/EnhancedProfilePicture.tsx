@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import classes from './EnhancedProfilePicture.module.css';
 import ImageLoader from '../../../../common/OptimizedImage/ImageLoader';
 
@@ -17,91 +17,66 @@ const EnhancedProfilePicture: React.FC<EnhancedProfilePictureProps> = ({
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  // We're using setNextImageLoaded but never reading the state directly
-  const [, setNextImageLoaded] = useState(false);
 
   const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const preloadImageRef = useRef<HTMLImageElement | null>(null);
-  
-  // Clear all timeouts safely
-  const clearAllTimeouts = () => {
+  // Keep a ref to the current index so callbacks always read the latest value
+  const currentImageIndexRef = useRef(currentImageIndex);
+  currentImageIndexRef.current = currentImageIndex;
+
+  const clearAllTimeouts = useCallback((): void => {
     if (animationTimeoutRef.current) {
       clearTimeout(animationTimeoutRef.current);
     }
     if (transitionTimeoutRef.current) {
       clearTimeout(transitionTimeoutRef.current);
     }
-  };
+  }, []);
 
-  // Function to preload the next image in sequence
-  const preloadNextImage = () => {
+  const preloadNextImage = useCallback((): void => {
     if (images.length <= 1) return;
-    
-    const nextIndex = (currentImageIndex + 1) % images.length;
-    // Make sure we access a valid array index
+
+    const nextIndex = (currentImageIndexRef.current + 1) % images.length;
     const nextImageSrc = images[nextIndex] || '';
-    
-    // Create a new image element for preloading
+
     if (!preloadImageRef.current) {
       preloadImageRef.current = new Image();
     }
-    
-    // Only load if it's a different image
+
     if (preloadImageRef.current.src !== nextImageSrc) {
-      preloadImageRef.current.onload = () => {
-        setNextImageLoaded(true);
-      };
       preloadImageRef.current.src = nextImageSrc;
     }
-  };
+  }, [images]);
 
-  // Function to handle the image transition
-  const triggerTransition = () => {
-    // Only run transitions if we have multiple images
+  const triggerTransition = useCallback((): void => {
     if (images.length <= 1) return;
-    
-    // Start the animation
+
     setIsAnimating(true);
-    
-    // Set a timeout to change the image at the peak of the blur effect
-    const animationDuration = 3000; // 3 seconds - must match CSS animation duration
-    const midpointTime = animationDuration / 2; // 1.5 seconds (50% of animation)
-    
-    // Schedule image change to happen at the peak blur
+
+    const animationDuration = 3000;
+    const midpointTime = animationDuration / 2;
+
     animationTimeoutRef.current = setTimeout(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-      setNextImageLoaded(false);
-      
-      // Schedule the end of animation
+
       animationTimeoutRef.current = setTimeout(() => {
         setIsAnimating(false);
-        
-        // Start preloading the next image immediately
         preloadNextImage();
-        
-        // Schedule the next transition
         transitionTimeoutRef.current = setTimeout(triggerTransition, transitionInterval);
       }, midpointTime);
-      
+
     }, midpointTime);
-  };
-  
-  // Start initial transition and preloading
+  }, [images, transitionInterval, preloadNextImage]);
+
   useEffect(() => {
-    // Only load the current image immediately
-    // The next image will be preloaded just before we need it
     if (images.length > 1) {
-      // Preload the next image
       preloadNextImage();
-      
-      // Start the first transition after initial delay
       transitionTimeoutRef.current = setTimeout(triggerTransition, transitionInterval);
     }
-    
-    // Cleanup function
+
     return clearAllTimeouts;
-  }, [images.length, transitionInterval]);
+  }, [images.length, transitionInterval, preloadNextImage, triggerTransition, clearAllTimeouts]);
 
   // Calculate dimensions based on size prop
   const containerSize = size + 20; // Add 20px for the border (10px on each side)

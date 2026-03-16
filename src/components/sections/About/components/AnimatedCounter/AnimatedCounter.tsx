@@ -58,7 +58,7 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
         />
       );
     });
-  }, [burstKey, particleCount]);
+  }, [particleCount]);
 
   // Animate the counter value
   useEffect(() => {
@@ -66,7 +66,7 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     let frameId: number;
     let lastValue = start;
 
-    const step = (timestamp: number) => {
+    const step = (timestamp: number): void => {
       if (!startTimestamp) startTimestamp = timestamp;
       const p = Math.min((timestamp - startTimestamp) / duration, 1);
       const currentValue = Math.floor(p * (end - start) + start);
