@@ -47,7 +47,7 @@ function getTablerIcon(iconName: string): React.ReactNode {
   return <Icon size={24} />;
 }
 
-const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
+const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps): React.JSX.Element => {
   const { t } = useLanguage();
 
   const processedMainSkills = useMemo(() => {
@@ -120,4 +120,5 @@ const SkillsSectionComponent = ({ data, evenSection = false }: SkillsProps) => {
   );
 };
 
-export default createRegisteredSection<SkillsProps>('skills', SkillsSectionComponent);
+const Skills = createRegisteredSection<SkillsProps>('skills', SkillsSectionComponent);
+export default Skills;

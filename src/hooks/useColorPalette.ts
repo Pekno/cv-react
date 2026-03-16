@@ -37,8 +37,8 @@ const useColorPalette = (
   );
 
   // Wrap generateVariants so that it automatically uses the current theme state.
-  const themedGenerateVariants = (baseHex: string, count: number): string[] =>
-    generateColorVariants(baseHex, count, isDark);
+  const themedGenerateVariants = (baseHex: string, variantCount: number): string[] =>
+    generateColorVariants(baseHex, variantCount, isDark);
 
   return {
     palette,

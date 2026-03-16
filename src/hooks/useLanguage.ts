@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import type { TOptions } from "i18next";
 import { useNavigate } from "react-router-dom";
 import { TranslationKey } from "../types/translations.types";
 import { useProfileData } from "./useProfileData";
@@ -9,7 +10,7 @@ interface UseLanguageReturn {
   currentLanguage: string;
   supportedLanguages: string[];
   setLanguage: (lang: string) => void;
-  t: (key: TranslationKey, options?: any) => string;
+  t: (key: TranslationKey, options?: TOptions) => string;
   getCvPdfPath: () => string;
 }
 
@@ -59,7 +60,7 @@ export const useLanguage = (): UseLanguageReturn => {
 
   // Type-safe translation function
   const t = useCallback(
-    (key: TranslationKey, options?: any): string => {
+    (key: TranslationKey, options?: TOptions): string => {
       return originalT(key as string, options) as string;
     },
     [originalT]

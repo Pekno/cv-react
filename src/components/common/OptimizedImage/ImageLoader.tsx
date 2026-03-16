@@ -55,37 +55,37 @@ const ImageLoader: React.FC<ImageLoaderProps> = ({
     // Set fetchPriority attribute if available
     if ('fetchPriority' in img) {
       // TypeScript doesn't know about this property by default
-      (img as any).fetchPriority = fetchPriority;
+      (img as HTMLImageElement & { fetchPriority: string }).fetchPriority = fetchPriority;
     }
-    
-    img.onload = () => {
+
+    img.onload = (): void => {
       setCurrentSrc(src);
       setLoaded(true);
     };
-    
-    img.onerror = () => {
+
+    img.onerror = (): void => {
       setError(true);
       if (fallbackSrc) {
         setCurrentSrc(fallbackSrc);
       }
     };
-    
-    return () => {
+
+    return (): void => {
       img.onload = null;
       img.onerror = null;
     };
   }, [src, lowQualitySrc, fallbackSrc, fetchPriority, loaded]);
   
   // Handle error state when no lowQualitySrc is provided
-  const handleError = () => {
+  const handleError = (): void => {
     setError(true);
     if (fallbackSrc) {
       setCurrentSrc(fallbackSrc);
     }
   };
-  
+
   // Handle successful load
-  const handleLoad = () => {
+  const handleLoad = (): void => {
     setLoaded(true);
   };
   

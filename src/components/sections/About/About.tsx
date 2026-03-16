@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, ReactNode } from 'react';
+import React, { useCallback, useMemo, useState, ReactNode } from 'react';
 import { Grid, Box } from '@mantine/core';
 import {
   IconDownload,
@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import Section from '@components/common/Section/Section';
 import classes from './About.module.css';
 import EnhancedProfilePicture from './components/EnhancedProfilePicture/EnhancedProfilePicture';
-import { getSocialIcon } from '@components/common/SocialLinks/SocialLinks';
+import { getSocialIcon } from '@components/common/SocialLinks/socialIcons';
 import { AboutProps } from './About.types';
 import { createRegisteredSection } from '@decorators/section.decorator';
 import { useLanguage } from '@hooks/useLanguage';
@@ -48,7 +48,7 @@ function buildSummaryNodes(
     }
   });
 
-  const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escapeRegExp = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   // Create regex only if we have companies
   const regex =
@@ -106,16 +106,17 @@ function buildSummaryNodes(
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-const AboutSectionComponent = ({ data, meta, evenSection = false }: AboutProps) => {
+const AboutSectionComponent = ({ data, meta, evenSection = false }: AboutProps): React.ReactElement => {
   const { t, getCvPdfPath } = useLanguage();
   const { data: profileData } = useProfileData();
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const experienceSection = profileData.sections.find(
-    (x) => x.sectionName === 'experiences',
-  )?.data as ExperiencesData | undefined;
-
-  const experiences: ExperienceItem[] = experienceSection?.experiences ?? [];
+  const experiences: ExperienceItem[] = useMemo(() => {
+    const experienceSection = profileData.sections.find(
+      (x) => x.sectionName === 'experiences',
+    )?.data as ExperiencesData | undefined;
+    return experienceSection?.experiences ?? [];
+  }, [profileData.sections]);
 
   const summaryText = t('sections.about.summary');
 
@@ -301,4 +302,5 @@ const AboutSectionComponent = ({ data, meta, evenSection = false }: AboutProps) 
   );
 };
 
-export default createRegisteredSection<AboutProps>('about', AboutSectionComponent);
+const About = createRegisteredSection<AboutProps>('about', AboutSectionComponent);
+export default About;

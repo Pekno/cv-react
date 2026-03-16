@@ -7,6 +7,7 @@ import {
   IconChevronDown,
   IconBriefcase,
 } from '@tabler/icons-react';
+import type { TOptions } from 'i18next';
 import { useLanguage } from '@hooks/useLanguage';
 import Section from '@components/common/Section/Section';
 import classes from './Experiences.module.css';
@@ -42,11 +43,13 @@ function formatDate(date: Date): string {
 interface ExperienceCardProps {
   exp: ProcessedExperience;
   isOpen: boolean;
+   
   onToggle: (id: string | null) => void;
-  t: (key: TranslationKey, options?: unknown) => string;
+   
+  t: (key: TranslationKey, options?: TOptions) => string;
 }
 
-const ExperienceCard = React.memo(({ exp, isOpen, onToggle, t }: ExperienceCardProps) => {
+const ExperienceCard = React.memo(({ exp, isOpen, onToggle, t }: ExperienceCardProps): React.JSX.Element => {
   const isCurrent = !exp.endDate || exp.isCurrent;
   const startStr = formatDate(exp.startDate);
   const endStr = isCurrent ? t('global.present' as TranslationKey) : formatDate(exp.endDate!);
@@ -121,7 +124,7 @@ ExperienceCard.displayName = 'ExperienceCard';
 
 // ── Main component ─────────────────────────────────────────────────
 
-const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesProps) => {
+const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesProps): React.JSX.Element => {
   const { t } = useLanguage();
   const location = useLocation();
   const [value, setValue] = useState<string | null>(null);
@@ -140,7 +143,7 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
           window.scrollTo({ top, behavior: 'smooth' });
         }
       }, 50);
-      return () => clearTimeout(timeoutId);
+      return (): void => clearTimeout(timeoutId);
     }
     return undefined;
   }, [location.hash]);
@@ -204,4 +207,5 @@ const ExperiencesSectionComponent = ({ data, evenSection = false }: ExperiencesP
   );
 };
 
-export default createRegisteredSection<ExperiencesProps>('experiences', ExperiencesSectionComponent);
+const Experiences = createRegisteredSection<ExperiencesProps>('experiences', ExperiencesSectionComponent);
+export default Experiences;
