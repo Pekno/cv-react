@@ -162,13 +162,12 @@ Each README contains detailed information on:
 
 ## Deployment
 
-Three deployment options are available — static hosting, Docker, and GitHub Actions. See the full **[Deployment Guide](DEPLOYMENT.md)** for step-by-step instructions.
+Two deployment options are available. See the full **[Deployment Guide](DEPLOYMENT.md)** for step-by-step instructions.
 
 | Option | Best for |
 |---|---|
 | [Netlify / Vercel](DEPLOYMENT.md#static-hosting--netlify--vercel-recommended) | Simplest setup, free tier available |
-| [Docker](DEPLOYMENT.md#docker--github-actions-self-hosted) | Self-hosted, full control |
-| [GitHub Actions + GHCR](DEPLOYMENT.md#docker--github-actions-self-hosted) | Automated builds with private data repo |
+| [Docker + GitHub Actions](DEPLOYMENT.md#docker--github-actions-self-hosted) | Self-hosted with automated builds via a private data repo |
 
 ### Using Demo Mode
 
