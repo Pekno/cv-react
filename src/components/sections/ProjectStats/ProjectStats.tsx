@@ -56,7 +56,7 @@ const StatCard = React.memo(({
 ));
 
 // Create the ProjectStats component as a regular function
-const ProjectStatsComponent = ({ data, evenSection = false }: ProjectStatsProps) => {
+const ProjectStatsComponent = ({ data, evenSection = false }: ProjectStatsProps): React.JSX.Element => {
   const { t } = useLanguage();
 
   // Memoize the icon getter function
@@ -94,4 +94,5 @@ const ProjectStatsComponent = ({ data, evenSection = false }: ProjectStatsProps)
 };
 
 // Export with section registration
-export default createRegisteredSection<ProjectStatsProps>('projectStats', ProjectStatsComponent);
+const ProjectStats = createRegisteredSection<ProjectStatsProps>('projectStats', ProjectStatsComponent);
+export default ProjectStats;

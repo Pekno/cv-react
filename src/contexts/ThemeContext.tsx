@@ -1,29 +1,18 @@
-import React, { createContext, ReactNode } from 'react';
-import { MantineColorScheme } from '@mantine/core';
+import React from 'react';
 import { useThemeState } from '../hooks/useTheme';
+import { ThemeContext } from './themeContextDef';
 
-// Define the shape of our context
-interface ThemeContextType {
-  colorScheme: MantineColorScheme;
-  toggleColorScheme: (value?: MantineColorScheme) => void;
-  isDark: boolean;
-}
-
-// Create the context with a default value (undefined for type safety)
-export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+// Re-export for consumers
+export { ThemeContext } from './themeContextDef';
+export type { ThemeContextType } from './themeContextDef';
 
 interface ThemeProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-/**
- * Theme provider component that manages color scheme state
- * This wraps the application to provide theme context
- */
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  // Use our custom hook to manage theme state
   const themeState = useThemeState();
-  
+
   return (
     <ThemeContext.Provider value={themeState}>
       {children}

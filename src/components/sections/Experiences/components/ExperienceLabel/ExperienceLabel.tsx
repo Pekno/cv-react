@@ -1,3 +1,4 @@
+import React from "react";
 import { Group, Image, Text } from "@mantine/core";
 import classes from './ExperienceLabel.module.css';
 

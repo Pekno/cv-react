@@ -21,7 +21,9 @@ const BentoCard = React.memo(({
   t,
 }: {
   item: HobbyItem;
+   
   onClick: (item: HobbyItem) => void;
+   
   t: (key: ReturnType<typeof hobbyKey>) => string;
 }) => {
   const colSpan = item.colSpan ?? 1;
@@ -85,9 +87,11 @@ const HobbiesLightbox = ({
   state: LightboxState;
   items: HobbyItem[];
   onClose: () => void;
+   
   onNavigate: (index: number) => void;
+   
   t: (key: ReturnType<typeof hobbyKey>) => string;
-}) => {
+}): React.JSX.Element => {
   const { item, index } = state;
   const hasPrev = index > 0;
   const hasNext = index < items.length - 1;
@@ -180,7 +184,7 @@ const HobbiesLightbox = ({
 
 // ── Main Section ──────────────────────────────────────────────────────────────
 
-const HobbiesSectionComponent = ({ data, evenSection = false }: HobbiesProps) => {
+const HobbiesSectionComponent = ({ data, evenSection = false }: HobbiesProps): React.JSX.Element => {
   const { t } = useLanguage();
   const [lightbox, setLightbox] = useState<LightboxState | null>(null);
 
@@ -197,6 +201,7 @@ const HobbiesSectionComponent = ({ data, evenSection = false }: HobbiesProps) =>
   const handleClose = useCallback(() => setLightbox(null), []);
 
   // Cast t to be compatible with hobbyKey return type
+   
   const typedT = t as unknown as (key: ReturnType<typeof hobbyKey>) => string;
 
   return (
@@ -233,4 +238,5 @@ const HobbiesSectionComponent = ({ data, evenSection = false }: HobbiesProps) =>
   );
 };
 
-export default createRegisteredSection<HobbiesProps>('hobbies', HobbiesSectionComponent);
+const Hobbies = createRegisteredSection<HobbiesProps>('hobbies', HobbiesSectionComponent);
+export default Hobbies;

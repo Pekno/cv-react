@@ -5,12 +5,26 @@ import { MantineColorScheme } from "@mantine/core";
 import { useProfileData } from "./useProfileData";
 import { getPrimaryThemeColor } from "../utils/themeUtils";
 
+interface UseThemeReturn {
+  colorScheme: MantineColorScheme;
+  toggleColorScheme: (value?: MantineColorScheme) => void;
+  isDark: boolean;
+  primaryColor: string;
+  brandColor: string;
+}
+
+interface UseThemeStateReturn {
+  colorScheme: MantineColorScheme;
+  toggleColorScheme: (value?: MantineColorScheme) => void;
+  isDark: boolean;
+}
+
 /**
  * Custom hook for managing application theme
  *
  * @returns Object with current theme state and toggle function
  */
-export const useTheme = () => {
+export const useTheme = (): UseThemeReturn => {
   const context = useContext(ThemeContext);
 
   if (!context) {
@@ -38,7 +52,7 @@ export const useTheme = () => {
  *
  * @returns Theme state management object
  */
-export const useThemeState = () => {
+export const useThemeState = (): UseThemeStateReturn => {
   // Check if user prefers dark mode
   const prefersDarkScheme = useMediaQuery("(prefers-color-scheme: dark)");
 

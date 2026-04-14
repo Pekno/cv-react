@@ -42,7 +42,7 @@ const LanguageSwitcher: React.FC = () => {
   const [languageOptions] = useState<LanguageOption[]>(buildLang(supportedLanguages));
 
   // Handle language change
-  const handleLanguageChange = (newLanguage?: string) => {
+  const handleLanguageChange = (newLanguage?: string): void => {
     if(!newLanguage) return;
     setLanguage(newLanguage);
   };

@@ -1,20 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Group, ActionIcon, Tooltip } from '@mantine/core';
-import {
-  IconBrandFacebook,
-  IconBrandGithub,
-  IconBrandInstagram,
-  IconBrandLinkedin,
-  IconBrandTwitter,
-  IconBrandYoutube,
-  IconBrandDribbble,
-  IconBrandBehance,
-  IconBrandMedium,
-  IconBrandStackoverflow,
-  IconWorld,
-  IconLink
-} from '@tabler/icons-react';
-import { SocialLink, SocialPlatform } from '../../../types/profile-data.types';
+import { SocialLink } from '../../../types/profile-data.types';
+import { getSocialIcon } from './socialIcons';
 import classes from './SocialLinks.module.css';
 
 interface SocialLinksProps {
@@ -25,39 +12,6 @@ interface SocialLinksProps {
   variant?: 'filled' | 'light' | 'outline' | 'subtle' | 'transparent';
   children?: ReactNode;
 }
-
-// Get the appropriate icon component with type safety
-export const getSocialIcon = (type: SocialPlatform) => {
-  // Use lowercase for consistent matching
-  const platformType = type.toLowerCase() as SocialPlatform;
-
-  switch (platformType) {
-    case 'github':
-      return IconBrandGithub;
-    case 'linkedin':
-      return IconBrandLinkedin;
-    case 'twitter':
-      return IconBrandTwitter;
-    case 'instagram':
-      return IconBrandInstagram;
-    case 'facebook':
-      return IconBrandFacebook;
-    case 'youtube':
-      return IconBrandYoutube;
-    case 'dribbble':
-      return IconBrandDribbble;
-    case 'behance':
-      return IconBrandBehance;
-    case 'medium':
-      return IconBrandMedium;
-    case 'stackoverflow':
-      return IconBrandStackoverflow;
-    case 'website':
-      return IconWorld;
-    default:
-      return IconLink; // Fallback icon for unknown types
-  }
-};
 
 /**
  * A reusable component for rendering social media links

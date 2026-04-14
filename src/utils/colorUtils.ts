@@ -38,7 +38,7 @@ export function hexToRgb(hex: string): RGB {
  * Convert RGB to HEX.
  */
 export function rgbToHex({ r, g, b }: RGB): string {
-  const toHex = (num: number) => {
+  const toHex = (num: number): string => {
     const hex = num.toString(16);
     return hex.length === 1 ? "0" + hex : hex;
   };
@@ -141,7 +141,7 @@ export function getLighterColor(hexColor: string, factor: number): string {
   const rgb = hexToRgb(hexColor);
 
   // Mix with white based on the factor
-  const clamp = (v: number) => Math.max(0, Math.min(255, v));
+  const clamp = (v: number): number => Math.max(0, Math.min(255, v));
   const mixR = clamp(Math.round(rgb.r + (255 - rgb.r) * factor));
   const mixG = clamp(Math.round(rgb.g + (255 - rgb.g) * factor));
   const mixB = clamp(Math.round(rgb.b + (255 - rgb.b) * factor));

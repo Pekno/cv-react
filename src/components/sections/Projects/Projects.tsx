@@ -10,7 +10,7 @@ import { createRegisteredSection } from '@decorators/section.decorator';
 const MemoizedProjectCarousel = React.memo(ProjectCarousel);
 
 // Create the Projects component as a regular function
-const ProjectsSectionComponent = ({ data, evenSection = false }: ProjectsProps) => {
+const ProjectsSectionComponent = ({ data, evenSection = false }: ProjectsProps): React.JSX.Element => {
   const { t } = useLanguage();
 
   // Process projects to add translated descriptions and link texts
@@ -38,4 +38,5 @@ const ProjectsSectionComponent = ({ data, evenSection = false }: ProjectsProps) 
 };
 
 // Export with section registration
-export default createRegisteredSection<ProjectsProps>('projects', ProjectsSectionComponent);
+const Projects = createRegisteredSection<ProjectsProps>('projects', ProjectsSectionComponent);
+export default Projects;

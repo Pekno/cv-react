@@ -15,7 +15,7 @@ const ASSET_EXTENSIONS =
 function stubAssetsPlugin(): EsbuildPlugin {
   return {
     name: "stub-assets",
-    setup(build) {
+    setup(build): void {
       build.onResolve({ filter: ASSET_EXTENSIONS }, (args) => ({
         path: args.path,
         namespace: "stub-asset",

@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import i18n, { ResourceKey } from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import realProfileData from "../data/profile-data";
@@ -15,7 +15,7 @@ const localeModules = import.meta.glob("./locales/*.{ts,js,json}", {
 });
 
 // Extract the language code from the file path and build resources dynamically
-const resources: Record<string, { translation: any }> = {};
+const resources: Record<string, { translation: ResourceKey }> = {};
 
 Object.entries(localeModules).forEach(([path, module]) => {
   // Skip example files unless we're in demo mode
@@ -37,7 +37,7 @@ Object.entries(localeModules).forEach(([path, module]) => {
     // Add to resources
     resources[langCode] = {
       // The actual content might be in default (for ESM) or directly in the module (for JSON)
-      translation: (module as any).default || module,
+      translation: ((module as Record<string, unknown>)["default"] ?? module) as ResourceKey,
     };
   }
 });

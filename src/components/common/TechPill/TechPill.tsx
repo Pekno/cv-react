@@ -113,7 +113,7 @@ const ICON_MAP: Record<string, IconComponent> = {
   jquery: SiJquery,
 };
 
-export function getTechIcon(slug: string): IconComponent | null {
+function getTechIcon(slug: string): IconComponent | null {
   return ICON_MAP[slug.toLowerCase()] ?? null;
 }
 
@@ -121,7 +121,7 @@ interface TechPillProps {
   item: TechItem;
 }
 
-const TechPill = ({ item }: TechPillProps) => {
+const TechPill = ({ item }: TechPillProps): React.ReactElement => {
   const IconComp = getTechIcon(item.icon);
   return (
     <div className={classes.techPill}>
@@ -140,7 +140,7 @@ interface TechPillGroupProps {
   className?: string;
 }
 
-export const TechPillGroup = ({ items, className }: TechPillGroupProps) => (
+export const TechPillGroup = ({ items, className }: TechPillGroupProps): React.ReactElement => (
   <div className={`${classes.techPillGroup}${className ? ` ${className}` : ''}`}>
     {items.map((item, idx) => (
       <TechPill key={idx} item={item} />

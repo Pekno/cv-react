@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Text } from '@mantine/core';
 import { IconSchool, IconLanguage, IconInfoCircle } from '@tabler/icons-react';
 import Section from '@components/common/Section/Section';
@@ -26,7 +26,7 @@ function getSegments(value: number): ('filled' | 'partial' | 'empty')[] {
   });
 }
 
-const EducationSectionComponent = ({ data, evenSection = false }: EducationProps) => {
+const EducationSectionComponent = ({ data, evenSection = false }: EducationProps): React.JSX.Element => {
   const { t } = useLanguage();
 
   const educationItems = useMemo(
@@ -138,4 +138,5 @@ const EducationSectionComponent = ({ data, evenSection = false }: EducationProps
   );
 };
 
-export default createRegisteredSection<EducationProps>('education', EducationSectionComponent);
+const Education = createRegisteredSection<EducationProps>('education', EducationSectionComponent);
+export default Education;

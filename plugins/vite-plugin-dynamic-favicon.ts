@@ -15,8 +15,7 @@ const require = createRequire(import.meta.url);
  * This avoids any font rendering dependency at the OS/container level.
  */
 function textToSvgPath(text: string, fill: string): string {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const opentype = require("opentype.js");
+  const opentype = require("opentype.js");  
   const fontPath = require.resolve(
     "@fontsource/signika/files/signika-latin-700-normal.woff"
   );

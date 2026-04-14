@@ -1,7 +1,7 @@
 import React, { JSX } from 'react';
 import '@mantine/core/styles.css';
 import './variables.css'; // Import our CSS variables
-import { MantineProvider, createTheme, MantineColorScheme } from '@mantine/core';
+import { MantineProvider, createTheme, MantineColorScheme, MantineTheme } from '@mantine/core';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { useTheme } from '../hooks/useTheme';
 import { generateBrandPalette } from '../utils/themeUtils';
@@ -11,7 +11,7 @@ import { useProfileData } from '../hooks/useProfileData';
  * Creates a theme with both light and dark mode support
  * Handles components styling for different color schemes
  */
-const createAppTheme = (colorScheme: MantineColorScheme, brandColor: string) => {
+const createAppTheme = (colorScheme: MantineColorScheme, brandColor: string): ReturnType<typeof createTheme> => {
   const isDark = colorScheme === 'dark';
   
   // Generate the brand color palette from the configured primary color
@@ -79,28 +79,28 @@ const createAppTheme = (colorScheme: MantineColorScheme, brandColor: string) => 
     // Enhanced component defaults
     components: {
       AppShell: {
-        styles: (theme: any) => ({
+        styles: (theme: MantineTheme) => ({
           main: {
             backgroundColor: isDark ? theme.colors.dark[8] : theme.colors.gray[0],
           }
         }),
       },
       Card: {
-        styles: (theme: any) => ({
+        styles: (theme: MantineTheme) => ({
           root: {
             backgroundColor: isDark ? theme.colors.dark[6] : theme.white,
           }
         }),
       },
       Paper: {
-        styles: (theme: any) => ({
+        styles: (theme: MantineTheme) => ({
           root: {
             backgroundColor: isDark ? theme.colors.dark[6] : theme.white,
           }
         }),
       },
       Accordion: {
-        styles: (theme: any) => ({
+        styles: (theme: MantineTheme) => ({
           item: {
             backgroundColor: isDark ? theme.colors.dark[6] : theme.white,
             borderColor: isDark ? theme.colors.dark[4] : theme.colors.gray[3],

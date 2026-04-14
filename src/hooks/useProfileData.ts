@@ -1,6 +1,7 @@
 import { use } from "react";
 import realProfileData from "../data/profile-data";
 import exampleProfileData from "../data/profile-data.example";
+import { ProfileData } from "../types/profile-data.types";
 
 // Declare the global variable for TypeScript
 declare const __USE_EXAMPLE_DATA__: boolean;
@@ -16,7 +17,7 @@ const profileDataPromise = Promise.resolve(profileData);
  * Uses React 19's `use` hook for handling the Promise
  * Automatically switches between real and example data based on build mode
  */
-export const useProfileData = () => {
+export const useProfileData = (): { data: ProfileData; isUsingExampleData: boolean } => {
   return {
     data: use(profileDataPromise),
     // Expose whether we're using example data for debugging purposes
