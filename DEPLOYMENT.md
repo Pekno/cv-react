@@ -13,7 +13,7 @@ The simplest way to deploy: fork, customize, and connect to a hosting platform. 
    ```bash
    npm run setup
    ```
-   This copies the example data/translation files to their real names and removes the `.gitignore` restrictions so you can commit your personal data.
+   This copies the example data/translation files to their real names, removes the `.gitignore` restrictions so you can commit your personal data, and cleans up test files that aren't needed in a fork.
 3. Edit `src/data/profile-data.ts` and `src/i18n/locales/en.ts` / `fr.ts` with your information
 4. Add your images to `src/assets/` and PDFs to `public/pdf/`
 5. Commit and push your changes:

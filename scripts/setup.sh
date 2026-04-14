@@ -99,106 +99,18 @@ write_file() {
   echo -e "  ${GREEN}+${RESET} ${rel}"
 }
 
-generate_workflow() {
-  cat << 'WORKFLOW_EOF'
-name: Build and Push Docker Image
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-    inputs:
-      cv_react_version:
-        description: 'cv-react version tag (e.g. v1.0.0). Leave empty to use the latest tag.'
-        required: false
-        default: ''
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout private repository
-        uses: actions/checkout@v4
-        with:
-          path: private
-
-      - name: Resolve cv-react version
-        id: resolve-version
-        run: |
-          if [ -n "${{ github.event.inputs.cv_react_version }}" ]; then
-            echo "ref=${{ github.event.inputs.cv_react_version }}" >> $GITHUB_OUTPUT
-          else
-            LATEST_TAG=$(git ls-remote --tags --sort=-v:refname https://github.com/Pekno/cv-react.git | head -n1 | sed 's/.*refs\/tags\///')
-            echo "ref=${LATEST_TAG}" >> $GITHUB_OUTPUT
-          fi
-          echo "Using cv-react version: $(cat $GITHUB_OUTPUT | grep ref= | cut -d= -f2)"
-
-      - name: Checkout main repository
-        uses: actions/checkout@v4
-        with:
-          repository: Pekno/cv-react
-          ref: ${{ steps.resolve-version.outputs.ref }}
-          path: main
-
-      - name: Copy profile data and translations
-        run: |
-          cp -r private/data/profile-data.ts main/src/data/
-
-          cp -r private/locales/* main/src/i18n/locales/
-
-          if [ -d "private/assets" ]; then
-            cp -r private/assets/* main/src/assets/
-          fi
-
-          if [ -d "private/public" ]; then
-            cp -r private/public/* main/public/
-          fi
-
-          echo "Copied profile data and translations successfully"
-
-      - id: lowercase-owner
-        name: Repository owner to lowercase
-        run: |
-          echo "owner=${GITHUB_REPOSITORY_OWNER@L}" >> $GITHUB_OUTPUT
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./main
-          push: true
-          tags: |
-            ghcr.io/${{ steps.lowercase-owner.outputs.owner }}/cv-react-private:latest
-            ghcr.io/${{ steps.lowercase-owner.outputs.owner }}/cv-react-private:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-WORKFLOW_EOF
-}
-
-generate_readme() {
-  local username="$1"
-  cat << EOF
-# CV React — Private Data
-
-This repository contains personal data for [cv-react](https://github.com/Pekno/cv-react).
-
-Pushes to \`main\` automatically build and push a Docker image to \`ghcr.io/${username,,}/cv-react-private\`.
-
-See the [deployment guide](https://github.com/Pekno/cv-react/blob/main/DEPLOYMENT.md) for details.
-EOF
+download_fork_file() {
+  local src="$1"   # path within fork/ in the repo
+  local dest="$2"  # destination path
+  local sed_expr="${3:-}"  # optional sed substitution
+  mkdir -p "$(dirname "$dest")"
+  if download_file "${REPO_RAW}/fork/${src}" "$dest"; then
+    if [ -n "$sed_expr" ]; then
+      sed -i "$sed_expr" "$dest"
+    fi
+    return 0
+  fi
+  return 1
 }
 
 setup_private_repo() {
@@ -251,16 +163,22 @@ setup_private_repo() {
   echo ""
 
   # Workflow
-  generate_workflow > "${target_dir}/.github/workflows/docker-build.yml"
-  echo -e "  ${GREEN}+${RESET} .github/workflows/docker-build.yml"
+  if download_fork_file ".github/workflows/docker-build.yml" "${target_dir}/.github/workflows/docker-build.yml"; then
+    echo -e "  ${GREEN}+${RESET} .github/workflows/docker-build.yml"
+  else
+    echo -e "  ${YELLOW}!${RESET} .github/workflows/docker-build.yml ${DIM}(download failed, skipped)${RESET}"
+  fi
 
   # .gitignore
   printf "node_modules/\n.DS_Store\nThumbs.db\n" > "${target_dir}/.gitignore"
   echo -e "  ${GREEN}+${RESET} .gitignore"
 
-  # README
-  generate_readme "$github_username" > "${target_dir}/README.md"
-  echo -e "  ${GREEN}+${RESET} README.md"
+  # README — download template and substitute {{USERNAME}} placeholder
+  if download_fork_file "README.md" "${target_dir}/README.md" "s/{{USERNAME}}/${github_username,,}/g"; then
+    echo -e "  ${GREEN}+${RESET} README.md"
+  else
+    echo -e "  ${YELLOW}!${RESET} README.md ${DIM}(download failed, skipped)${RESET}"
+  fi
 
   # Example files
   if [ "$include_examples" = true ]; then

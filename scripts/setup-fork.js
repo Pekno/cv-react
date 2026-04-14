@@ -5,6 +5,7 @@
 // This script:
 //   1. Copies *.example.ts files to their real names (skips if already present)
 //   2. Patches .gitignore so your personal data files CAN be committed to your fork
+//   3. Removes test files and test scripts (not needed in a fork deployment)
 
 import fs from 'fs'
 import path from 'path'
@@ -41,6 +42,17 @@ const GITIGNORE_LINES_TO_REMOVE = [
   '/public/android-chrome-*.png',
   '/public/site.webmanifest',
 ]
+
+// Files and dirs to delete from the fork
+const PATHS_TO_DELETE = [
+  'tests',
+  'vitest.config.ts',
+  '.github/workflows',
+  '.github/screenshots',
+]
+
+// package.json scripts to remove from the fork
+const PACKAGE_SCRIPTS_TO_REMOVE = ['test', 'test:watch']
 
 const green = (s) => `\x1b[32m${s}\x1b[0m`
 const yellow = (s) => `\x1b[33m${s}\x1b[0m`
@@ -100,6 +112,54 @@ if (content !== original) {
   )
 } else {
   console.log(`  ${yellow('~')} .gitignore already clean, nothing to remove`)
+}
+
+// 3. Remove unneeded files
+console.log(`\n  ${bold('Removing unneeded files...')}\n`)
+for (const rel of PATHS_TO_DELETE) {
+  const target = path.join(root, rel)
+  if (fs.existsSync(target)) {
+    fs.rmSync(target, { recursive: true, force: true })
+    console.log(`  ${green('-')} ${rel}`)
+  } else {
+    console.log(`  ${yellow('~')} ${rel} ${dim('(not found, skipped)')}`)
+  }
+}
+
+// Remove .github/ entirely if it is now empty
+const githubDir = path.join(root, '.github')
+if (fs.existsSync(githubDir)) {
+  const remaining = fs.readdirSync(githubDir)
+  if (remaining.length === 0) {
+    fs.rmSync(githubDir, { recursive: true, force: true })
+    console.log(`  ${green('-')} .github ${dim('(now empty, removed)')}`)
+  }
+}
+
+// 4. Patch package.json: remove test scripts, reset version
+console.log(`\n  ${bold('Patching package.json...')}\n`)
+const pkgPath = path.join(root, 'package.json')
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
+let pkgChanged = false
+
+for (const script of PACKAGE_SCRIPTS_TO_REMOVE) {
+  if (pkg.scripts && script in pkg.scripts) {
+    delete pkg.scripts[script]
+    console.log(`  ${green('-')} scripts.${script}`)
+    pkgChanged = true
+  }
+}
+
+if (pkg.version !== '1.0.0') {
+  pkg.version = '1.0.0'
+  console.log(`  ${green('✓')} version → 1.0.0`)
+  pkgChanged = true
+}
+
+if (pkgChanged) {
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8')
+} else {
+  console.log(`  ${yellow('~')} nothing to change`)
 }
 
 console.log(`\n  ${bold(green('Done!'))} Next steps:\n`)
