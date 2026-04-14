@@ -5,7 +5,8 @@
 // This script:
 //   1. Copies *.example.ts files to their real names (skips if already present)
 //   2. Patches .gitignore so your personal data files CAN be committed to your fork
-//   3. Removes test files and test scripts (not needed in a fork deployment)
+//   3. Removes test files, CI workflow, screenshots, and test scripts
+//   4. Resets package.json version to 1.0.0
 
 import fs from 'fs'
 import path from 'path'
@@ -95,21 +96,17 @@ for (const line of lines) {
   }
 }
 
-// Remove the now-orphaned comments
 content = kept
   .join('\n')
   .replace(/# Ignore content of asset directories but keep their structure\r?\n/g, '')
   .replace(/# Ignore actual data files but keep examples\r?\n/g, '')
   .replace(/# Ignore actual translation files but keep examples\r?\n?/g, '')
-  // Collapse 3+ blank lines into 2
   .replace(/(\r?\n){3,}/g, '\n\n')
 
 if (content !== original) {
   fs.writeFileSync(gitignorePath, content, 'utf8')
   console.log(`  ${green('✓')} Removed ${removedCount} restrictive line(s) from .gitignore`)
-  console.log(
-    `  ${dim('Your data, translation, and asset files can now be committed.')}`
-  )
+  console.log(`  ${dim('Your data, translation, and asset files can now be committed.')}`)
 } else {
   console.log(`  ${yellow('~')} .gitignore already clean, nothing to remove`)
 }
@@ -126,14 +123,10 @@ for (const rel of PATHS_TO_DELETE) {
   }
 }
 
-// Remove .github/ entirely if it is now empty
 const githubDir = path.join(root, '.github')
-if (fs.existsSync(githubDir)) {
-  const remaining = fs.readdirSync(githubDir)
-  if (remaining.length === 0) {
-    fs.rmSync(githubDir, { recursive: true, force: true })
-    console.log(`  ${green('-')} .github ${dim('(now empty, removed)')}`)
-  }
+if (fs.existsSync(githubDir) && fs.readdirSync(githubDir).length === 0) {
+  fs.rmSync(githubDir, { recursive: true, force: true })
+  console.log(`  ${green('-')} .github ${dim('(now empty, removed)')}`)
 }
 
 // 4. Patch package.json: remove test scripts, reset version
