@@ -11,7 +11,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+    "setup": "node scripts/setup-fork.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@fontsource/signika": "^5.2.8",

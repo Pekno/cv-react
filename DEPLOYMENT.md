@@ -9,20 +9,43 @@ The simplest way to deploy: fork, customize, and connect to a hosting platform. 
 ### Deploying to Netlify
 
 1. Fork this repository on GitHub
-2. Edit `src/data/profile-data.ts` and `src/i18n/locales/` with your information
-3. Log in to [Netlify](https://app.netlify.com/) and click **"Add new site" > "Import an existing project"**
-4. Connect your GitHub fork — Netlify will auto-detect the build settings from `netlify.toml`
-5. Click **Deploy site**
+2. Clone your fork locally and run the setup script:
+   ```bash
+   npm run setup
+   ```
+   This copies the example data/translation files to their real names and removes the `.gitignore` restrictions so you can commit your personal data.
+3. Edit `src/data/profile-data.ts` and `src/i18n/locales/en.ts` / `fr.ts` with your information
+4. Add your images to `src/assets/` and PDFs to `public/pdf/`
+5. Commit and push your changes:
+   ```bash
+   git add .
+   git commit -m "my cv data"
+   git push
+   ```
+6. Log in to [Netlify](https://app.netlify.com/) and click **"Add new site" > "Import an existing project"**
+7. Connect your GitHub fork — Netlify will auto-detect the build settings from `netlify.toml`
+8. Click **Deploy site**
 
 Every push to your repository will trigger an automatic redeploy.
 
 ### Deploying to Vercel
 
 1. Fork this repository on GitHub
-2. Edit `src/data/profile-data.ts` and `src/i18n/locales/` with your information
-3. Log in to [Vercel](https://vercel.com/) and click **"Add New Project"**
-4. Import your GitHub fork — Vercel auto-detects Vite projects and uses the settings from `vercel.json`
-5. Click **Deploy**
+2. Clone your fork locally and run the setup script:
+   ```bash
+   npm run setup
+   ```
+3. Edit `src/data/profile-data.ts` and `src/i18n/locales/en.ts` / `fr.ts` with your information
+4. Add your images to `src/assets/` and PDFs to `public/pdf/`
+5. Commit and push your changes:
+   ```bash
+   git add .
+   git commit -m "my cv data"
+   git push
+   ```
+6. Log in to [Vercel](https://vercel.com/) and click **"Add New Project"**
+7. Import your GitHub fork — Vercel auto-detects Vite projects and uses the settings from `vercel.json`
+8. Click **Deploy**
 
 Every push to your repository will trigger an automatic redeploy.
 

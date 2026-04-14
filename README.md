@@ -162,72 +162,13 @@ Each README contains detailed information on:
 
 ## Deployment
 
-### Static Hosting with Netlify or Vercel (Recommended)
+Three deployment options are available — static hosting, Docker, and GitHub Actions. See the full **[Deployment Guide](DEPLOYMENT.md)** for step-by-step instructions.
 
-The fastest way to deploy your CV — no server or Docker required:
-
-1. **Fork** this repository
-2. **Edit** `src/data/profile-data.ts` and the translation files in `src/i18n/locales/` with your information
-3. **Connect** your fork to [Netlify](https://app.netlify.com/) or [Vercel](https://vercel.com/) — both auto-detect Vite projects
-4. **Deploy** — every push to your repo triggers an automatic rebuild
-
-The project includes `netlify.toml` and `vercel.json` configuration files that handle SPA routing out of the box.
-
-### Docker (Self-Hosted)
-
-For self-hosted deployments, a production-ready Docker setup is included.
-
-#### Prerequisites for Docker
-
-- Docker and Docker Compose installed on your machine
-
-#### Deploying with Docker
-
-Build and run the production-optimized container:
-
-```bash
-# Build and start the container in detached mode
-npm run docker:up
-# or
-docker-compose up -d
-```
-
-This will:
-1. Build your application
-2. Create an optimized Nginx-based Docker image
-3. Start a container serving your application on port 80
-
-To stop the container:
-
-```bash
-npm run docker:down
-# or
-docker-compose down
-```
-
-The build artifacts will be stored in the `dist/` directory.
-More info in the [Deployment Documentation](DEPLOYMENT.md).
-
-### Keeping Your Fork Up to Date
-
-When new features or fixes are released upstream, sync your fork to get them:
-
-```bash
-# Add the upstream remote (only needed once)
-git remote add upstream https://github.com/Pekno/cv-react.git
-
-# Fetch upstream changes
-git fetch upstream
-
-# Merge upstream into your branch
-git merge upstream/main
-```
-
-If there are merge conflicts, they will most likely be in your customized files (`profile-data.ts`, translation files). Resolve them by keeping your personal data while accepting the structural changes from upstream.
-
-You can check the ![GitHub Tag](https://img.shields.io/github/v/tag/Pekno/cv-react?label=latest%20version) badge to see if a newer version is available.
-
-> **Tip:** If you use Netlify or Vercel, merging upstream and pushing will automatically trigger a redeploy.
+| Option | Best for |
+|---|---|
+| [Netlify / Vercel](DEPLOYMENT.md#static-hosting--netlify--vercel-recommended) | Simplest setup, free tier available |
+| [Docker](DEPLOYMENT.md#docker--github-actions-self-hosted) | Self-hosted, full control |
+| [GitHub Actions + GHCR](DEPLOYMENT.md#docker--github-actions-self-hosted) | Automated builds with private data repo |
 
 ### Using Demo Mode
 
