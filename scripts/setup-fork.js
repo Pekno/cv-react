@@ -11,6 +11,7 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { execSync } from 'child_process'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
@@ -59,6 +60,19 @@ const green = (s) => `\x1b[32m${s}\x1b[0m`
 const yellow = (s) => `\x1b[33m${s}\x1b[0m`
 const bold = (s) => `\x1b[1m${s}\x1b[0m`
 const dim = (s) => `\x1b[2m${s}\x1b[0m`
+
+// Derive info from git remote origin URL
+const getRemoteInfo = () => {
+  try {
+    const remote = execSync('git remote get-url origin', { cwd: root, encoding: 'utf8' }).trim()
+    // https://github.com/USER/repo.git  or  git@github.com:USER/repo.git
+    const username = remote.match(/github\.com[:/]([^/]+)\//)?.[1] ?? null
+    const repoName = remote.match(/\/([^/]+?)(?:\.git)?$/)?.[1] ?? null
+    return { username, repoName }
+  } catch {
+    return { username: null, repoName: null }
+  }
+}
 
 console.log(`\n  ${bold('CV React — Fork Setup')}\n`)
 
@@ -111,7 +125,21 @@ if (content !== original) {
   console.log(`  ${yellow('~')} .gitignore already clean, nothing to remove`)
 }
 
-// 3. Remove unneeded files
+// 3. Replace README with fork template
+console.log(`\n  ${bold('Updating README.md...')}\n`)
+const readmeTemplatePath = path.join(root, 'fork/README.md')
+if (fs.existsSync(readmeTemplatePath)) {
+  const { username, repoName } = getRemoteInfo()
+  let readme = fs.readFileSync(readmeTemplatePath, 'utf8')
+  readme = readme.replace(/\{\{REPO_NAME\}\}/g, repoName ?? 'cv-react')
+  readme = readme.replace(/\{\{USERNAME\}\}/g, username ?? 'your-username')
+  fs.writeFileSync(path.join(root, 'README.md'), readme, 'utf8')
+  console.log(`  ${green('✓')} README.md ${username ? dim(`(${username}/${repoName ?? 'cv-react'})`) : dim('(username not detected, placeholder used)')}`)
+} else {
+  console.log(`  ${yellow('~')} fork/README.netlify.md not found, skipped`)
+}
+
+// 4. Remove unneeded files
 console.log(`\n  ${bold('Removing unneeded files...')}\n`)
 for (const rel of PATHS_TO_DELETE) {
   const target = path.join(root, rel)
@@ -129,7 +157,7 @@ if (fs.existsSync(githubDir) && fs.readdirSync(githubDir).length === 0) {
   console.log(`  ${green('-')} .github ${dim('(now empty, removed)')}`)
 }
 
-// 4. Patch package.json: remove test scripts, reset version
+// 5. Patch package.json: remove test scripts, reset version
 console.log(`\n  ${bold('Patching package.json...')}\n`)
 const pkgPath = path.join(root, 'package.json')
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))

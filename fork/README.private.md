@@ -1,6 +1,10 @@
-# {{REPO_NAME}} — CV
+# CV React — Private Data
 
-A personal CV/portfolio built with [cv-react](https://github.com/Pekno/cv-react).
+This repository contains personal data for [cv-react](https://github.com/Pekno/cv-react).
+
+Pushes to `main` automatically build and push a Docker image to `ghcr.io/{{USERNAME}}/cv-react-private`.
+
+See the [deployment guide](https://github.com/Pekno/cv-react/blob/main/DEPLOYMENT.md) for details.
 
 ## Keeping up to date
 

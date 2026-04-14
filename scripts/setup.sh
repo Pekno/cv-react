@@ -174,7 +174,7 @@ setup_private_repo() {
   echo -e "  ${GREEN}+${RESET} .gitignore"
 
   # README — download template and substitute {{USERNAME}} placeholder
-  if download_fork_file "README.md" "${target_dir}/README.md" "s/{{USERNAME}}/${github_username,,}/g"; then
+  if download_fork_file "README.private.md" "${target_dir}/README.md" "s/{{USERNAME}}/${github_username,,}/g"; then
     echo -e "  ${GREEN}+${RESET} README.md"
   else
     echo -e "  ${YELLOW}!${RESET} README.md ${DIM}(download failed, skipped)${RESET}"
